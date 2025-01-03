@@ -1,0 +1,32 @@
+
+
+
+#imgpromote{
+    width: 100%;
+    height: 660px;
+    background-image: url('../assets/Promote.png');
+    background-size: cover; 
+    background-position: center; 
+    display: flex; /* ใช้ Flexbox */
+    flex-direction: column; /* ตั้งค่าให้เป็นแนวตั้ง */
+    justify-content: center; /* จัดแนวตั้งให้ตรงกลาง */
+    align-items: center; /* จัดแนวนอนให้ตรงกลาง */
+    text-align: center; /* ทำให้ข้อความอยู่กลาง */
+}
+p{
+    color: #FFFFFF;
+    font-size: 32px;
+    font-family: 'Prompt', sans-serif;
+    font-weight: bold;
+}
+.btn-borrow{
+    position: relative;
+    top: 80px;
+    border-radius: 10px;
+    background-color: #009498;
+    color: #FFFFFF;
+    width: 144px;
+    height: 51px;
+    border: none;
+    font-family: 'Prompt', sans-serif;
+}

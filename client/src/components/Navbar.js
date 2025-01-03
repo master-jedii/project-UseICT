@@ -1,9 +1,10 @@
 import React from 'react';
 import logo from '../assets/LOGO.png'; // นำเข้าโลโก้ (แก้ path ตามโครงสร้างของคุณ)
+import '../App.css'
 
 const Navbar = () => {
     return (
-        <nav className="navbar navbar-light bg-white px-5" style={{ fontFamily: "'Sarabun', sans-serif" }}>
+        <nav className="navbar navbar-light bg-white px-5" >
             <div className="d-flex align-items-center">
                 {/* โลโก้ด้านซ้าย */}
                 <a className="navbar-brand" href="#">
