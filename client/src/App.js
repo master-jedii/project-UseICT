@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import Carousel from './components/Carousel';
 import Login from './components/login';
+import Type from './components/type'
 
 const MainLayout = ({ children }) => (
   <>
@@ -21,7 +22,9 @@ const App = () => {
           element={
             <MainLayout>
               <Carousel />
+              <Type/>
             </MainLayout>
+            
           }
         />
         {/* เส้นทางที่ไม่มี Navbar */}

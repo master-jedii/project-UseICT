@@ -1,6 +1,7 @@
 import React from 'react'
 import '../View/Carousel.css'
 
+
 const Carousel = () => {
   return (
     <div id='imgpromote'>
