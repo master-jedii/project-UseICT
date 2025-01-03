@@ -3,6 +3,8 @@ import axios from 'axios';
 import Swal from 'sweetalert2';
 import { useNavigate } from 'react-router-dom';
 import '../View/Login.css'; // นำเข้าไฟล์ CSS สำหรับ UI
+import login from '../assets/login.png';
+import logo from '../assets/LOGO.png';
 
 const Login = () => {
     const [email, setEmail] = useState('');
@@ -44,7 +46,7 @@ const Login = () => {
             </div>
             <div className="form-section">
                 <div className="logo">
-                    <img src="/path/to/your/logo.png" alt="SU KITS Logo" className="logo-image" />
+                    <img src={logo} alt="SU KITS Logo" className="logo-image" />
                 </div>
                 <div className="login-box">
                     <h1 className="login-title">LOGIN</h1>

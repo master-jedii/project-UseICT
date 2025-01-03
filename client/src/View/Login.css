@@ -7,8 +7,9 @@
 
 .image-section {
     flex: 1;
-    background-color: #e0e0e0;
+    background-image: url('../assets/login.png');
     position: relative;
+    background-size: cover;
 }
 
 .background-image {
