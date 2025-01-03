@@ -4,23 +4,31 @@ import Navbar from './components/Navbar';
 import Carousel from './components/Carousel';
 import Login from './components/login';
 
-
+const MainLayout = ({ children }) => (
+  <>
+    <Navbar />
+    {children}
+  </>
+);
 
 const App = () => {
   return (
     <Router>
-      <Navbar />
       <Routes>
-        <Route path="/" element={<Carousel />} />
+        {/* เส้นทางที่มี Navbar */}
+        <Route
+          path="/"
+          element={
+            <MainLayout>
+              <Carousel />
+            </MainLayout>
+          }
+        />
+        {/* เส้นทางที่ไม่มี Navbar */}
         <Route path="/login" element={<Login />} />
       </Routes>
     </Router>
   );
 };
-
-
-
-
-
 
 export default App;

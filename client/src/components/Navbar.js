@@ -8,7 +8,7 @@ const Navbar = () => {
         <nav className="navbar navbar-light bg-white px-5" >
             <div className="d-flex align-items-center">
                 {/* โลโก้ด้านซ้าย */}
-                <a className="navbar-brand" href="#">
+                <a className="navbar-brand" href="/">
                     <img
                         src={logo}
                         alt="Logo"
