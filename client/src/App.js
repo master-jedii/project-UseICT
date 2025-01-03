@@ -1,23 +1,13 @@
-import './App.css';
-import Button from '@mui/material/Button';
-
-function App() {
-  return (
-    <div className="App">
-      
-    </div>
-  );
-}
-
-const login = () => {
-  return (
-      <div className="App">
-        <Button variant="contained">Hello world</Button>
-      </div>
-  );
-}
+import React from 'react';
 
 
-
+const App = () => {
+    return (
+        <div>
+            <h1>ระบบจัดการอุปกรณ์</h1>
+            <hr />
+        </div>
+    );
+};
 
 export default App;
