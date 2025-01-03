@@ -4,6 +4,8 @@ import Navbar from './components/Navbar';
 import Carousel from './components/Carousel';
 import Login from './components/login';
 
+
+
 const App = () => {
   return (
     <Router>
@@ -16,13 +18,7 @@ const App = () => {
   );
 };
 
-const login = () => {
-  return (
-      <div className="App">
-        <Button variant="contained">Hello world</Button>
-      </div>
-  );
-}
+
 
 
 

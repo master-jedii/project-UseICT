@@ -2,6 +2,7 @@ import React from 'react';
 import logo from '../assets/LOGO.png';
 import '../App.css'
 
+
 const Navbar = () => {
     return (
         <nav className="navbar navbar-light bg-white px-5" >

@@ -1,5 +1,6 @@
 import React from 'react'
 
+
 const Login = () => {
     return (
       <div className="container">
@@ -14,9 +15,7 @@ const Login = () => {
                   <form action="#" method="post">
                       <input type="email" name="email" placeholder="Email" required />
                       <input type="password" name="password" placeholder="Password" required />
-                      <Button variant="contained" color="primary" type="submit">
-                          LOGIN
-                      </Button>
+                      
                   </form>
                   <div className="links">
                       <p>New Users? <a href="#">Signup</a></p>
