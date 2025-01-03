@@ -1,9 +1,13 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const mysql = require('mysql2');
+const cors = require('cors');  // ติดตั้งและนำเข้า cors
 
 const app = express();
 const jsonParser = bodyParser.json();
+
+// ใช้ CORS middleware ให้กับเซิร์ฟเวอร์ของเรา
+app.use(cors());  // ทำให้สามารถรับคำขอจากทุกโดเมน
 
 // สร้างการเชื่อมต่อกับฐานข้อมูล
 const connection = mysql.createConnection({
@@ -22,6 +26,7 @@ connection.connect((err) => {
     console.log('Connected to the database.');
 });
 
+// Route สำหรับการสมัครสมาชิก (Register)
 app.post('/register', jsonParser, function (req, res, next) {
     const { 
         UserID, 
@@ -74,8 +79,57 @@ app.post('/register', jsonParser, function (req, res, next) {
     );
 });
 
+// Route สำหรับการล็อกอิน (Login)
+app.post('/login', jsonParser, function (req, res, next) {
+    const { email, password } = req.body;
+
+    // ตรวจสอบข้อมูลที่ได้จากฟอร์ม
+    const query = `SELECT * FROM users WHERE email = ? AND password = ?`;
+
+    connection.execute(query, [email, password], (err, results) => {
+        if (err) {
+            return res.status(500).json({ error: 'Database error' });
+        }
+        if (results.length > 0) {
+            res.status(200).json({ message: 'Login successful' });
+        } else {
+            res.status(401).json({ error: 'Invalid email or password' });
+        }
+    });
+});
+
+
+// Route สำหรับตรวจสอบ UserID หรือ Email ซ้ำ
+app.post('/check-duplicate', jsonParser, function (req, res, next) {
+    const { UserID, email } = req.body;
+
+    // ตรวจสอบว่ามี UserID หรือ Email อยู่ในฐานข้อมูลหรือไม่
+    const query = `
+        SELECT * FROM users 
+        WHERE UserID = ? OR email = ?
+    `;
+
+    connection.execute(query, [UserID, email], (err, results) => {
+        if (err) {
+            console.error('Error executing query:', err);
+            return res.status(500).json({ error: 'Database error' });
+        }
+
+        // ตรวจสอบผลลัพธ์
+        if (results.length > 0) {
+            res.status(200).json({ exists: true }); // มีข้อมูลซ้ำ
+        } else {
+            res.status(200).json({ exists: false }); // ไม่มีข้อมูลซ้ำ
+        }
+    });
+});
+
 // เริ่มเซิร์ฟเวอร์
 const PORT = 3333;
 app.listen(PORT, () => {
     console.log(`Server is running on http://localhost:${PORT}`);
 });
+
+app.use(cors({
+    origin: 'http://localhost:3000'  // จะอนุญาตให้เข้าถึงเฉพาะจาก localhost:3000
+}));
