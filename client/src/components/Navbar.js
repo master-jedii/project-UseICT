@@ -1,5 +1,6 @@
 import React from 'react';
 import logo from '../assets/LOGO.png'; // นำเข้าโลโก้ (แก้ path ตามโครงสร้างของคุณ)
+import '../App.css'
 
 const Navbar = () => {
     return (
@@ -43,6 +44,7 @@ const Navbar = () => {
                         width: '144px',
                         borderRadius: '5px',
                         fontSize: '20px',
+                        fontFamily: "'Sarabun', sans-serif"  // ฟอนต์เดียวกันกับ Navbar
                     }}
                 >
                     เข้าสู่ระบบ
