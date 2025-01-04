@@ -7,7 +7,7 @@ const Carousel = () => {
     <div id='imgpromote'>
         <p>การให้บริการยืม-คืนอุปกรณ์ กำหนดเปิด/ปิด วันจันทร์-วันศุกร หยุดเสาร์-อาทิตย์และวันหยุดนักขัตฤกษ์เวลา <br></br>09.00-16.30 น.  </p>
         
-       <button class='btn-borrow'>ยืมคืนอุปกรณ์</button>
+       <button className='btn-borrow'>ยืมคืนอุปกรณ์</button>
     </div>
   )
 }
