@@ -5,6 +5,7 @@ const mysql = require("mysql2"); // ใช้ MySQL (หรือเปลี่
 const jwt = require("jsonwebtoken"); // ใช้ JWT สำหรับการสร้าง Token
 const app = express();
 
+app.use(cors());
 // CORS
 app.use(cors({
   origin: 'http://localhost:3000', // ให้ frontend ที่รันที่ localhost:3000 สามารถเข้าถึงได้
@@ -144,6 +145,32 @@ app.post('/signup', async (req, res) => {
     });
   });
   
+  app.get('/admin', (req, res) => {
+    db.query("SELECT * FROM equipment", (err, result) => {
+        if (err) {
+            console.log(err);
+        }
+        else {
+            res.send(result);
+        }
+    })
+});
+
+app.post('/create', (req, res) => {
+    const name = req.body.name;
+    const description = req.body.description;
+    const category = req.body.category;
+    db.query("INSERT INTO equipment (name,description,category) VALUES(?,?,?)",
+        [name, description, category],
+        (err, result) => {
+            if (err) {
+                console.log(err)
+            }
+            else {
+                res.send('ข้อมูลเข้าแล้ว')
+            }
+        })
+})
   
   
 
