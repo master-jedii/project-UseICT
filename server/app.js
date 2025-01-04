@@ -5,9 +5,8 @@ const cors = require('cors');
 const jwt = require('jsonwebtoken');  // เพิ่มการใช้งาน jsonwebtoken
 
 const app = express();
-app.use(bodyParser.json());
+const jsonParser = bodyParser.json();
 
-// การเชื่อมต่อฐานข้อมูล
 // ใช้ CORS middleware ให้กับเซิร์ฟเวอร์ของเรา
 app.use(cors());
 
@@ -15,10 +14,11 @@ app.use(cors());
 const connection = mysql.createConnection({
     host: 'localhost',
     user: 'root',
-    password: '', // รหัสผ่าน MySQL ของคุณ
-    database: 'project-useict'
+    password: '', // ระบุรหัสผ่านของคุณ
+    database: 'project-useict' // ระบุชื่อฐานข้อมูล
 });
 
+// ตรวจสอบว่าการเชื่อมต่อทำงานได้
 connection.connect((err) => {
     if (err) {
         console.error('Error connecting to the database:', err);
@@ -27,14 +27,6 @@ connection.connect((err) => {
     console.log('Connected to the database.');
 });
 
-// ตัวอย่าง API POST สำหรับ Equipment
-app.post('/equipment', (req, res) => {
-    const { Type_Equipment, Name_Equipment, Status_Equipment, Details_Equipment } = req.body;
-    const query = `INSERT INTO Equipment (Type_Equipment, Name_Equipment, Status_Equipment, Details_Equipment) VALUES (?, ?, ?, ?)`;
-    connection.execute(query, [Type_Equipment, Name_Equipment, Status_Equipment, Details_Equipment], (err, results) => {
-        if (err) {
-            console.error(err);
-            return res.status(500).json({ error: 'Database error' });
 // Secret key สำหรับการสร้างและตรวจสอบ JWT token
 const SECRET_KEY = 'your_secret_key'; // เก็บใน environment variable ควรปลอดภัย
 
@@ -92,8 +84,7 @@ app.post('/register', jsonParser, function (req, res, next) {
                 data: { UserID, firstname, lastname, grade, branch, email, phone_number }
             });
         }
-        res.json({ message: 'Equipment added successfully' });
-    });
+    );
 });
 
 // Route สำหรับการล็อกอิน (Login) พร้อมสร้าง JWT token
@@ -146,7 +137,7 @@ app.get('/main', authenticateToken, (req, res) => {
     const query = 'SELECT firstname FROM users WHERE UserID = ?';
     connection.execute(query, [userId], (err, results) => {
         if (err) {
-            return res.status(500).json({ error: 'Database error' });
+            return res.status(500).json({ error: 'main error' });
         }
 
         if (results.length > 0) {

@@ -17,7 +17,7 @@ const Dashboard = () => {
 
         const fetchData = async () => {
             try {
-                const response = await api.get('/dashboard', {
+                const response = await api.get('/main', {
                     headers: { Authorization: `Bearer ${token}` },
                 });
 
