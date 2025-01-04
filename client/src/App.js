@@ -6,19 +6,18 @@ import Login from './components/login';
 import Signup from './components/signup';
 import Type from './components/type'
 import Howtoborrow from './components/Howtoborrow';
-import Admin from './Admin/Admin'
 import About  from './components/About';
 import Footer from './components/Footer';
-
-
-
 import Main from './components/main';
+import Admin from './Admin/Admin.js';
+
 const MainLayout = ({ children }) => (
   <>
     <Navbar />
     {children}
   </>
 );
+
 
 const App = () => {
   return (
@@ -30,23 +29,21 @@ const App = () => {
           element={
             <MainLayout>
               <Carousel />
+              <Type />
+              <Howtoborrow />
               <Type/>
               <Howtoborrow/>
               <About/>
               <Footer/>
               
             </MainLayout>
-
           }
         />
         {/* เส้นทางที่ไม่มี Navbar */}
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/main" element={<Main />} />
-        <Route path="/signup" element={<Signup />} /> 
-        <Route path="/admin" element={<Admin />} />
-        
-        
+        <Route path="/admin" element={<Admin />} /> 
       </Routes>
     </Router>
   );

@@ -1,20 +1,17 @@
 import axios from 'axios';
 
-// ตั้งค่าพื้นฐานสำหรับ axios
-const axiosInstance = axios.create({
-    baseURL: 'http://localhost:3333', // ตั้งค่า base URL ของ API
-    headers: {
-        'Content-Type': 'application/json', // กำหนด Content-Type สำหรับ JSON
-    },
-    timeout: 10000, // ตั้งเวลา timeout สำหรับการเชื่อมต่อ
+// สร้าง instance ของ Axios
+const api = axios.create({
+    baseURL: 'http://localhost:3333', // URL หลักของ API
+    timeout: 5000, // ตั้งเวลา Timeout (ms)
 });
 
-// หากต้องการให้แน่ใจว่ามีการตรวจสอบ token ใน header
-axiosInstance.interceptors.request.use(
+// เพิ่ม Interceptor เพื่อเพิ่ม Authorization Header
+api.interceptors.request.use(
     (config) => {
-        const token = localStorage.getItem('authToken');
+        const token = localStorage.getItem('authToken'); // ดึง token จาก localStorage
         if (token) {
-            config.headers['Authorization'] = `Bearer ${token}`;
+            config.headers.Authorization = `Bearer ${token}`;
         }
         return config;
     },
@@ -23,4 +20,4 @@ axiosInstance.interceptors.request.use(
     }
 );
 
-export default axiosInstance;
+export default api;

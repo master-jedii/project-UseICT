@@ -1,0 +1,76 @@
+.navbar_main {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #008080; /* สีพื้นหลัง */
+    color: white;
+    padding: 20px 40px; /* เพิ่ม Padding ให้มีความสมดุล */
+    height: 100px; /* ปรับความสูงของ navbar_main ให้ใหญ่ขึ้น */
+}
+
+.navbar_main-left {
+    display: flex;
+    align-items: center;
+}
+
+.logo {
+    height: 60px; /* ปรับขนาดโลโก้ให้ใหญ่ขึ้น */
+    margin-right: 20px; /* เพิ่มระยะห่างระหว่างโลโก้กับข้อความ */
+}
+
+.navbar_main-title {
+    font-size: 26px; /* เพิ่มขนาดตัวอักษรชื่อระบบ */
+    font-weight: bold;
+    margin-right: 40px; /* เพิ่มระยะห่างระหว่างชื่อระบบและลิงก์ */
+}
+
+.navbar_main-links a {
+    margin-right: 30px; /* เพิ่มระยะห่างระหว่างลิงก์ */
+    text-decoration: none;
+    color: white;
+    font-size: 20px; /* ขนาดตัวอักษรลิงก์ใหญ่ขึ้น */
+    font-weight: normal;
+}
+
+.navbar_main-links a:hover {
+    text-decoration: underline;
+}
+
+.navbar_main-right {
+    display: flex;
+    align-items: center;
+    gap: 20px; /* เพิ่มระยะห่างระหว่างแต่ละไอเทมในส่วนขวา */
+}
+
+.notification {
+    position: relative;
+}
+
+
+.user-info {
+    display: flex;
+    align-items: center;
+    gap: 12px; /* เพิ่มระยะห่างระหว่างไอคอนผู้ใช้และชื่อ */
+}
+
+.user-info span {
+    font-size: 18px; /* เพิ่มขนาดตัวอักษรชื่อผู้ใช้ */
+    font-weight: bold;
+}
+
+.logout-button {
+    background-color: white;
+    color: #008080;
+    border: none;
+    border-radius: 5px;
+    padding: 10px 20px; /* เพิ่มขนาดปุ่ม */
+    font-size: 16px; /* ขนาดตัวอักษรใหญ่ขึ้น */
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.logout-button:hover {
+    background-color: #004d4d; /* สีพื้นหลังเมื่อ Hover */
+    color: white;
+}

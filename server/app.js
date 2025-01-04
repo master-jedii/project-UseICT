@@ -1,162 +1,152 @@
-const express = require('express');
-const bodyParser = require('body-parser');
-const mysql = require('mysql2');
-const cors = require('cors');
-const jwt = require('jsonwebtoken');  // เพิ่มการใช้งาน jsonwebtoken
-const multer = require('multer');
-const path = require('path');
-
-
+const express = require("express");
+const cors = require("cors");
+const bcrypt = require("bcryptjs");
+const mysql = require("mysql2"); // ใช้ MySQL (หรือเปลี่ยนเป็น DB ที่คุณใช้งาน)
+const jwt = require("jsonwebtoken"); // ใช้ JWT สำหรับการสร้าง Token
 const app = express();
-const jsonParser = bodyParser.json();
+
+app.use(cors());
+// CORS
+app.use(cors({
+  origin: 'http://localhost:3000', // ให้ frontend ที่รันที่ localhost:3000 สามารถเข้าถึงได้
+  methods: 'GET,POST',
+}));
+
+// Body parser
 app.use(express.json());
 
-// ใช้ CORS middleware ให้กับเซิร์ฟเวอร์ของเรา
-app.use(cors());
-
-
-
-// สร้างการเชื่อมต่อกับฐานข้อมูล
-const connection = mysql.createConnection({
-    host: 'localhost',
-    user: 'root',
-    password: '', // ระบุรหัสผ่านของคุณ
-    database: 'project-useict' // ระบุชื่อฐานข้อมูล
+// ตั้งค่าการเชื่อมต่อฐานข้อมูล
+const db = mysql.createConnection({
+  host: "localhost",
+  user: "root",
+  password: "", // รหัสผ่าน MySQL ของคุณ
+  database: "project-useict", // ชื่อฐานข้อมูล
 });
 
-// ตรวจสอบว่าการเชื่อมต่อทำงานได้
-connection.connect((err) => {
-    if (err) {
-        console.error('Error connecting to the database:', err);
-        return;
-    }
-    console.log('Connected to the database.');
+// เชื่อมต่อฐานข้อมูล
+db.connect((err) => {
+  if (err) {
+    console.error("Error connecting to database:", err);
+    return;
+  }
+  console.log("Connected to database!");
 });
 
-// Secret key สำหรับการสร้างและตรวจสอบ JWT token
-const SECRET_KEY = 'your_secret_key'; // เก็บใน environment variable ควรปลอดภัย
-
-// Middleware สำหรับตรวจสอบ JWT token
-const authenticateToken = (req, res, next) => {
-    const token = req.headers['authorization']?.split(' ')[1]; // อ่าน token จาก Authorization header
-
+app.get('/main', (req, res) => {
+    const token = req.headers.authorization?.split(' ')[1]; // ดึง token จาก header
+  
     if (!token) {
-        return res.status(403).json({ error: 'Token is required' });
+      return res.status(401).json({ message: 'Unauthorized: No token provided' }); // ถ้าไม่มี token
     }
-
-    // ตรวจสอบว่า token ถูกต้องหรือไม่
-    jwt.verify(token, SECRET_KEY, (err, user) => {
-        if (err) {
-            return res.status(403).json({ error: 'Invalid token' });
-        }
-        req.user = user; // เก็บข้อมูล user ที่ถูกถอดรหัสใน request
-        next(); // ข้ามไปยัง route ถัดไป
+  
+    jwt.verify(token, 'your_jwt_secret_key', (err, decoded) => { // ตรวจสอบ token
+      if (err) {
+        return res.status(401).json({ message: 'Unauthorized: Invalid token' }); // ถ้า token ไม่ถูกต้อง
+      }
+  
+      const userId = decoded.id;
+      const userFirstname = decoded.firstname;
+      res.status(200).json({ user: { id: userId, firstname: userFirstname } }); // ส่งข้อมูลกลับ
     });
-};
+  });
+  
 
-// Route สำหรับการสมัครสมาชิก (Register)
-app.post('/register', jsonParser, function (req, res, next) {
-    const {
-        UserID,
-        firstname,
-        lastname,
-        grade,
-        branch,
-        email,
-        password,
-        phone_number
-    } = req.body;
+// Login endpoint
+app.post('/login', async (req, res) => {
+  const { email, password } = req.body;
 
-    if (!UserID || !firstname || !lastname || !grade || !branch || !email || !password || !phone_number) {
-        return res.status(400).json({ error: 'Missing required fields' });
+  try {
+    // ตรวจสอบผู้ใช้ในฐานข้อมูล
+    const query = "SELECT * FROM users WHERE email = ?";
+    db.execute(query, [email], async (err, results) => {
+      if (err) {
+        return res.status(500).json({ error: 'Database error' });
+      }
+
+      const user = results[0]; // สมมติว่า email มีเพียง 1 รายการเท่านั้น
+      if (!user) {
+        return res.status(400).json({ error: 'Invalid email or password' });
+      }
+
+      // เปรียบเทียบรหัสผ่าน
+      const isMatch = await bcrypt.compare(password, user.password);
+      if (!isMatch) {
+        return res.status(400).json({ error: 'Invalid email or password' });
+      }
+
+      // สร้าง JWT Token
+      const token = jwt.sign(
+        { id: user.id, email: user.email, firstname: user.firstname },
+        'your_jwt_secret_key', // ใส่ secret key ที่ปลอดภัย
+        { expiresIn: '1h' } // กำหนดระยะเวลาหมดอายุของ token
+      );
+
+      // ส่ง Token และข้อมูลของผู้ใช้กลับไป
+      res.status(200).json({
+        message: 'Login successful!',
+        token,
+        user: {
+          firstname: user.firstname, // ส่งข้อมูล firstname กลับไป
+        }
+      });
+    });
+  } catch (error) {
+    console.error("Login error:", error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+
+app.post('/signup', async (req, res) => {
+    const { UserID, firstname, lastname, grade, branch, email, password, phone_number } = req.body;
+  
+    // ตรวจสอบว่า UserID ซ้ำหรือไม่
+    const userIdExists = await new Promise((resolve, reject) => {
+      db.query('SELECT * FROM users WHERE UserID = ?', [UserID], (err, result) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve(result.length > 0); // ถ้ามีแถวที่พบ UserID ซ้ำ
+        }
+      });
+    });
+  
+    if (userIdExists) {
+      return res.status(400).json({ error: 'UserID already exists' });
     }
-
-    const insertQuery = `
-        INSERT INTO users (UserID, firstname, lastname, grade, branch, email, password, phone_number) 
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-    `;
-
-    connection.execute(
-        insertQuery,
-        [UserID, firstname, lastname, grade, branch, email, password, phone_number],
-        function (err, results) {
-            if (err) {
-                console.error('Error executing query:', err);
-                return res.status(500).json({ error: 'Database error' });
-            }
-
-            res.json({
-                message: 'User registered successfully',
-                data: { UserID, firstname, lastname, grade, branch, email, phone_number }
-            });
-        }
-    );
-});
-
-// Route สำหรับการล็อกอิน (Login) พร้อมสร้าง JWT token
-app.post('/login', jsonParser, function (req, res, next) {
-    const { email, password } = req.body;
-
-    const query = `SELECT * FROM users WHERE email = ? AND password = ?`;
-
-    connection.execute(query, [email, password], (err, results) => {
+  
+    // ตรวจสอบว่า email ซ้ำหรือไม่
+    const emailExists = await new Promise((resolve, reject) => {
+      db.query('SELECT * FROM users WHERE email = ?', [email], (err, result) => {
         if (err) {
-            return res.status(500).json({ error: 'Database error' });
-        }
-        if (results.length > 0) {
-            // ถ้าผู้ใช้ล็อกอินสำเร็จ, สร้าง JWT token
-            const user = results[0];
-            const token = jwt.sign({ id: user.UserID, email: user.email }, SECRET_KEY, { expiresIn: '1h' });
-            res.status(200).json({ message: 'Login successful', token });
+          reject(err);
         } else {
-            res.status(401).json({ error: 'Invalid email or password' });
+          resolve(result.length > 0); // ถ้ามีแถวที่พบ email ซ้ำ
         }
+      });
     });
-});
-
-// Route สำหรับตรวจสอบ UserID หรือ Email ซ้ำ
-app.post('/check-duplicate', jsonParser, function (req, res, next) {
-    const { UserID, email } = req.body;
-
-    const query = `
-        SELECT * FROM users 
-        WHERE UserID = ? OR email = ?
-    `;
-
-    connection.execute(query, [UserID, email], (err, results) => {
-        if (err) {
-            return res.status(500).json({ error: 'Database error' });
-        }
-
-        if (results.length > 0) {
-            res.status(200).json({ exists: true });
-        } else {
-            res.status(200).json({ exists: false });
-        }
+  
+    if (emailExists) {
+      return res.status(400).json({ error: 'Email already exists' });
+    }
+  
+    // เข้ารหัสรหัสผ่าน
+    const hashedPassword = await bcrypt.hash(password, 10);
+  
+    // เพิ่มข้อมูลผู้ใช้ใหม่
+    const query = 'INSERT INTO users (UserID, firstname, lastname, grade, branch, email, password, phone_number) VALUES (?, ?, ?, ?, ?, ?, ?, ?)';
+    const values = [UserID, firstname, lastname, grade, branch, email, hashedPassword, phone_number];
+  
+    db.query(query, values, (err, result) => {
+      if (err) {
+        return res.status(500).json({ error: 'Error saving user' });
+      }
+      res.status(200).json({ message: 'User registered successfully' });
     });
-});
-
-
-// Route สำหรับการเข้าถึง Dashboard ที่ต้องการการตรวจสอบ JWT token
-app.get('/main', authenticateToken, (req, res) => {
-    const userId = req.user.id;  // ดึง UserID จากข้อมูลใน JWT token
-    const query = 'SELECT firstname FROM users WHERE UserID = ?';
-    connection.execute(query, [userId], (err, results) => {
-        if (err) {
-            return res.status(500).json({ error: 'main error' });
-        }
-
-        if (results.length > 0) {
-            const user = results[0];
-            res.json({ message: 'Welcome to the main!', user: user });
-        } else {
-            res.status(404).json({ error: 'User not found' });
-        }
-    });
-});
-
-app.get('/admin', (req, res) => {
-    connection.query("SELECT * FROM equipment", (err, result) => {
+  });
+  
+  app.get('/admin', (req, res) => {
+    db.query("SELECT * FROM equipment", (err, result) => {
         if (err) {
             console.log(err);
         }
@@ -167,12 +157,10 @@ app.get('/admin', (req, res) => {
 });
 
 app.post('/create', (req, res) => {
-    // const equipment_id = req.body.equipment_id;
     const name = req.body.name;
     const description = req.body.description;
     const category = req.body.category;
-
-    connection.query("INSERT INTO equipment (name,description,category) VALUES(?,?,?)",
+    db.query("INSERT INTO equipment (name,description,category) VALUES(?,?,?)",
         [name, description, category],
         (err, result) => {
             if (err) {
@@ -183,10 +171,10 @@ app.post('/create', (req, res) => {
             }
         })
 })
-
+  
+  
 
 // เริ่มเซิร์ฟเวอร์
-const PORT = 3333;
-app.listen(PORT, () => {
-    console.log(`Server is running on http://localhost:${PORT}`);
+app.listen(3333, () => {
+  console.log("Server running on http://localhost:3333");
 });
