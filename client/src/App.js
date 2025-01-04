@@ -6,10 +6,10 @@ import Login from './components/login';
 import Signup from './components/signup';
 import Type from './components/type'
 import Howtoborrow from './components/Howtoborrow';
-import Admin from './admin/admin'
+import Admin from './Admin/admin';
 import Main from './components/main';
-import AdminPage from './admin/Layout/AdminPage';
-import Dashboard from './admin/Layout/Dashboard';
+import AdminPage from './Admin/Layout/AdminPage';
+import Dashboard from './Admin/Layout/Dashboard';
 
 const MainLayout = ({ children }) => (
   <>
