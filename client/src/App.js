@@ -6,10 +6,9 @@ import Login from './components/login';
 import Signup from './components/signup';
 import Type from './components/type'
 import Howtoborrow from './components/Howtoborrow';
-import Admin from './Admin/Admin'
-
-
+import Admin from './Admin/admin'
 import Main from './components/main';
+
 const MainLayout = ({ children }) => (
   <>
     <Navbar />
