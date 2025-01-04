@@ -1,0 +1,71 @@
+.homepage {
+    text-align: center;
+    font-family: "Arial", sans-serif;
+    background-color: #f8f9fa;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .hero-section {
+    margin-bottom: 40px;
+  }
+  
+  .hero-section .logo {
+    width: 120px;
+    margin-bottom: 20px;
+  }
+  
+  .hero-section h1 {
+    font-size: 2.5rem;
+    color: #00695c;
+    margin-bottom: 10px;
+  }
+  
+  .hero-section p {
+    font-size: 1.2rem;
+    color: #444;
+  }
+  
+  .action-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 15px;
+  }
+  
+  .btn {
+    padding: 15px 25px;
+    font-size: 1rem;
+    border: none;
+    border-radius: 5px;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    transition: all 0.3s ease;
+    cursor: pointer;
+  }
+  
+  .btn-primary {
+    background-color: #4caf50;
+    color: white;
+  }
+  
+  .btn-secondary {
+    background-color: #2196f3;
+    color: white;
+  }
+  
+  .btn:hover {
+    transform: scale(1.05);
+  }
+  
+  footer {
+    margin-top: 40px;
+    font-size: 0.9rem;
+    color: #777;
+  }
+  
