@@ -1,13 +1,14 @@
 import React from 'react';
-import logo from '../assets/LOGO.png'; // นำเข้าโลโก้ (แก้ path ตามโครงสร้างของคุณ)
+import logo from '../assets/LOGO.png';
 import '../App.css'
+
 
 const Navbar = () => {
     return (
         <nav className="navbar navbar-light bg-white px-5" >
             <div className="d-flex align-items-center">
                 {/* โลโก้ด้านซ้าย */}
-                <a className="navbar-brand" href="#">
+                <a className="navbar-brand" href="/">
                     <img
                         src={logo}
                         alt="Logo"
@@ -44,11 +45,13 @@ const Navbar = () => {
                         width: '144px',
                         borderRadius: '5px',
                         fontSize: '20px',
-                        fontFamily: "'Sarabun', sans-serif"  // ฟอนต์เดียวกันกับ Navbar
+                        fontFamily: "'Sarabun', sans-serif"
                     }}
+                    onClick={() => window.location.href = '/login'}
                 >
                     เข้าสู่ระบบ
                 </button>
+
             </div>
         </nav>
     );
