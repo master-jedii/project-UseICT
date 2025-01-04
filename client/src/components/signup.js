@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import Swal from 'sweetalert2';
+import bcrypt from 'bcryptjs';
 
 const Signup = () => {
     const [formData, setFormData] = useState({
@@ -20,56 +21,64 @@ const Signup = () => {
         setFormData({ ...formData, [name]: value });
     };
 
-    const handleSignup = async (e) => {
-        e.preventDefault();
 
-        // ตรวจสอบว่ากรอกข้อมูลครบทุกช่อง
-        if (
-            !formData.UserID ||
-            !formData.firstname ||
-            !formData.lastname ||
-            !formData.grade ||
-            !formData.branch ||
-            !formData.email ||
-            !formData.password ||
-            !formData.confirmPassword ||
-            !formData.phone_number
-        ) {
-            Swal.fire('Error', 'กรุณากรอกข้อมูลให้ครบทุกช่อง', 'error');
+const handleSignup = async (e) => {
+    e.preventDefault();
+
+    // ตรวจสอบว่ากรอกข้อมูลครบทุกช่อง
+    if (
+        !formData.UserID ||
+        !formData.firstname ||
+        !formData.lastname ||
+        !formData.grade ||
+        !formData.branch ||
+        !formData.email ||
+        !formData.password ||
+        !formData.confirmPassword ||
+        !formData.phone_number
+    ) {
+        Swal.fire('Error', 'กรุณากรอกข้อมูลให้ครบทุกช่อง', 'error');
+        return;
+    }
+
+    // ตรวจสอบ password และ confirmPassword
+    if (formData.password !== formData.confirmPassword) {
+        Swal.fire('Error', 'Passwords do not match', 'error');
+        return;
+    }
+
+    try {
+        // ตรวจสอบ UserID และ email ซ้ำ
+        const checkResponse = await axios.post('http://localhost:3333/check-duplicate', {
+            UserID: formData.UserID,
+            email: formData.email,
+        });
+
+        if (checkResponse.data.exists) {
+            Swal.fire('Error', checkResponse.data.message || 'UserID หรือ Email ซ้ำในระบบ', 'error');
             return;
         }
 
-        // ตรวจสอบ password และ confirmPassword
-        if (formData.password !== formData.confirmPassword) {
-            Swal.fire('Error', 'Passwords do not match', 'error');
-            return;
-        }
+        // แฮชรหัสผ่านก่อนส่งไปยังเซิร์ฟเวอร์
+        const hashedPassword = await bcrypt.hash(formData.password, 10);
 
-        try {
-            // ตรวจสอบ UserID และ email ซ้ำ
-            const checkResponse = await axios.post('http://localhost:3333/check-duplicate', {
-                UserID: formData.UserID,
-                email: formData.email,
+        // ส่งข้อมูล signup ไปยังเซิร์ฟเวอร์
+        const { confirmPassword, password, ...userData } = formData;
+        const response = await axios.post('http://localhost:3333/register', {
+            ...userData,
+            password: hashedPassword, // ส่งรหัสผ่านที่แฮชแล้ว
+        });
+
+        if (response.status === 200) {
+            Swal.fire('Success', 'Signup successful! You will be redirected to login.', 'success').then(() => {
+                window.location.href = '/login';
             });
-
-            if (checkResponse.data.exists) {
-                Swal.fire('Error', checkResponse.data.message || 'UserID หรือ Email ซ้ำในระบบ', 'error');
-                return;
-            }
-
-            // ส่งข้อมูล signup ไปยังเซิร์ฟเวอร์
-            const { confirmPassword, ...userData } = formData;
-            const response = await axios.post('http://localhost:3333/register', userData);
-
-            if (response.status === 200) {
-                Swal.fire('Success', 'Signup successful! You will be redirected to login.', 'success').then(() => {
-                    window.location.href = '/login';
-                });
-            }
-        } catch (error) {
-            Swal.fire('Error', error.response?.data?.error || 'เกิดข้อผิดพลาด', 'error');
         }
-    };
+    } catch (error) {
+        Swal.fire('Error', error.response?.data?.error || 'เกิดข้อผิดพลาด', 'error');
+    }
+}
+
 
     return (
         <div className="signup-container">

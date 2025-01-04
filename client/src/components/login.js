@@ -1,9 +1,7 @@
 import React, { useState } from 'react';
-import axios from 'axios';
 import Swal from 'sweetalert2';
 import { useNavigate } from 'react-router-dom';
 import '../View/Login.css'; // นำเข้าไฟล์ CSS สำหรับ UI
-import login from '../assets/login.png';
 import logo from '../assets/LOGO.png';
 import api from '../service/axios'
 
@@ -29,13 +27,13 @@ const Login = () => {
         try {
             // เรียก API เพื่อล็อกอิน โดยใช้ axiosInstance ที่ตั้งค่าไว้
             const response = await api.post('/login', { email, password });
-    
-    
+
             const { token } = response.data;
     
             // เก็บ token ใน localStorage
             if (token) {
                 localStorage.setItem('authToken', token);  // เก็บ token ใน localStorage
+                sessionStorage.setItem('authToken', token);
                 console.log('Token stored in localStorage:', localStorage.getItem('authToken'));
             } else {
                 // ถ้าไม่มี token
@@ -55,7 +53,7 @@ const Login = () => {
                 icon: 'success',
                 confirmButtonText: 'OK'
             }).then(() => {
-                navigate('/dashboard'); // พาไปหน้า Dashboard
+                navigate('/main'); // พาไปหน้า Dashboard
             });
         } catch (error) {
             console.error('โปรดตรวจสอบข้อมูลให้ถูกต้อง:', error);
