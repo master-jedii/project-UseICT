@@ -6,7 +6,7 @@ import Login from './components/login';
 import Signup from './components/signup';
 import Type from './components/type'
 import Howtoborrow from './components/Howtoborrow';
-import Admin from './Admin/admin'
+import Admin from './admin/admin'
 import Main from './components/main';
 
 const MainLayout = ({ children }) => (
