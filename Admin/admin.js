@@ -1,10 +1,12 @@
 import React from 'react';
-import NavbarAdmin from './Layout/NavbarAdmin';
+import FormAddEquiment from './Layout/FormAddEquiment';
+
 
 
 const Admin = () => {
   return (
-    <NavbarAdmin/>
+    
+    <FormAddEquiment/>
   );
 };
 
