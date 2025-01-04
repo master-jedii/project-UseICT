@@ -30,12 +30,13 @@ const Login = () => {
             // เรียก API เพื่อล็อกอิน โดยใช้ axiosInstance ที่ตั้งค่าไว้
             const response = await api.post('/login', { email, password });
     
+    
             const { token } = response.data;
     
             // เก็บ token ใน localStorage
             if (token) {
                 localStorage.setItem('authToken', token);  // เก็บ token ใน localStorage
-
+                console.log('Token stored in localStorage:', localStorage.getItem('authToken'));
             } else {
                 // ถ้าไม่มี token
                 Swal.fire({
@@ -54,7 +55,7 @@ const Login = () => {
                 icon: 'success',
                 confirmButtonText: 'OK'
             }).then(() => {
-                navigate('/main'); // พาไปหน้า Dashboard
+                navigate('/dashboard'); // พาไปหน้า Dashboard
             });
         } catch (error) {
             console.error('โปรดตรวจสอบข้อมูลให้ถูกต้อง:', error);

@@ -137,7 +137,7 @@ app.get('/main', authenticateToken, (req, res) => {
     const query = 'SELECT firstname FROM users WHERE UserID = ?';
     connection.execute(query, [userId], (err, results) => {
         if (err) {
-            return res.status(500).json({ error: 'Database error' });
+            return res.status(500).json({ error: 'main error' });
         }
 
         if (results.length > 0) {

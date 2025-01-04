@@ -3,10 +3,10 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import Carousel from './components/Carousel';
 import Login from './components/login';
-import Admin from './Admin/Admin';
 import Signup from './components/signup';
 import Type from './components/type'
 import Howtoborrow from './components/Howtoborrow';
+
 import Main from './components/main';
 const MainLayout = ({ children }) => (
   <>
@@ -28,13 +28,13 @@ const App = () => {
               <Type/>
               <Howtoborrow/>
             </MainLayout>
+
           }
         />
         {/* เส้นทางที่ไม่มี Navbar */}
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/main" element={<Main />} />
-        <Route path="/Admin" element={<Admin />} />
         <Route path="/signup" element={<Signup />} /> 
       </Routes>
     </Router>

@@ -24,8 +24,8 @@ const Dashboard = () => {
                 // เก็บข้อมูล JSON ที่ได้รับ
                 setData(response.data);
             } catch (error) {
-                setError(error.response?.data?.message || 'Error fetching main data');
-                console.error('Error fetching main data:', error);
+                setError(error.response?.data?.message || 'Error fetching dashboard data');
+                console.error('Error fetching dashboard data:', error);
             } finally {
                 setLoading(false);
             }
@@ -44,7 +44,7 @@ const Dashboard = () => {
 
     return (
         <div>
-            <h1>main</h1>
+            <h1>Dashboard</h1>
             {/* แสดงเฉพาะ firstname ของ user */}
             {data && data.user && <p>Welcome, {data.user.firstname}!</p>}
 
