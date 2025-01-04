@@ -6,10 +6,8 @@ import Login from './components/login';
 import Signup from './components/signup';
 import Type from './components/type'
 import Howtoborrow from './components/Howtoborrow';
-// import Admin from './Admin/admin';
 import Main from './components/main';
-// import AdminPage from './Admin/Layout/AdminPage';
-// import Dashboard from './Admin/Layout/Dashboard';
+
 
 const MainLayout = ({ children }) => (
   <>
@@ -37,9 +35,6 @@ const App = () => {
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/main" element={<Main />} />
-        {/* <Route path="/admin" element={<Admin />} />
-        <Route path="/adminpage" element={<AdminPage />} />
-        <Route path="/dashboard" element={<Dashboard />} /> */}
       </Routes>
     </Router>
   );

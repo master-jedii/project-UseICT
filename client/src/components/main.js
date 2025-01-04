@@ -1,6 +1,8 @@
+// Main.js
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../service/axios';
+import NavbarMain from './NavbarMain'; // นำเข้า NavbarMain
 
 const Main = () => {
   const [data, setData] = useState(null);
@@ -54,10 +56,7 @@ const Main = () => {
 
   return (
     <div>
-      <h1>Main</h1>
-      {data && data.user && <p>Welcome, {data.user.firstname}!</p>}
-
-      <button onClick={handleLogout}>Logout</button>
+        <NavbarMain userData={data.user} onLogout={handleLogout} /> {/* ส่งฟังก์ชัน Logout */}
     </div>
   );
 };
