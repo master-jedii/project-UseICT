@@ -1,16 +1,16 @@
-import React from "react";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import Navbar from "./components/Navbar";
-import Carousel from "./components/Carousel";
-import Login from "./components/login";
-import Signup from "./components/signup";
-import Type from "./components/type";
-import Howtoborrow from "./components/Howtoborrow";
-import Admin from "./admin/admin";
-import AdminPage from "./admin/Layout/AdminPage";
-import Dashboard from "./admin/Layout/Dashboard";
+import React from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import Navbar from './components/Navbar';
+import Carousel from './components/Carousel';
+import Login from './components/login';
+import Signup from './components/signup';
+import Type from './components/type'
+import Howtoborrow from './components/Howtoborrow';
+import Admin from './admin/admin'
+import Main from './components/main';
+import AdminPage from './admin/Layout/AdminPage';
+import Dashboard from './admin/Layout/Dashboard';
 
-import Main from "./components/main";
 const MainLayout = ({ children }) => (
   <>
     <Navbar />
