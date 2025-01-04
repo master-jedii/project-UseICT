@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import '../View/Login.css'; // นำเข้าไฟล์ CSS สำหรับ UI
 import login from '../assets/login.png';
 import logo from '../assets/LOGO.png';
+import api from '../service/axios'
 
 const Login = () => {
     const [email, setEmail] = useState('');
@@ -13,29 +14,61 @@ const Login = () => {
 
     const handleLogin = async (e) => {
         e.preventDefault();
-
+    
+        // ตรวจสอบว่า email และ password ถูกกรอกครบหรือไม่
+        if (!email || !password) {
+            Swal.fire({
+                title: 'Invalid Input',
+                text: 'กรุณากรอกอีเมลและรหัสผ่าน',
+                icon: 'warning',
+                confirmButtonText: 'OK'
+            });
+            return;
+        }
+    
         try {
-            const response = await axios.post('http://localhost:3333/login', { email, password });
-            if (response.status === 200) {
+            // เรียก API เพื่อล็อกอิน โดยใช้ axiosInstance ที่ตั้งค่าไว้
+            const response = await api.post('/login', { email, password });
+    
+            const { token } = response.data;
+    
+            // เก็บ token ใน localStorage
+            if (token) {
+                localStorage.setItem('authToken', token);  // เก็บ token ใน localStorage
+
+            } else {
+                // ถ้าไม่มี token
                 Swal.fire({
-                    title: 'Login Success',
-                    text: 'เข้าสู่ระบบสำเร็จ!',
-                    icon: 'success',
+                    title: 'Login Failed',
+                    text: 'ไม่พบ Token ในการตอบกลับจากเซิร์ฟเวอร์',
+                    icon: 'error',
                     confirmButtonText: 'OK'
-                }).then(() => {
-                    navigate('/dashboard');
                 });
+                return;
             }
+    
+            // แจ้งผู้ใช้ว่าเข้าสู่ระบบสำเร็จ
+            Swal.fire({
+                title: 'Login Success',
+                text: 'เข้าสู่ระบบสำเร็จ!',
+                icon: 'success',
+                confirmButtonText: 'OK'
+            }).then(() => {
+                navigate('/dashboard'); // พาไปหน้า Dashboard
+            });
         } catch (error) {
+            console.error('โปรดตรวจสอบข้อมูลให้ถูกต้อง:', error);
+            // แสดงข้อความข้อผิดพลาดตามเงื่อนไข
             Swal.fire({
                 title: 'Login Failed',
-                text: error.response?.data?.error || 'เกิดข้อผิดพลาด',
+                text: error.response?.data?.error || 'เกิดข้อผิดพลาดในการเชื่อมต่อกับเซิร์ฟเวอร์',
                 icon: 'error',
                 confirmButtonText: 'Try Again'
             });
         }
     };
-
+    
+    
     const handleSignupRedirect = () => {
         navigate('/signup');
     };
