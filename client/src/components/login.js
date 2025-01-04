@@ -75,10 +75,11 @@ const Login = () => {
     return (
         <div className="login-container">
             <div className="image-section">
+                <img src={logo} alt="SU KITS Logo" className="logo-image" />
             </div>
             <div className="form-section">
                 <div className="logo">
-                    <img src={logo} alt="SU KITS Logo" className="logo-image" />
+                    
                 </div>
                 <div className="login-box">
                     <h1 className="login-title">LOGIN</h1>
@@ -106,16 +107,19 @@ const Login = () => {
                             required
                             className="login-input"
                         />
-                        <button type="submit" className="login-button">Login</button>
+                        
                     </form>
+                    <button type="submit" className="login-button">Login</button>
                     <div className="links">
-                        <p>New Users? <button onClick={handleSignupRedirect} className="signup-link">Signup</button></p>
-                        <p><a href="#" className="forgot-password">Forgot your password?</a></p>
+                        <p>New Users? <button onClick={handleSignupRedirect} className="signup-link">Signup</button>&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; 
+                        &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                          
+                        <a href="#" className="forgot-password">Forgot your password?</a></p>
+
                     </div>
                 </div>
-            </div>
+            </div> 
         </div>
     );
 }
-
 export default Login;
