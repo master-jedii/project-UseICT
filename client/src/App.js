@@ -5,6 +5,9 @@ import Carousel from './components/Carousel';
 import Login from './components/login';
 import Admin from './Admin/Admin';
 
+import Signup from './components/signup';
+import Type from './components/type'
+import Howtoborrow from './components/Howtoborrow';
 const MainLayout = ({ children }) => (
   <>
     <Navbar />
@@ -22,12 +25,16 @@ const App = () => {
           element={
             <MainLayout>
               <Carousel />
+              <Type/>
+              <Howtoborrow/>
             </MainLayout>
+            
           }
         />
         {/* เส้นทางที่ไม่มี Navbar */}
         <Route path="/login" element={<Login />} />
         <Route path="/Admin" element={<Admin />} />
+        <Route path="/signup" element={<Signup />} /> 
       </Routes>
     </Router>
   );
