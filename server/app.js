@@ -3,12 +3,18 @@ const bodyParser = require('body-parser');
 const mysql = require('mysql2');
 const cors = require('cors');
 const jwt = require('jsonwebtoken');  // เพิ่มการใช้งาน jsonwebtoken
+const multer = require('multer');
+const path = require('path');
+
 
 const app = express();
 const jsonParser = bodyParser.json();
+app.use(express.json());
 
 // ใช้ CORS middleware ให้กับเซิร์ฟเวอร์ของเรา
 app.use(cors());
+
+
 
 // สร้างการเชื่อมต่อกับฐานข้อมูล
 const connection = mysql.createConnection({
@@ -50,15 +56,15 @@ const authenticateToken = (req, res, next) => {
 
 // Route สำหรับการสมัครสมาชิก (Register)
 app.post('/register', jsonParser, function (req, res, next) {
-    const { 
-        UserID, 
-        firstname, 
-        lastname, 
-        grade, 
-        branch, 
-        email, 
-        password, 
-        phone_number 
+    const {
+        UserID,
+        firstname,
+        lastname,
+        grade,
+        branch,
+        email,
+        password,
+        phone_number
     } = req.body;
 
     if (!UserID || !firstname || !lastname || !grade || !branch || !email || !password || !phone_number) {
@@ -149,6 +155,34 @@ app.get('/main', authenticateToken, (req, res) => {
     });
 });
 
+app.get('/admin', (req, res) => {
+    connection.query("SELECT * FROM equipment", (err, result) => {
+        if (err) {
+            console.log(err);
+        }
+        else {
+            res.send(result);
+        }
+    })
+});
+
+app.post('/create', (req, res) => {
+    // const equipment_id = req.body.equipment_id;
+    const name = req.body.name;
+    const description = req.body.description;
+    const category = req.body.category;
+
+    connection.query("INSERT INTO equipment (name,description,category) VALUES(?,?,?)",
+        [name, description, category],
+        (err, result) => {
+            if (err) {
+                console.log(err)
+            }
+            else {
+                res.send('ข้อมูลเข้าแล้ว')
+            }
+        })
+})
 
 
 // เริ่มเซิร์ฟเวอร์

@@ -7,6 +7,9 @@ import Signup from './components/signup';
 import Type from './components/type'
 import Howtoborrow from './components/Howtoborrow';
 import Admin from './Admin/Admin'
+import About  from './components/About';
+import Footer from './components/Footer';
+
 
 
 import Main from './components/main';
@@ -29,6 +32,8 @@ const App = () => {
               <Carousel />
               <Type/>
               <Howtoborrow/>
+              <About/>
+              <Footer/>
               
             </MainLayout>
 
@@ -40,6 +45,8 @@ const App = () => {
         <Route path="/main" element={<Main />} />
         <Route path="/signup" element={<Signup />} /> 
         <Route path="/admin" element={<Admin />} />
+        
+        
       </Routes>
     </Router>
   );
