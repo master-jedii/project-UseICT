@@ -1,14 +1,11 @@
 import React from 'react';
-import navbaradmin from './components/navbaradmin';
+import NavbarAdmin from './Layout/NavbarAdmin';
+
 
 const Admin = () => {
   return (
-
-    <navbaradminavbaradmin/>
-
-
-
-    );
+    <NavbarAdmin/>
+  );
 };
 
 export default Admin;

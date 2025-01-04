@@ -6,6 +6,8 @@ import Login from './components/login';
 import Signup from './components/signup';
 import Type from './components/type'
 import Howtoborrow from './components/Howtoborrow';
+import Admin from './Admin/Admin'
+
 
 import Main from './components/main';
 const MainLayout = ({ children }) => (
@@ -27,6 +29,7 @@ const App = () => {
               <Carousel />
               <Type/>
               <Howtoborrow/>
+              
             </MainLayout>
 
           }
@@ -36,6 +39,7 @@ const App = () => {
         <Route path="/signup" element={<Signup />} />
         <Route path="/main" element={<Main />} />
         <Route path="/signup" element={<Signup />} /> 
+        <Route path="/admin" element={<Admin />} />
       </Routes>
     </Router>
   );
