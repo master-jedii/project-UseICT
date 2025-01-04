@@ -132,7 +132,7 @@ app.post('/check-duplicate', jsonParser, function (req, res, next) {
 
 
 // Route สำหรับการเข้าถึง Dashboard ที่ต้องการการตรวจสอบ JWT token
-app.get('/dashboard', authenticateToken, (req, res) => {
+app.get('/main', authenticateToken, (req, res) => {
     const userId = req.user.id;  // ดึง UserID จากข้อมูลใน JWT token
     const query = 'SELECT firstname FROM users WHERE UserID = ?';
     connection.execute(query, [userId], (err, results) => {
@@ -142,7 +142,7 @@ app.get('/dashboard', authenticateToken, (req, res) => {
 
         if (results.length > 0) {
             const user = results[0];
-            res.json({ message: 'Welcome to the dashboard!', user: user });
+            res.json({ message: 'Welcome to the main!', user: user });
         } else {
             res.status(404).json({ error: 'User not found' });
         }

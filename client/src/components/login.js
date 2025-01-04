@@ -54,7 +54,7 @@ const Login = () => {
                 icon: 'success',
                 confirmButtonText: 'OK'
             }).then(() => {
-                navigate('/dashboard'); // พาไปหน้า Dashboard
+                navigate('/main'); // พาไปหน้า Dashboard
             });
         } catch (error) {
             console.error('โปรดตรวจสอบข้อมูลให้ถูกต้อง:', error);
