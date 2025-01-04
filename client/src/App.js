@@ -5,7 +5,7 @@ import Carousel from './components/Carousel';
 import Login from './components/login';
 import Signup from './components/signup';
 import Type from './components/type'
-
+import Howtoborrow from './components/Howtoborrow';
 const MainLayout = ({ children }) => (
   <>
     <Navbar />
@@ -24,6 +24,7 @@ const App = () => {
             <MainLayout>
               <Carousel />
               <Type/>
+              <Howtoborrow/>
             </MainLayout>
             
           }
