@@ -1,201 +1,168 @@
-import React, { useState } from 'react';
-import axios from 'axios';
-import Swal from 'sweetalert2';
-import bcrypt from 'bcryptjs';
+import React, { useState } from "react";
+import axios from "axios";
+import Swal from "sweetalert2";
+import { useNavigate } from "react-router-dom";
+import '../View/Signup.css'
+
+
+
 
 const Signup = () => {
-    const [formData, setFormData] = useState({
-        UserID: '',
-        firstname: '',
-        lastname: '',
-        grade: '',
-        branch: '',
-        email: '',
-        password: '',
-        confirmPassword: '',
-        phone_number: '',
-    });
+  const [formData, setFormData] = useState({
+    UserID: "",
+    firstname: "",
+    lastname: "",
+    grade: "",
+    branch: "",
+    email: "",
+    password: "",
+    confirmPassword: "",
+    phone_number: "",
+  });
+  const navigate = useNavigate(); // สำหรับใช้ redirect
 
-    const handleChange = (e) => {
-        const { name, value } = e.target;
-        setFormData({ ...formData, [name]: value });
-    };
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
+  };
 
-
-const handleSignup = async (e) => {
+  const handleSignup = async (e) => {
     e.preventDefault();
-
-    // ตรวจสอบว่ากรอกข้อมูลครบทุกช่อง
-    if (
-        !formData.UserID ||
-        !formData.firstname ||
-        !formData.lastname ||
-        !formData.grade ||
-        !formData.branch ||
-        !formData.email ||
-        !formData.password ||
-        !formData.confirmPassword ||
-        !formData.phone_number
-    ) {
-        Swal.fire('Error', 'กรุณากรอกข้อมูลให้ครบทุกช่อง', 'error');
-        return;
-    }
-
-    // ตรวจสอบ password และ confirmPassword
+  
+    // ตรวจสอบรหัสผ่านกับการยืนยันรหัสผ่าน
     if (formData.password !== formData.confirmPassword) {
-        Swal.fire('Error', 'Passwords do not match', 'error');
-        return;
+      Swal.fire("Error", "Passwords do not match", "error");
+      return;
     }
-
+  
     try {
-        // ตรวจสอบ UserID และ email ซ้ำ
-        const checkResponse = await axios.post('http://localhost:3333/check-duplicate', {
-            UserID: formData.UserID,
-            email: formData.email,
+      // ส่งข้อมูล signup ไปยัง backend
+      const response = await axios.post("http://localhost:3333/signup", formData);
+  
+      if (response.status === 200) {
+        Swal.fire("Success", "Account created successfully", "success").then(() => {
+          // Redirect ไปที่หน้าล็อกอิน
+          navigate('/login');
         });
-
-        if (checkResponse.data.exists) {
-            Swal.fire('Error', checkResponse.data.message || 'UserID หรือ Email ซ้ำในระบบ', 'error');
-            return;
-        }
-
-        // แฮชรหัสผ่านก่อนส่งไปยังเซิร์ฟเวอร์
-        const hashedPassword = await bcrypt.hash(formData.password, 10);
-
-        // ส่งข้อมูล signup ไปยังเซิร์ฟเวอร์
-        const { confirmPassword, password, ...userData } = formData;
-        const response = await axios.post('http://localhost:3333/register', {
-            ...userData,
-            password: hashedPassword, // ส่งรหัสผ่านที่แฮชแล้ว
-        });
-
-        if (response.status === 200) {
-            Swal.fire('Success', 'Signup successful! You will be redirected to login.', 'success').then(() => {
-                window.location.href = '/login';
-            });
-        }
+      }
     } catch (error) {
-        Swal.fire('Error', error.response?.data?.error || 'เกิดข้อผิดพลาด', 'error');
+      Swal.fire("Error", error.response?.data?.error || "Signup failed", "error");
     }
-}
+  };
+  
 
+  return (
+    <div className="signup-container">
+        <div className="signup-left">
+            {/* Left section will display background image */}
+        </div>
+        <div className="signup-right">
+            <div className="signup-form">
+            <h1>REGISTER</h1>
+            <form onSubmit={handleSignup}>
+                <div className="form-row">
+                <input
+                    type="text"
+                    name="firstname"
+                    placeholder="ชื่อ"
+                    value={formData.firstname}
+                    onChange={handleChange}
+                    maxLength="50"
+                    required
+                />
+                <input
+                    type="text"
+                    name="lastname"
+                    placeholder="นามสกุล"
+                    value={formData.lastname}
+                    onChange={handleChange}
+                    maxLength="50"
+                    required
+                />
+                </div>
+                <div className="form-row">
+                <input
+                    type="number"
+                    name="UserID"
+                    placeholder="รหัสนักศึกษา"
+                    value={formData.UserID}
+                    onChange={(e) => {
+                    if (e.target.value.length <= 9) handleChange(e); // รับเลขไม่เกิน 9 หลัก
+                    }}
+                    required
+                />
+                <select
+                    name="grade"
+                    value={formData.grade}
+                    onChange={handleChange}
+                    required
+                >
+                    <option value="">ชั้นปี</option>
+                    <option value="1">ปี 1</option>
+                    <option value="2">ปี 2</option>
+                    <option value="3">ปี 3</option>
+                    <option value="4">ปี 4</option>
+                </select>
+                </div>
+                <div className="form-row">
+                <input
+                    type="email"
+                    name="email"
+                    placeholder="Email"
+                    value={formData.email}
+                    onChange={handleChange}
+                    maxLength="50"
+                    required
+                />
+                <select
+                    name="branch"
+                    value={formData.branch}
+                    onChange={handleChange}
+                    required
+                >
+                    <option value="">สาขา</option>
+                    <option value="การจัดการ">การจัดการ</option>
+                    <option value="ICT">ICT</option>
+                    <option value="นิเทศ">นิเทศ</option>
+                </select>
+                </div>
+                <div className="form-row">
+                <input
+                    type="number"
+                    name="phone_number"
+                    placeholder="เบอร์โทรศัพท์"
+                    value={formData.phone_number}
+                    onChange={(e) => {
+                    if (e.target.value.length <= 10) handleChange(e); // รับเลขไม่เกิน 10 หลัก
+                    }}
+                    required
+                />
+                </div>
+                <div className="form-row">
+                <input
+                    type="password"
+                    name="password"
+                    placeholder="รหัสผ่าน"
+                    value={formData.password}
+                    onChange={handleChange}
+                    required
+                />
+                <input
+                    type="password"
+                    name="confirmPassword"
+                    placeholder="ยืนยันรหัสผ่าน"
+                    value={formData.confirmPassword}
+                    onChange={handleChange}
+                    required
+                />
+                </div>
+                <button type="submit" className="signup-button">SIGN UP</button>
+            </form>
+            </div>
+        </div>
+        </div>
 
-    return (
-        <div className="signup-container">
-    <h1>Signup</h1>
-    <form onSubmit={handleSignup}>
-        {/* UserID */}
-        <input
-            type="number"
-            name="UserID"
-            placeholder="UserID"
-            value={formData.UserID}
-            onChange={(e) => {
-                if (e.target.value.length <= 10) handleChange(e); // จำกัดความยาวไม่เกิน 10
-            }}
-            required
-        />
-        
-        {/* Firstname */}
-        <input
-            type="text"
-            name="firstname"
-            placeholder="Firstname"
-            value={formData.firstname}
-            onChange={(e) => {
-                if (e.target.value.length <= 50) handleChange(e); // จำกัดความยาวไม่เกิน 50
-            }}
-            required
-        />
-
-        {/* Lastname */}
-        <input
-            type="text"
-            name="lastname"
-            placeholder="Lastname"
-            value={formData.lastname}
-            onChange={(e) => {
-                if (e.target.value.length <= 50) handleChange(e); // จำกัดความยาวไม่เกิน 50
-            }}
-            required
-        />
-
-        {/* Grade */}
-        <select
-            name="grade"
-            value={formData.grade}
-            onChange={handleChange}
-            required
-        >
-            <option value="">Select Grade</option>
-            <option value="1">Grade 1</option>
-            <option value="2">Grade 2</option>
-            <option value="3">Grade 3</option>
-            <option value="4">Grade 4</option>
-        </select>
-
-        {/* Branch */}
-        <select
-            name="branch"
-            value={formData.branch}
-            onChange={handleChange}
-            required
-        >
-            <option value="">Select Branch</option>
-            <option value="การจัดการ">การจัดการ</option>
-            <option value="ICT">ICT</option>
-            <option value="นิเทศ">นิเทศ</option>
-        </select>
-
-        {/* Email */}
-        <input
-            type="email"
-            name="email"
-            placeholder="Email"
-            value={formData.email}
-            onChange={(e) => {
-                if (e.target.value.length <= 50) handleChange(e); // จำกัดความยาวไม่เกิน 50
-            }}
-            required
-        />
-
-        {/* Password */}
-        <input
-            type="password"
-            name="password"
-            placeholder="Password"
-            value={formData.password}
-            onChange={handleChange}
-            required
-        />
-
-        {/* Confirm Password */}
-        <input
-            type="password"
-            name="confirmPassword"
-            placeholder="Confirm Password"
-            value={formData.confirmPassword}
-            onChange={handleChange}
-            required
-        />
-
-        {/* Phone Number */}
-        <input
-            type="number"
-            name="phone_number"
-            placeholder="Phone Number"
-            value={formData.phone_number}
-            onChange={(e) => {
-                if (e.target.value.length <= 10) handleChange(e); // จำกัดความยาวไม่เกิน 10
-            }}
-            required
-        />
-
-        <button type="submit">Signup</button>
-    </form>
-</div>
-
-    );
+  );
 };
 
 export default Signup;

@@ -1,87 +1,87 @@
-/* Signup.css */
-
 .signup-container {
     display: flex;
     height: 100vh;
-    font-family: 'Arial', sans-serif;
-}
-
-.image-section {
-    flex: 1;
-    background: url('../assets/Register.png') no-repeat center center/cover;
-}
-
-
-.form-section {
+    font-family: Arial, sans-serif;
+  }
+  
+  .signup-left {
+    flex: 0.5;
+    background: url('../assets/Register.png') no-repeat center center;
+    background-size: cover;
+  }
+  
+  .signup-right {
     flex: 1;
     display: flex;
-    flex-direction: column;
     justify-content: center;
     align-items: center;
-    background-color: #f7f9fc;
-    padding: 20px;
-}
-
-.logo {
-    margin-bottom: 20px;
-}
-
-.logo-image {
-    max-width: 150px;
-}
-
-.signup-box {
-    width: 100%;
-    max-width: 400px;
-    padding: 20px;
-    background: #ffffff;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    background: #f9f9f9; /* สีพื้นหลังของส่วนฟอร์ม */
+  }
+  
+  .signup-form {
+    background: white;
+    padding: 2rem;
     border-radius: 10px;
-}
-
-.signup-title {
-    font-size: 24px;
-    color: #007b8f;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    max-width: 1200px;
+    width: 100%;
+  }
+  
+  .signup-form h1 {
     text-align: center;
-    margin-bottom: 20px;
-}
-
-.signup-form {
+    color: #007b8f;
+    margin-bottom: 1.5rem;
+    font-size: 1.8rem;
+  }
+  
+  .form-row {
     display: flex;
-    flex-direction: column;
-    gap: 15px;
-}
-
-.input-group {
-    display: flex;
-    gap: 10px;
-}
-
-.signup-input {
+    gap: 1rem;
+    margin-bottom: 1.2rem;
+  }
+  
+  .form-row input,
+  .form-row select {
     flex: 1;
-    padding: 10px;
-    font-size: 16px;
+    padding: 0.8rem;
     border: 1px solid #ccc;
     border-radius: 5px;
-    outline: none;
-    transition: border-color 0.3s;
-}
-
-.signup-input:focus {
-    border-color: #007b8f;
-}
-
-.signup-button {
-    padding: 10px;
-    font-size: 16px;
-    background-color: #007b8f;
+    font-size: 1rem;
+  }
+  
+  .terms {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 1.5rem;
+  }
+  
+  .terms span {
+    font-size: 1;
+  }
+  
+  .terms a {
+    color: #007b8f;
+    text-decoration: none;
+  }
+  
+  .terms a:hover {
+    text-decoration: underline;
+  }
+  
+  .signup-button {
+    width: 100%;
+    padding: 0.8rem;
+    background: #007b8f;
     color: white;
     border: none;
     border-radius: 5px;
+    font-size: 1rem;
     cursor: pointer;
-    transition: background-color 0.3s;
-}
-
-.signup-button:hover {
-    background-color: #005f6e;
-}
+    transition: background 0.3s ease;
+  }
+  
+  .signup-button:hover {
+    background: #005f6b;
+  }
+  

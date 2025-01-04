@@ -1,140 +1,107 @@
-/* Login.css */
 .login-container {
     display: flex;
     height: 100vh;
-    background-color: #f0f0f0;
-}
-
-.image-section {
-    flex: 1;
-    background-image: url('../assets/login.png');
+    font-family: Arial, sans-serif;
+  }
+  
+  .login-left {
+    flex: 0.5;
+    background: url('../assets/login.png') no-repeat center center;
+    background-size: cover;
     position: relative;
-    background-size: cover; 
-    
-    
-}
-
-.background-image {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-}
-
-.form-section {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    background-color: white;
-    padding: 2rem;
-}
-
-.logo-image {
-    width: 307px;
-    height: 307px;
-    position: relative;
-    top: 325px;
-    left: 270px;
-    
-}
-
-.login-box {
-    width: 100%;
-    max-width: 717px;
+  }
+  
+  .login-left .logo-container {
+    position: absolute;
+    bottom: 10%;
+    left: 50%;
+    transform: translateX(-50%);
     text-align: center;
-}
-
-.login-title {
-    font-size: 40px; 
-    color: #009498;
+  }
+  
+  .login-left .logo-container img {
+    width: 150px;
     margin-bottom: 1rem;
-    justify-self: left; 
+  }
+  
+  .login-left .logo-container h2 {
+    color: white;
+    font-size: 1.5rem;
     font-weight: bold;
-    margin-top: 10rem;
-}
-
-.login-description {
-    font-size: 24px;
-    color: #666;                                 
-    margin-bottom: 4rem;
-    font-weight: 200;
-    text-align: left; /* ทำให้ฟอนต์ชิดฝั่งซ้าย */
-}
-
-
-.login-form {
+  }
+  
+  .login-right {
+    flex: 1;
     display: flex;
-    flex-direction: column;
-    gap: 1rem;
     justify-content: center;
-    
-    
-}
-
-.login-input {
-    padding: 0.75rem;
-    font-size: 1rem;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-}
-
-.login-button {
-    padding: 0.75rem;
-    font-size: 1rem;
-    background-color: #009498;
-    font-size: 20px;
-    color: white;                                       
-    border: none;
-    border-radius: 10px;
-    cursor: pointer;
-    transition: background-color 0.3s;   
-    width: 198px; 
-    height: 70px;
-    margin-top: 50px;
     align-items: center;
-    margin-bottom: 10rem;
-}
-
-
-.login-button:hover {
-    background-color: #3d434a;
-}
-
-.links {
+    padding: 2rem; /* เพิ่ม padding เพื่อเว้นระยะ */
+    background: rgba(255, 255, 255, 0.9);
+  }
+  
+  .login-form {
+    width: 100%; /* ใช้พื้นที่ทั้งหมดของ login-right */
+    max-width: 700px; /* เพิ่มขนาดฟอร์มให้ใหญ่ขึ้น */
+    max-height: 1000px;
+    text-align: center;
+    padding: 3rem; /* เพิ่ม padding ภายในฟอร์ม */
+    border-radius: 10px; /* มุมมน */
+    background: rgba(255, 255, 255, 0.95); /* เพิ่มความโปร่งแสง */
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2); /* เพิ่มเงา */
+  }
+  
+  .login-form h1 {
+    font-size: 2.5rem; /* เพิ่มขนาดหัวข้อ */
+    color: #007b8f;
+    margin-bottom: 2rem;
+  }
+  
+  .login-form p {
+    font-size: 1.2rem; /* เพิ่มขนาดข้อความคำอธิบาย */
+    color: #6b6b6b;
+    margin-bottom: 2.5rem;
+    line-height: 1.8;
+  }
+  
+  .login-form input {
+    width: 100%;
+    padding: 1rem; /* เพิ่ม padding ให้ใหญ่ขึ้น */
+    margin-bottom: 1.5rem; /* เพิ่มระยะระหว่าง input */
+    border: 1px solid #ccc;
+    border-radius: 8px; /* มุมมนขึ้น */
+    font-size: 1.2rem; /* เพิ่มขนาดตัวอักษร */
+  }
+  
+  .login-form button {
+    width: 100%;
+    padding: 1rem; /* ปรับปุ่มให้ใหญ่ขึ้น */
+    background: #007b8f;
+    color: white;
+    border: none;
+    border-radius: 8px; /* มุมมนของปุ่ม */
+    font-size: 1.2rem; /* เพิ่มขนาดตัวอักษรของปุ่ม */
+    cursor: pointer;
+    transition: background 0.3s ease;
+  }
+  
+  .login-form button:hover {
+    background: #005f6b; /* สีเข้มขึ้นเมื่อ hover */
+  }
+  
+  .login-footer {
     display: flex;
-    flex-direction: column; /* ทำให้เนื้อหาตรงแนวตั้ง */
-    align-items: flex-start; /* จัดตำแหน่งให้ชิดซ้าย */
-    
-}
-
-.links p {
-    color: #3d434a; /* เปลี่ยนสีข้อความ New Users? เป็นสีดำ */
-    font-size: 20px;
-    font-weight: 300;
-}
-
-
-.signup-link {
-    background: none; /* เอากล่องครอบปุ่มออก */
-    border: none; /* ลบเส้นขอบ */
-    color: #009498; /* เปลี่ยนสีตัวหนังสือของปุ่ม */
-    cursor: pointer; /* เปลี่ยน cursor เมื่อ hover */
-    text-decoration: none; /* เอาเส้นใต้ของลิงก์ออก */
-}
-
-.signup-link:hover {
-    text-decoration: underline; /* เมื่อ hover จะมีเส้นใต้ */
-    color: #3d434a;
-}
-.links a.forgot-password{
-    color: #009498; /* เปลี่ยนสีตัวหนังสือของปุ่ม */
-    text-decoration: none; /* เอาเส้นใต้ของลิงก์ออก */
-    font-weight: 300;
-}
-.links a.forgot-password:hover{
-    text-decoration: underline; /* เมื่อ hover จะมีเส้นใต้ */
-    color: #3d434a;
-}
-
-
+    justify-content: space-between;
+    margin-top: 2rem;
+    font-size: 1rem; /* เพิ่มขนาดตัวอักษร */
+    color: #6b6b6b;
+  }
+  
+  .login-footer a {
+    color: #007b8f;
+    text-decoration: none;
+  }
+  
+  .login-footer a:hover {
+    text-decoration: underline;
+  }
+  
