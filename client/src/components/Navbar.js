@@ -1,68 +1,60 @@
 import React from 'react';
-import '../View/NavbarMain.css'; // CSS จะปรับตามด้านล่าง
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faBell, faUser } from '@fortawesome/free-solid-svg-icons';
+import logo from '../assets/LOGO.png';
+import '../App.css'
 
-const NavbarMain = ({ userData, onLogout }) => {
-  return (
-    <nav className="navbar navbar-light bg-white px-5">
-      {/* ด้านซ้าย: โลโก้ */}
-      <div className="d-flex align-items-center">
-        <a className="navbar-brand" href="/">
-          <img src="/logo.png" alt="SU Kits Logo" style={{ height: '105px' }} />
-        </a>
-      </div>
-      {/* ตรงกลาง: ลิงก์ */}
-      <div className="d-flex justify-content-center">
-        <ul className="navbar-nav flex-row">
-          <li className="nav-item mx-4">
-            <a className="nav-link" href="#" style={{ fontSize: '20px' }}>
-              รายการอุปกรณ์
-            </a>
-          </li>
-          <li className="nav-item mx-4">
-            <a className="nav-link" href="#" style={{ fontSize: '20px' }}>
-              สถานะการยืม
-            </a>
-          </li>
-          <li className="nav-item mx-4">
-            <a className="nav-link" href="#" style={{ fontSize: '20px' }}>
-              กำหนดการคืน
-            </a>
-          </li>
-        </ul>
-      </div>
-      {/* ด้านขวา: การแจ้งเตือน, ชื่อผู้ใช้, Logout */}
-      <div className="d-flex align-items-center">
-        <div className="notification mx-3">
-          <FontAwesomeIcon icon={faBell} />
-          <span className="notification-badge">1</span>
-        </div>
-        <div className="user-info d-flex align-items-center mx-3">
-          <FontAwesomeIcon icon={faUser} />
-          <span className="mx-2" style={{ fontSize: '20px' }}>
-            {userData?.name || 'Guest'}
-          </span>
-        </div>
-        <button
-          className="btn"
-          style={{
-            backgroundColor: '#009498',
-            color: '#fff',
-            border: 'none',
-            height: '51px',
-            width: '144px',
-            borderRadius: '5px',
-            fontSize: '20px',
-            fontFamily: "'Sarabun', sans-serif"
-          }}
-          onClick={onLogout}
-        >
-          Logout
-        </button>
-      </div>
-    </nav>
-  );
+
+const Navbar = () => {
+    return (
+        <nav className="navbar navbar-light bg-white px-5" >
+            <div className="d-flex align-items-center">
+                {/* โลโก้ด้านซ้าย */}
+                <a className="navbar-brand" href="/">
+                    <img
+                        src={logo}
+                        alt="Logo"
+                        style={{ height: '105px' }}
+                    />
+                </a>
+            </div>
+            {/* ลิงก์ตรงกลาง */}
+            <div className="d-flex justify-content-center">
+                <ul className="navbar-nav flex-row">
+                    <li className="nav-item mx-4">
+                        <a className="nav-link" href="#" style={{ fontSize: '20px' }}>หมวดหมู่อุปกรณ์</a>
+                    </li>
+                    <li className="nav-item mx-4">
+                        <a className="nav-link" href="#" style={{ fontSize: '20px' }}>วิธีใช้งานอุปกรณ์</a>
+                    </li>
+                    <li className="nav-item mx-4">
+                        <a className="nav-link" href="#" style={{ fontSize: '20px' }}>ศึกษาเพิ่มเติม</a>
+                    </li>
+                    <li className="nav-item mx-4">
+                        <a className="nav-link" href="#" style={{ fontSize: '20px' }}>ติดต่อเรา</a>
+                    </li>
+                </ul>
+            </div>
+            {/* ปุ่มเข้าสู่ระบบด้านขวา */}
+            <div className="d-flex align-items-center">
+                <button
+                    className="btn"
+                    style={{
+                        backgroundColor: '#009498',
+                        color: '#fff',
+                        border: 'none',
+                        height: '51px',
+                        width: '144px',
+                        borderRadius: '5px',
+                        fontSize: '20px',
+                        fontFamily: "'Sarabun', sans-serif"
+                    }}
+                    onClick={() => window.location.href = '/login'}
+                >
+                    เข้าสู่ระบบ
+                </button>
+
+            </div>
+        </nav>
+    );
 };
 
-export default NavbarMain;
+export default Navbar;

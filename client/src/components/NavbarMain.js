@@ -5,7 +5,7 @@ import { faBell, faUser } from '@fortawesome/free-solid-svg-icons';
 
 const NavbarMain = ({ userData, onLogout }) => {
   return (
-    <nav className="navbar">
+    <nav className="navbar_main">
       <div className="navbar-left">
         <img src="/logo.png" alt="SU Kits Logo" className="logo" />
         <div className="navbar-links">

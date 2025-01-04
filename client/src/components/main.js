@@ -18,26 +18,26 @@ const Main = () => {
     }
 
     const fetchData = async () => {
-        try {
-          const token = localStorage.getItem('authToken');
-      
-          if (!token) {
-            throw new Error("No token found");
-          }
-      
-          const response = await api.get('/main', {
-            headers: { Authorization: `Bearer ${token}` },
-          });
-          
-          console.log('Data from server:', response.data); // ตรวจสอบข้อมูลที่ได้รับจาก API
-          setData(response.data);
-        } catch (error) {
-          console.error('Error fetching main data:', error);
-          setError(error.response?.data?.message || error.message || 'Error fetching main data');
-        } finally {
-          setLoading(false);
+      try {
+        const response = await api.get('/main', {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        
+        console.log('Data from server:', response.data); // ตรวจสอบข้อมูลที่ได้รับจาก API
+
+        if (response.data.user) {
+          setData(response.data); // ถ้ามีข้อมูล user ให้ตั้งค่าที่ state
+        } else {
+          setError('User data not found');
         }
-      };
+      } catch (error) {
+        console.error('Error fetching main data:', error);
+        setError(error.response?.data?.message || error.message || 'Error fetching main data');
+      } finally {
+        setLoading(false);
+      }
+    };
+
     fetchData();
   }, [navigate]);
 
@@ -56,7 +56,14 @@ const Main = () => {
 
   return (
     <div>
-        <NavbarMain userData={data.user} onLogout={handleLogout} /> {/* ส่งฟังก์ชัน Logout */}
+      {/* ตรวจสอบว่า data.user มีข้อมูลหรือไม่ */}
+      {data && data.user ? (
+        <>
+          <NavbarMain userData={data.user} onLogout={handleLogout} /> {/* ส่งฟังก์ชัน Logout */}
+        </>
+      ) : (
+        <div>No user data available</div> // ถ้าไม่มีข้อมูลผู้ใช้แสดงข้อความนี้
+      )}
     </div>
   );
 };
