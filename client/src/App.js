@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import Carousel from './components/Carousel';
 import Login from './components/login';
+import Admin from './Admin/Admin';
 
 const MainLayout = ({ children }) => (
   <>
@@ -26,6 +27,7 @@ const App = () => {
         />
         {/* เส้นทางที่ไม่มี Navbar */}
         <Route path="/login" element={<Login />} />
+        <Route path="/Admin" element={<Admin />} />
       </Routes>
     </Router>
   );
