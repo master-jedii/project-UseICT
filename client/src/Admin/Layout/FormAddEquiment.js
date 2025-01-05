@@ -6,28 +6,32 @@ const FormAddEquiment = () => {
     const [name, Setname] = useState("");
     const [description, Setdescription] = useState("");
     const [category, Setcategory] = useState("");
+    const [image, Setimage] = useState(null); // State สำหรับเก็บไฟล์ภาพ
 
-    const addEquipment = () => {
-        Axios.post("http://localhost:3333/create", {
-            name: name,
-            description: description,
-            category: category,
-        }).then(() => {
-            setEquipment([
-                ...equipment,
-                {
-                    name: name,
-                    description: description,
-                    category: category,
-                },
-            ]);
-        });
+    const addEquipment = (event) => {
+        event.preventDefault(); // ป้องกันไม่ให้ฟอร์มรีเฟรชหน้าใหม่
+
+        const formData = new FormData();
+        formData.append("name", name);
+        formData.append("description", description);
+        formData.append("category", category);
+        formData.append("image", image); // เพิ่มไฟล์ภาพ
+
+        Axios.post("http://localhost:3333/create", formData)
+            .then(() => {
+                alert("Equipment added successfully");
+                getEquipment();
+            })
+            .catch((err) => {
+                console.log(err);
+                alert("Error adding equipment");
+            });
     };
 
     const [equipment, setEquipment] = useState([]);
 
     const getEquipment = () => {
-        Axios.get('http://localhost:3333/admin').then((response) => {
+        Axios.get("http://localhost:3333/admin").then((response) => {
             setEquipment(response.data);
         });
     };
@@ -36,7 +40,7 @@ const FormAddEquiment = () => {
         <div className="App container">
             <h1>Form Add Equipment</h1>
             <div className="information">
-                <form>
+                <form onSubmit={addEquipment}>
                     <div className="mb-3">
                         <label className="form-label" htmlFor="name">
                             ชื่ออุปกรณ์:
@@ -46,9 +50,7 @@ const FormAddEquiment = () => {
                             className="form-control"
                             name="name"
                             placeholder="Enter equipment name"
-                            onChange={(event) => {
-                                Setname(event.target.value);
-                            }}
+                            onChange={(event) => Setname(event.target.value)}
                         />
                     </div>
                     <div className="mb-3">
@@ -59,9 +61,7 @@ const FormAddEquiment = () => {
                             className="form-control"
                             name="description"
                             placeholder="Enter equipment description"
-                            onChange={(event) => {
-                                Setdescription(event.target.value);
-                            }}
+                            onChange={(event) => Setdescription(event.target.value)}
                         />
                     </div>
                     <div className="mb-3">
@@ -72,11 +72,11 @@ const FormAddEquiment = () => {
                             className="form-control"
                             name="category"
                             value={category}
-                            onChange={(event) => {
-                                Setcategory(event.target.value);
-                            }}
+                            onChange={(event) => Setcategory(event.target.value)}
                         >
-                            <option value="" disabled>เลือกหมวดหมู่</option>
+                            <option value="" disabled>
+                                เลือกหมวดหมู่
+                            </option>
                             <option value="กล้อง">กล้อง</option>
                             <option value="ขาตั้งกล้อง">ขาตั้งกล้อง</option>
                             <option value="ไฟสำหรับถ่ายทำ">ไฟสำหรับถ่ายทำ</option>
@@ -85,7 +85,21 @@ const FormAddEquiment = () => {
                             <option value="อุปกรณ์อื่นๆ">อุปกรณ์อื่นๆ</option>
                         </select>
                     </div>
-                    <button type="submit" className="btn btn-success" onClick={addEquipment}>
+
+                    {/* เพิ่ม Input สำหรับเลือกไฟล์ */}
+                    <div className="mb-3">
+                        <label className="form-label" htmlFor="file">
+                            เลือกไฟล์:
+                        </label>
+                        <input
+                            type="file"
+                            className="form-control"
+                            name="image"
+                            onChange={(event) => Setimage(event.target.files[0])}
+                        />
+                    </div>
+
+                    <button type="submit" className="btn btn-success">
                         Add Equipment
                     </button>
                 </form>
@@ -95,15 +109,24 @@ const FormAddEquiment = () => {
                 <button className="btn btn-primary" onClick={getEquipment}>
                     Show Equipment
                 </button>
-                <br /><br />
+                <br />
+                <br />
                 {equipment.map((val, key) => {
                     return (
                         <div className="equipment card" key={key}>
                             <div className="card-body text-left">
+                                {val.image && (
+                                    <img
+                                        src={`http://localhost:3333/uploads/${val.image}`}
+                                        alt={val.name}
+                                        style={{ width: "500px", height: "500px" }}
+                                    />
+                                )}
                                 <p className="card-text">Equipment ID: {val.equipment_id}</p>
                                 <p className="card-text">Equipment Name: {val.name}</p>
                                 <p className="card-text">Description: {val.description}</p>
                                 <p className="card-text">Category: {val.category}</p>
+                                
                             </div>
                         </div>
                     );

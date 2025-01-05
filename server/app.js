@@ -4,6 +4,9 @@ const bcrypt = require("bcryptjs");
 const mysql = require("mysql2"); // ใช้ MySQL (หรือเปลี่ยนเป็น DB ที่คุณใช้งาน)
 const jwt = require("jsonwebtoken"); // ใช้ JWT สำหรับการสร้าง Token
 const app = express();
+const multer = require('multer');
+const path = require("path");
+
 
 app.use(cors());
 // CORS
@@ -11,6 +14,10 @@ app.use(cors({
   origin: 'http://localhost:3000', // ให้ frontend ที่รันที่ localhost:3000 สามารถเข้าถึงได้
   methods: 'GET,POST',
 }));
+
+// ให้ Express สามารถเข้าถึงไฟล์ในโฟลเดอร์ 'uploads'
+app.use('/uploads', express.static('uploads'));
+
 
 // Body parser
 app.use(express.json());
@@ -33,23 +40,23 @@ db.connect((err) => {
 });
 
 app.get('/main', (req, res) => {
-    const token = req.headers.authorization?.split(' ')[1]; // ดึง token จาก header
-  
-    if (!token) {
-      return res.status(401).json({ message: 'Unauthorized: No token provided' }); // ถ้าไม่มี token
+  const token = req.headers.authorization?.split(' ')[1]; // ดึง token จาก header
+
+  if (!token) {
+    return res.status(401).json({ message: 'Unauthorized: No token provided' }); // ถ้าไม่มี token
+  }
+
+  jwt.verify(token, 'your_jwt_secret_key', (err, decoded) => { // ตรวจสอบ token
+    if (err) {
+      return res.status(401).json({ message: 'Unauthorized: Invalid token' }); // ถ้า token ไม่ถูกต้อง
     }
-  
-    jwt.verify(token, 'your_jwt_secret_key', (err, decoded) => { // ตรวจสอบ token
-      if (err) {
-        return res.status(401).json({ message: 'Unauthorized: Invalid token' }); // ถ้า token ไม่ถูกต้อง
-      }
-  
-      const userId = decoded.id;
-      const userFirstname = decoded.firstname;
-      res.status(200).json({ user: { id: userId, firstname: userFirstname } }); // ส่งข้อมูลกลับ
-    });
+
+    const userId = decoded.id;
+    const userFirstname = decoded.firstname;
+    res.status(200).json({ user: { id: userId, firstname: userFirstname } }); // ส่งข้อมูลกลับ
   });
-  
+});
+
 
 // Login endpoint
 app.post('/login', async (req, res) => {
@@ -98,81 +105,105 @@ app.post('/login', async (req, res) => {
 
 
 app.post('/signup', async (req, res) => {
-    const { UserID, firstname, lastname, grade, branch, email, password, phone_number } = req.body;
-  
-    // ตรวจสอบว่า UserID ซ้ำหรือไม่
-    const userIdExists = await new Promise((resolve, reject) => {
-      db.query('SELECT * FROM users WHERE UserID = ?', [UserID], (err, result) => {
-        if (err) {
-          reject(err);
-        } else {
-          resolve(result.length > 0); // ถ้ามีแถวที่พบ UserID ซ้ำ
-        }
-      });
-    });
-  
-    if (userIdExists) {
-      return res.status(400).json({ error: 'UserID already exists' });
-    }
-  
-    // ตรวจสอบว่า email ซ้ำหรือไม่
-    const emailExists = await new Promise((resolve, reject) => {
-      db.query('SELECT * FROM users WHERE email = ?', [email], (err, result) => {
-        if (err) {
-          reject(err);
-        } else {
-          resolve(result.length > 0); // ถ้ามีแถวที่พบ email ซ้ำ
-        }
-      });
-    });
-  
-    if (emailExists) {
-      return res.status(400).json({ error: 'Email already exists' });
-    }
-  
-    // เข้ารหัสรหัสผ่าน
-    const hashedPassword = await bcrypt.hash(password, 10);
-  
-    // เพิ่มข้อมูลผู้ใช้ใหม่
-    const query = 'INSERT INTO users (UserID, firstname, lastname, grade, branch, email, password, phone_number) VALUES (?, ?, ?, ?, ?, ?, ?, ?)';
-    const values = [UserID, firstname, lastname, grade, branch, email, hashedPassword, phone_number];
-  
-    db.query(query, values, (err, result) => {
+  const { UserID, firstname, lastname, grade, branch, email, password, phone_number } = req.body;
+
+  // ตรวจสอบว่า UserID ซ้ำหรือไม่
+  const userIdExists = await new Promise((resolve, reject) => {
+    db.query('SELECT * FROM users WHERE UserID = ?', [UserID], (err, result) => {
       if (err) {
-        return res.status(500).json({ error: 'Error saving user' });
+        reject(err);
+      } else {
+        resolve(result.length > 0); // ถ้ามีแถวที่พบ UserID ซ้ำ
       }
-      res.status(200).json({ message: 'User registered successfully' });
     });
   });
-  
-  app.get('/admin', (req, res) => {
-    db.query("SELECT * FROM equipment", (err, result) => {
-        if (err) {
-            console.log(err);
-        }
-        else {
-            res.send(result);
-        }
-    })
+
+  if (userIdExists) {
+    return res.status(400).json({ error: 'UserID already exists' });
+  }
+
+  // ตรวจสอบว่า email ซ้ำหรือไม่
+  const emailExists = await new Promise((resolve, reject) => {
+    db.query('SELECT * FROM users WHERE email = ?', [email], (err, result) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve(result.length > 0); // ถ้ามีแถวที่พบ email ซ้ำ
+      }
+    });
+  });
+
+  if (emailExists) {
+    return res.status(400).json({ error: 'Email already exists' });
+  }
+
+  // เข้ารหัสรหัสผ่าน
+  const hashedPassword = await bcrypt.hash(password, 10);
+
+  // เพิ่มข้อมูลผู้ใช้ใหม่
+  const query = 'INSERT INTO users (UserID, firstname, lastname, grade, branch, email, password, phone_number) VALUES (?, ?, ?, ?, ?, ?, ?, ?)';
+  const values = [UserID, firstname, lastname, grade, branch, email, hashedPassword, phone_number];
+
+  db.query(query, values, (err, result) => {
+    if (err) {
+      return res.status(500).json({ error: 'Error saving user' });
+    }
+    res.status(200).json({ message: 'User registered successfully' });
+  });
 });
 
-app.post('/create', (req, res) => {
-    const name = req.body.name;
-    const description = req.body.description;
-    const category = req.body.category;
-    db.query("INSERT INTO equipment (name,description,category) VALUES(?,?,?)",
-        [name, description, category],
-        (err, result) => {
-            if (err) {
-                console.log(err)
-            }
-            else {
-                res.send('ข้อมูลเข้าแล้ว')
-            }
-        })
-})
-  
-  
+
+
+
+
+// แสดงรายการอุปกรณ์
+app.get("/admin", (req, res) => {
+  db.query("SELECT * FROM equipment", (err, result) => {
+    if (err) {
+      console.log(err);
+    } else {
+      res.send(result);
+    }
+  });
+});
+
+
+// ตั้งค่าการเก็บไฟล์
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, "uploads/"); // เก็บไฟล์ในโฟลเดอร์ uploads
+  },
+  filename: function (req, file, cb) {
+    cb(null, Date.now() + path.extname(file.originalname)); // ตั้งชื่อไฟล์เป็น timestamp
+  },
+});
+
+const upload = multer({ storage: storage });
+
+app.post("/create", upload.single("image"), (req, res) => {
+  const name = req.body.name;
+  const description = req.body.description;
+  const category = req.body.category;
+  const image = req.file ? req.file.filename : null; // เก็บชื่อไฟล์ของภาพ
+
+  // บันทึกข้อมูลอุปกรณ์ในฐานข้อมูล
+  db.query(
+    "INSERT INTO equipment (name, description, category, image) VALUES(?, ?, ?, ?)",
+    [name, description, category, image],
+    (err, result) => {
+      if (err) {
+        console.log(err);
+        return res.status(500).json({ message: "Error saving equipment" });
+      }
+      res.status(200).json({ message: "Equipment added successfully" });
+    }
+  );
+});
+
+
+
+
+
 
 // เริ่มเซิร์ฟเวอร์
 app.listen(3333, () => {
