@@ -13,7 +13,7 @@ const NavbarMain = ({ userData, onLogout }) => {
 
   const handleLogout = () => {
     onLogout(); // เรียกฟังก์ชัน Logout ที่ส่งมาจาก props
-    navigate('/login'); // เปลี่ยนเส้นทางไปยังหน้า Login
+    navigate('/'); // เปลี่ยนเส้นทางไปยังหน้า Login
   };
 
   return (
