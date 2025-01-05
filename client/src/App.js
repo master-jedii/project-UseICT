@@ -30,12 +30,9 @@ const App = () => {
             <MainLayout>
               <Carousel />
               <Type />
-              <Howtoborrow />
-              <Type/>
               <Howtoborrow/>
               <About/>
               <Footer/>
-              
             </MainLayout>
           }
         />
