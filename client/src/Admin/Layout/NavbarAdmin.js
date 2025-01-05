@@ -5,7 +5,7 @@ import myLogo from '../../assets/LOGO.png';
 import '../CSS/NavbarAdmin.css';
 import Axios from 'axios';
 
-const MainAdmin = () => {
+const NavbarAdmin = () => {
     const navigate = useNavigate(); // Initialize navigate function
     const [showModal, setShowModal] = useState(false);
     const [name, setName] = useState("");
@@ -62,6 +62,7 @@ const MainAdmin = () => {
           </li>
         </ul>
       </div>
+      
       <div className="main-content">
         <header className="admin-header">
           <div className="admin-header-info">
@@ -125,4 +126,4 @@ const MainAdmin = () => {
   );
 };
 
-export default MainAdmin;
+export default NavbarAdmin;
