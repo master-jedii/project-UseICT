@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import Axios from 'axios';
 import '../CSS/MainAdmin.css';
+// import DisplayEquipment from './DisplayEquipment';
 
 const MainAdmin = () => {
   const [showModal, setShowModal] = useState(false);
@@ -8,7 +9,6 @@ const MainAdmin = () => {
   const [description, setDescription] = useState("");
   const [category, setCategory] = useState("");
   const [image, setImage] = useState(null);
-  const [equipment, setEquipment] = useState([]);
 
   // เปิด/ปิด Modal
   const toggleModal = () => {
@@ -33,21 +33,11 @@ const MainAdmin = () => {
       .then(() => {
         alert("เพิ่มอุปกรณ์เรียบร้อย!");
         toggleModal();
-        getEquipment(); // อัปเดตรายการอุปกรณ์
       })
       .catch((err) => {
         console.error(err);
         alert("เกิดข้อผิดพลาดในการเพิ่มอุปกรณ์");
       });
-  };
-
-  // ฟังก์ชันดึงข้อมูลอุปกรณ์
-  const getEquipment = () => {
-    Axios.get("http://localhost:3333/admin")
-      .then((response) => {
-        setEquipment(response.data);
-      })
-      .catch((err) => console.error(err));
   };
 
   return (
@@ -116,32 +106,8 @@ const MainAdmin = () => {
         </div>
       )}
 
-      {/* ปุ่มดึงข้อมูลอุปกรณ์ */}
-      <button className="btn btn-primary" onClick={getEquipment}>
-        แสดงอุปกรณ์
-      </button>
-      <hr />
-
-      {/* แสดงรายการอุปกรณ์ */}
-      <div className="equipment-list">
-        {equipment.map((val, key) => (
-          <div className="equipment card" key={key}>
-            <div className="card-body">
-              {val.image && (
-                <img
-                  src={`http://localhost:3333/uploads/${val.image}`}
-                  alt={val.name}
-                  style={{ width: "100%", maxWidth: "500px", height: "auto", marginBottom: "15px" }}
-                />
-              )}
-              <p>Equipment ID: {val.equipment_id}</p>
-              <p>ชื่ออุปกรณ์: {val.name}</p>
-              <p>รายละเอียด: {val.description}</p>
-              <p>หมวดหมู่: {val.category}</p>
-            </div>
-          </div>
-        ))}
-      </div>
+      {/* เรียกใช้ DisplayEquipment */}
+      {/* <DisplayEquipment /> */}
     </div>
   );
 };
