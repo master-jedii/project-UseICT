@@ -3,8 +3,8 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../service/axios';
 import NavbarMain from './NavbarMain'; // นำเข้า NavbarMain
-import DisplayEquipment from './DisplayEquipment';
-import Type from './type';
+import DisplayEquipment from '../interface/DisplayEquipment';
+
 
 const Main = () => {
   const [data, setData] = useState(null);
@@ -71,7 +71,7 @@ const Main = () => {
 
       <DisplayEquipment />
 
-      
+
     </div>
   );
 };
