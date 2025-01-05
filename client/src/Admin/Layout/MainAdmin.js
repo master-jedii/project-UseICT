@@ -1,12 +1,10 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom'; // Import useNavigate
 import '../CSS/MainAdmin.css';
 import myLogo from '../../assets/LOGO.png';
 import '../CSS/NavbarAdmin.css';
 import Axios from 'axios';
 
 const MainAdmin = () => {
-  const navigate = useNavigate(); // Initialize navigate function
   const [showModal, setShowModal] = useState(false);
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
