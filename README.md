@@ -7,3 +7,5 @@ Install
 -npm i axios
 -npm install sweetalert2@11.15.9
 -npm install @fortawesome/react-fontawesome @fortawesome/free-solid-svg-icons
+-npm install bcryptjs
+-npm install jsonwebtoken
