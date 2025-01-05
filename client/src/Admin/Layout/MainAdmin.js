@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import Axios from 'axios';
 import '../CSS/MainAdmin.css';
-// import DisplayEquipment from './DisplayEquipment';
+import NavbarAdmin from './NavbarAdmin';
 
 const MainAdmin = () => {
   const [showModal, setShowModal] = useState(false);
@@ -42,11 +42,11 @@ const MainAdmin = () => {
 
   return (
     <div className="Adminss">
+      <NavbarAdmin />
       <h1>Main Admin</h1>
       <button className="btn btn-primary" onClick={toggleModal}>
         เพิ่มอุปกรณ์
       </button>
-
       {/* Modal สำหรับเพิ่มอุปกรณ์ */}
       {showModal && (
         <div className="modal">
