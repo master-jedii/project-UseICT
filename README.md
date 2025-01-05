@@ -6,3 +6,4 @@ Install
 -npm install body-parser
 -npm i axios
 -npm install sweetalert2@11.15.9
+-npm install @fortawesome/react-fontawesome @fortawesome/free-solid-svg-icons
