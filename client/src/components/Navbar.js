@@ -1,22 +1,68 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import logo from '../assets/LOGO.png';
-import '../App.css'
-
+import '../App.css';
+import api from '../service/axios';
+import { useNavigate } from 'react-router-dom'; // Import useNavigate
 
 const Navbar = () => {
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
+    const [userFirstName, setUserFirstName] = useState(''); // Create a state to hold the first name
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+    
+    const navigate = useNavigate(); // Initialize the navigate function
+
+    useEffect(() => {
+        const fetchUserData = async () => {
+            const token = localStorage.getItem('token') || sessionStorage.getItem('authToken');
+            if (token) {
+                try {
+                    const response = await api.get('/main', {
+                        headers: { Authorization: `Bearer ${token}` },
+                    });
+
+                    // Log the response data to see what is returned
+                    // console.log('API Response:', response.data);
+
+                    // Use 'firstname' instead of 'firstName'
+                    if (response.data && response.data.user) {
+                        setIsLoggedIn(true);
+                        setUserFirstName(response.data.user.firstname || ''); // Use 'firstname'
+                        // console.log('User First Name:', response.data.user.firstname); // Log the firstName
+                    } else {
+                        setIsLoggedIn(false);
+                        setUserFirstName('');
+                    }
+                } catch (err) {
+                    console.error('Error fetching user data:', err);
+                    setError(err.response?.data?.message || 'Error fetching user data');
+                } finally {
+                    setLoading(false);
+                }
+            } else {
+                setLoading(false);
+            }
+        };
+        fetchUserData();
+    }, []);
+
+    const handleLogout = () => {
+        localStorage.removeItem('token');
+        sessionStorage.removeItem('authToken');
+        setIsLoggedIn(false);
+        setUserFirstName(''); // Clear firstName on logout
+        navigate('/'); // Use navigate to go to the home page
+    };
+
+    console.log(userFirstName); 
+
     return (
-        <nav className="navbar navbar-light bg-white px-5" >
+        <nav className="navbar navbar-light bg-white px-5">
             <div className="d-flex align-items-center">
-                {/* โลโก้ด้านซ้าย */}
                 <a className="navbar-brand" href="/">
-                    <img
-                        src={logo}
-                        alt="Logo"
-                        style={{ height: '105px' }}
-                    />
+                    <img src={logo} alt="Logo" style={{ height: '105px' }} />
                 </a>
             </div>
-            {/* ลิงก์ตรงกลาง */}
             <div className="d-flex justify-content-center">
                 <ul className="navbar-nav flex-row">
                     <li className="nav-item mx-4">
@@ -33,25 +79,55 @@ const Navbar = () => {
                     </li>
                 </ul>
             </div>
-            {/* ปุ่มเข้าสู่ระบบด้านขวา */}
             <div className="d-flex align-items-center">
-                <button
-                    className="btn"
-                    style={{
-                        backgroundColor: '#009498',
-                        color: '#fff',
-                        border: 'none',
-                        height: '51px',
-                        width: '144px',
-                        borderRadius: '5px',
-                        fontSize: '20px',
-                        fontFamily: "'Sarabun', sans-serif"
-                    }}
-                    onClick={() => window.location.href = '/login'}
-                >
-                    เข้าสู่ระบบ
-                </button>
-
+                {loading ? (
+                    <span style={{ fontSize: '20px' }}>กำลังโหลด...</span>
+                ) : isLoggedIn ? (
+                    <>
+                        <span
+                            style={{
+                                fontSize: '20px',
+                                marginRight: '20px',
+                                fontFamily: "'Sarabun', sans-serif",
+                            }}
+                        >
+                            สวัสดี, {userFirstName} {/* Display first name here */}
+                        </span>
+                        <button
+                            className="btn"
+                            style={{
+                                backgroundColor: '#e74c3c',
+                                color: '#fff',
+                                border: 'none',
+                                height: '51px',
+                                width: '144px',
+                                borderRadius: '5px',
+                                fontSize: '20px',
+                                fontFamily: "'Sarabun', sans-serif",
+                            }}
+                            onClick={handleLogout}
+                        >
+                            ออกจากระบบ
+                        </button>
+                    </>
+                ) : (
+                    <button
+                        className="btn"
+                        style={{
+                            backgroundColor: '#009498',
+                            color: '#fff',
+                            border: 'none',
+                            height: '51px',
+                            width: '144px',
+                            borderRadius: '5px',
+                            fontSize: '20px',
+                            fontFamily: "'Sarabun', sans-serif",
+                        }}
+                        onClick={() => navigate('/login')} // Use navigate to redirect to login
+                    >
+                        เข้าสู่ระบบ
+                    </button>
+                )}
             </div>
         </nav>
     );
