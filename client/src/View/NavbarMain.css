@@ -2,7 +2,7 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background-color: #008080; /* สีพื้นหลัง */
+    background-color: #009498; /* สีพื้นหลัง */
     color: white;
     padding: 20px 40px; /* เพิ่ม Padding ให้มีความสมดุล */
     height: 148px; /* ปรับความสูงของ navbar_main ให้ใหญ่ขึ้น */
@@ -21,7 +21,7 @@
 .user-info {
     display: flex;
     align-items: center;
-    gap: 12px; /* เพิ่มระยะห่างระหว่างไอคอนผู้ใช้และชื่อ */
+    gap: 20px; /* เพิ่มระยะห่างระหว่างไอคอนผู้ใช้และชื่อ */
 }
 
 .user-info span {
@@ -45,3 +45,33 @@
     background-color: #004d4d; /* สีพื้นหลังเมื่อ Hover */
     color: white;
 }
+
+.navbar-links {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    gap: 50px;
+    margin-top: 10px;
+    
+
+  }
+  
+  .navbar-links p {
+    margin: 0;
+    padding: 0 15px;
+    font-size: 24px;
+    font-weight: 100;
+    
+    
+  }
+  .navbar-links a {
+    text-decoration: none; /* ปิดการแสดงเส้นใต้ */
+    
+  }
+  .navbar-links a :hover {
+    text-decoration: underline; /* ปิดการแสดงเส้นใต้ */
+    color: bisque;
+    text-underline-offset: 10px;
+  }
+
+  
