@@ -10,6 +10,15 @@
     background-size: cover;
   }
   
+  .logo-signup{
+    width: 306px;
+    height: 306px;
+    position: absolute;
+    bottom: 35%;
+    left: 17%;
+    transform: translateX(-50%);
+    text-align: center;
+  }
   .signup-right {
     flex: 1;
     display: flex;
@@ -23,21 +32,25 @@
     padding: 2rem;
     border-radius: 10px;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-    max-width: 1200px;
+    max-width: 1000px;
     width: 100%;
+    
+    
   }
   
   .signup-form h1 {
     text-align: center;
-    color: #007b8f;
+    color: #009498;
     margin-bottom: 1.5rem;
     font-size: 1.8rem;
+    font-weight: bold;
+    margin-bottom: 2rem3;
   }
   
   .form-row {
     display: flex;
     gap: 1rem;
-    margin-bottom: 1.2rem;
+    margin-bottom: 1.5rem;
   }
   
   .form-row input,
@@ -47,6 +60,7 @@
     border: 1px solid #ccc;
     border-radius: 5px;
     font-size: 1rem;
+    
   }
   
   .terms {
@@ -61,7 +75,7 @@
   }
   
   .terms a {
-    color: #007b8f;
+    color: #009498;
     text-decoration: none;
   }
   
@@ -71,12 +85,12 @@
   
   .signup-button {
     width: 100%;
-    padding: 0.8rem;
-    background: #007b8f;
+    padding: 1rem; /* ปรับปุ่มให้ใหญ่ขึ้น */
+    background: #009498;
     color: white;
     border: none;
-    border-radius: 5px;
-    font-size: 1rem;
+    border-radius: 8px; /* มุมมนของปุ่ม */
+    font-size: 1.2rem; /* เพิ่มขนาดตัวอักษรของปุ่ม */
     cursor: pointer;
     transition: background 0.3s ease;
   }
@@ -84,4 +98,5 @@
   .signup-button:hover {
     background: #005f6b;
   }
-  
+
+ 

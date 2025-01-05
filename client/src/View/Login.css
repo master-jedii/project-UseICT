@@ -70,7 +70,7 @@
   .login-form button {
     width: 25%;
     padding: 1rem; /* ปรับปุ่มให้ใหญ่ขึ้น */
-    background: #007b8f;
+    background: #009498;
     color: white;
     border: none;
     border-radius: 8px; /* มุมมนของปุ่ม */
@@ -92,7 +92,7 @@
   }
   
   .login-footer a {
-    color: #007b8f;
+    color: #009498;
     text-decoration: none;
   }
   

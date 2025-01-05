@@ -54,7 +54,11 @@ const Signup = () => {
   return (
     <div className="signup-container">
         <div className="signup-left">
-            {/* Left section will display background image */}
+          <img
+            src="/logo.png"
+            alt="SU Kits Logo"
+            className="logo-signup"
+          />
         </div>
         <div className="signup-right">
             <div className="signup-form">
