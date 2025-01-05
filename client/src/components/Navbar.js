@@ -2,15 +2,15 @@ import React, { useState, useEffect } from 'react';
 import logo from '../assets/LOGO.png';
 import '../App.css';
 import api from '../service/axios';
-import { useNavigate } from 'react-router-dom'; // Import useNavigate
+import { useNavigate, useLocation } from 'react-router-dom';
 
 const Navbar = () => {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
-    const [userFirstName, setUserFirstName] = useState(''); // Create a state to hold the first name
+    const [userFirstName, setUserFirstName] = useState('');
     const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
-    
-    const navigate = useNavigate(); // Initialize the navigate function
+
+    const navigate = useNavigate();
+    const location = useLocation(); // ใช้ตรวจสอบตำแหน่งของเส้นทางปัจจุบัน
 
     useEffect(() => {
         const fetchUserData = async () => {
@@ -21,21 +21,15 @@ const Navbar = () => {
                         headers: { Authorization: `Bearer ${token}` },
                     });
 
-                    // Log the response data to see what is returned
-                    // console.log('API Response:', response.data);
-
-                    // Use 'firstname' instead of 'firstName'
                     if (response.data && response.data.user) {
                         setIsLoggedIn(true);
-                        setUserFirstName(response.data.user.firstname || ''); // Use 'firstname'
-                        // console.log('User First Name:', response.data.user.firstname); // Log the firstName
+                        setUserFirstName(response.data.user.firstname || '');
                     } else {
                         setIsLoggedIn(false);
                         setUserFirstName('');
                     }
                 } catch (err) {
                     console.error('Error fetching user data:', err);
-                    setError(err.response?.data?.message || 'Error fetching user data');
                 } finally {
                     setLoading(false);
                 }
@@ -50,14 +44,28 @@ const Navbar = () => {
         localStorage.removeItem('token');
         sessionStorage.removeItem('authToken');
         setIsLoggedIn(false);
-        setUserFirstName(''); // Clear firstName on logout
-        navigate('/'); // Use navigate to go to the home page
+        setUserFirstName('');
+        navigate('/');
     };
 
-    console.log(userFirstName); 
+    const scrollToSection = (id) => {
+        if (location.pathname === '/') {
+            const section = document.getElementById(id);
+            if (section) {
+                section.scrollIntoView({ behavior: 'smooth' });
+            }
+        } else {
+            navigate('/'); // กลับไปหน้าแรก
+            setTimeout(() => {
+                const section = document.getElementById(id);
+                if (section) {
+                    section.scrollIntoView({ behavior: 'smooth' });
+                }
+            }, 500); // รอให้หน้าแรกโหลดก่อนเลื่อน
+        }
+    };
 
     return (
-        
         <nav className="navbar navbar-light bg-white px-5">
             <div className="d-flex align-items-center">
                 <a className="navbar-brand" href="/">
@@ -67,16 +75,40 @@ const Navbar = () => {
             <div className="d-flex justify-content-center">
                 <ul className="navbar-nav flex-row">
                     <li className="nav-item mx-4">
-                        <a className="nav-link" href="#" style={{ fontSize: '20px' }}>หมวดหมู่อุปกรณ์</a>
+                        <button
+                            className="nav-link btn btn-link"
+                            style={{ fontSize: '20px', textDecoration: 'none' }}
+                            onClick={() => scrollToSection('type')}
+                        >
+                            หมวดหมู่อุปกรณ์
+                        </button>
                     </li>
                     <li className="nav-item mx-4">
-                        <a className="nav-link" href="#" style={{ fontSize: '20px' }}>วิธียืมอุปกรณ์</a>
+                        <button
+                            className="nav-link btn btn-link"
+                            style={{ fontSize: '20px', textDecoration: 'none' }}
+                            onClick={() => scrollToSection('Howtoborrow')}
+                        >
+                            วิธียืมอุปกรณ์
+                        </button>
                     </li>
                     <li className="nav-item mx-4">
-                        <a className="nav-link" href="#" style={{ fontSize: '20px' }}>คำถามที่พบบ่อย</a>
+                        <button
+                            className="nav-link btn btn-link"
+                            style={{ fontSize: '20px', textDecoration: 'none' }}
+                            onClick={() => scrollToSection('About')}
+                        >
+                            คำถามที่พบบ่อย
+                        </button>
                     </li>
                     <li className="nav-item mx-4">
-                        <a className="nav-link" href="#" style={{ fontSize: '20px' }}>ติดต่อเรา</a>
+                        <button
+                            className="nav-link btn btn-link"
+                            style={{ fontSize: '20px', textDecoration: 'none' }}
+                            onClick={() => scrollToSection('Footer')}
+                        >
+                            ติดต่อเรา
+                        </button>
                     </li>
                 </ul>
             </div>
@@ -92,7 +124,7 @@ const Navbar = () => {
                                 fontFamily: "'Sarabun', sans-serif",
                             }}
                         >
-                            สวัสดี, {userFirstName} {/* Display first name here */}
+                            สวัสดี, {userFirstName}
                         </span>
                         <button
                             className="btn"
@@ -124,7 +156,7 @@ const Navbar = () => {
                             fontSize: '20px',
                             fontFamily: "'Sarabun', sans-serif",
                         }}
-                        onClick={() => navigate('/login')} // Use navigate to redirect to login
+                        onClick={() => navigate('/login')}
                     >
                         เข้าสู่ระบบ
                     </button>
