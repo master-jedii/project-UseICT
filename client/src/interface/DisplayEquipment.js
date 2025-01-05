@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import Axios from 'axios';
-
+import '../View/DisplayEquipment.css'
 const DisplayEquipment = () => {
   const [equipment, setEquipment] = useState([]);
 
@@ -15,12 +15,14 @@ const DisplayEquipment = () => {
 
   return (
     <div className="equipment-list">
-      
-      <div>
+
+      <div className='header-category'>
         <h1>กล้อง</h1>
+
         
+
       </div>
-      
+
     </div>
   );
 };
