@@ -1,6 +1,6 @@
 import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faBell, faUser } from '@fortawesome/free-solid-svg-icons';
+import { faUser } from '@fortawesome/free-solid-svg-icons';
 import { useNavigate, Link } from 'react-router-dom';
 import '../View/NavbarMain.css';
 
@@ -26,17 +26,15 @@ const NavbarMain = ({ userData, onLogout }) => {
           onClick={handleLogoClick}
           style={{ cursor: 'pointer' }}
         />
-        <div className="navbar-links">
-          <Link to="/equipment">รายการอุปกรณ์</Link>
-          <Link to="/status">สถานะการยืม</Link>
-          <Link to="/return">กำหนดการคืน</Link>
-        </div>
       </div>
+
+      <div className="navbar-links">
+            <Link to="/equipment"><p>รายการอุปกรณ์</p></Link>
+            <Link to="/status"><p>สถานะการยืม</p></Link>
+            <Link to="/return"><p>กำหนดการคืน</p></Link>
+      </div>
+      
       <div className="navbar-right">
-        <div className="notification">
-          <FontAwesomeIcon icon={faBell} />
-          {/* <span className="notification-badge">1</span> */}
-        </div>
         <div className="user-info">
           <FontAwesomeIcon icon={faUser} />
           <span>{userData?.firstname || 'Guest'}</span>

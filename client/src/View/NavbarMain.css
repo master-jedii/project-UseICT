@@ -5,46 +5,17 @@
     background-color: #008080; /* สีพื้นหลัง */
     color: white;
     padding: 20px 40px; /* เพิ่ม Padding ให้มีความสมดุล */
-    height: 100px; /* ปรับความสูงของ navbar_main ให้ใหญ่ขึ้น */
+    height: 148px; /* ปรับความสูงของ navbar_main ให้ใหญ่ขึ้น */
 }
 
-.navbar_main-left {
-    display: flex;
-    align-items: center;
-}
-
-.logo {
-    height: 60px; /* ปรับขนาดโลโก้ให้ใหญ่ขึ้น */
+.navbar-left img{
+    height: 108px; /* ปรับขนาดโลโก้ให้ใหญ่ขึ้น */
+    width: 108px;
     margin-right: 20px; /* เพิ่มระยะห่างระหว่างโลโก้กับข้อความ */
+    background-color: white;
+    border-radius: 100px;
 }
 
-.navbar_main-title {
-    font-size: 26px; /* เพิ่มขนาดตัวอักษรชื่อระบบ */
-    font-weight: bold;
-    margin-right: 40px; /* เพิ่มระยะห่างระหว่างชื่อระบบและลิงก์ */
-}
-
-.navbar_main-links a {
-    margin-right: 30px; /* เพิ่มระยะห่างระหว่างลิงก์ */
-    text-decoration: none;
-    color: white;
-    font-size: 20px; /* ขนาดตัวอักษรลิงก์ใหญ่ขึ้น */
-    font-weight: normal;
-}
-
-.navbar_main-links a:hover {
-    text-decoration: underline;
-}
-
-.navbar_main-right {
-    display: flex;
-    align-items: center;
-    gap: 20px; /* เพิ่มระยะห่างระหว่างแต่ละไอเทมในส่วนขวา */
-}
-
-.notification {
-    position: relative;
-}
 
 
 .user-info {
