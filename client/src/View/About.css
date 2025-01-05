@@ -1,96 +1,107 @@
-/* การตั้งค่าพื้นฐาน */
-body {
-    
-  }
-  
-  /* โครงสร้างของ faq-section */
-  .faq-section {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background-color: #ffffff;
-    padding: 20px;
-    gap: 70px;
-    width: 100%;
-    height: 675px;
-  }
-  
-  /* บล็อกคำถามที่พบบ่อย */
-  .faq-block1 {
-    width: 727px;
-    height: 409px;
-    background-color: #ffffff;
-    color: white;
-    overflow: hidden;
-    box-shadow: 0 4px 4px rgba(0, 0, 0, 0.1);
+.faq-section {
+  display: flex;
+  justify-content: space-between; /* จัดระยะห่างระหว่างสองบล็อก */
+  gap: 10px;
+  padding: 50px 120px; /* ระยะห่างจากขอบทั้งสองฝั่ง */
+}
 
-  }
-  
-  .faq-block1 p {
-    margin: 0;
-    padding: 30px 30px 50px 30px;
-    height: 85px;
-    background-color: #009498;
-    font-size: 32px;
-    color: #ffffff;
-  }
-  
-  .faq-list {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-  }
+.faq-block1,
+.faq-block2 {
+  flex: 1;
+}
 
-  .faq-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 30px  20px 20px 50px;
-    border-bottom: 1px solid #ccc;
-    background-color: #ffffff;
-    color: #333;
-    position: relative; /* ให้สามารถใช้ตำแหน่ง absolute สำหรับข้อความได้ */
-  }
-  
-  .faq-answer {
-    position: absolute; /* ใช้ absolute positioning เพื่อให้อยู่ข้างล่างคำถาม */
-    top: 100%; /* วางข้อความ "hi" อยู่ข้างล่างของคำถาม */
-    left: 50%; /* จัดข้อความให้เริ่มต้นจากกลาง */
-    transform: translateX(-50%); /* ปรับให้ข้อความอยู่กลาง */
-    margin-top: 10px; /* เพิ่มระยะห่างจากคำถาม */
-    padding: 10px 20px;
-    background-color: #f0f0f0;
-    border: 1px solid #ccc;
-    font-size: 16px;
-    color: #333;
-  }
-  
-  
-  
-  
-  
-  .faq-item:last-child {
-    border-bottom: none;
-  }
-  
-  .faq-button {
-    border: none;
-    background-color: transparent;
-    font-size: 16px;
-    font-weight: bold;
-    color: #D0D0D0;
-    cursor: pointer;
-  }
-  
-  .faq-button:hover {
-    color: #005f5a;
-  }
-  
-  /* บล็อกแผนที่ */
-  .faq-block2 img {
-    width: 542px;
-    height: 497px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  }
-  
-  
+.faq-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.faq-item {
+  margin-bottom: 20px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  overflow: hidden;
+}
+
+.faq-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+  cursor: pointer;
+  background: #009498;
+  border-bottom: 1px solid #ddd;
+}
+
+.faq-header span {
+  font-size: 16px;
+  font-weight: bold;
+  color: #ffff;
+}
+
+
+
+.faq-button {
+  background: none;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+  color: #ffff;
+}
+
+.faq-answer-wrapper {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease;
+}
+
+.faq-answer-wrapper.open {
+  max-height: 100px; /* ความสูงที่แสดง */
+}
+
+.faq-answer {
+  padding: 10px;
+  background: #fff;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.faq-block2 {
+  flex: 1;
+  text-align: center;
+}
+
+.faq-block2 img {
+  max-width: 1030%;
+  height: auto;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  margin-left: 50px;
+
+}
+.Header-ques{
+  width: 300px;
+  height: 80px;
+  background-color: #009498;
+  text-align: center;
+}
+
+.Header-ques p{
+  color: #000;
+}
+
+.faq-block1 p{
+  color: #000;
+  cursor: pointer;
+}
+
+.faq-block1{
+  padding-top: 20px;
+  margin-left: 50px;
+}
+
+.faq-block1 h1{
+  margin-bottom: 35px;
+  margin-top: 20px;
+
+}
