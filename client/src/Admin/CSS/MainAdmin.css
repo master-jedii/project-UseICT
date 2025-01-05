@@ -1,3 +1,147 @@
-.Adminss{
-    background-color: aquamarine;
-}
+/* MainAdmin.css */
+
+/* ตั้งค่าพื้นฐานสำหรับหน้า */
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #f4f4f9;
+    margin: 0;
+    padding: 0;
+  }
+  
+  .Adminss {
+    text-align: center;
+    padding: 20px;
+  }
+  
+  /* ปุ่มทั่วไป */
+  button {
+    padding: 10px 20px;
+    font-size: 16px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  button.btn-primary {
+    background-color: #007bff;
+    color: white;
+    transition: background-color 0.3s;
+  }
+  
+  button.btn-primary:hover {
+    background-color: #0056b3;
+  }
+  
+  button.btn-success {
+    background-color: #28a745;
+    color: white;
+    transition: background-color 0.3s;
+  }
+  
+  button.btn-success:hover {
+    background-color: #218838;
+  }
+  
+  button.btn-danger {
+    background-color: #dc3545;
+    color: white;
+    transition: background-color 0.3s;
+  }
+  
+  button.btn-danger:hover {
+    background-color: #c82333;
+  }
+  
+  /* Modal */
+  .modal {
+    display: block;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+  }
+  
+  .modal-content {
+    background-color: #ffffff;
+    margin: 10% auto;
+    padding: 20px 30px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    width: 50%;
+    text-align: left;
+    position: relative;
+  }
+  
+  .close {
+    color: #aaa;
+    font-size: 28px;
+    font-weight: bold;
+    position: absolute;
+    top: 10px;
+    right: 20px;
+    cursor: pointer;
+  }
+  
+  .close:hover,
+  .close:focus {
+    color: #000;
+  }
+  
+  /* Form Styling */
+  form {
+    margin-top: 20px;
+  }
+  
+  form label {
+    font-weight: bold;
+    margin-bottom: 5px;
+  }
+  
+  form .form-control {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 14px;
+  }
+  
+  form .form-control:focus {
+    outline: none;
+    border-color: #007bff;
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+  }
+  
+  form .btn {
+    width: 100%;
+    padding: 10px;
+  }
+  
+  /* Equipment List */
+  .equipment-list {
+    margin-top: 20px;
+  }
+  
+  .equipment {
+    background-color: #000000;
+    margin: 15px auto;
+    padding: 15px;
+    border-radius: 10px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    width: 80%;
+    text-align: left;
+    
+  }
+  
+  .equipment .card-body p {
+    margin: 0;
+    font-size: 16px;
+  }
+  
+  .equipment .card-body {
+    color: #333;
+  }
+  

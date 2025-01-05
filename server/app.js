@@ -153,9 +153,6 @@ app.post('/signup', async (req, res) => {
 });
 
 
-
-
-
 // แสดงรายการอุปกรณ์
 app.get("/admin", (req, res) => {
   db.query("SELECT * FROM equipment", (err, result) => {
@@ -170,34 +167,31 @@ app.get("/admin", (req, res) => {
 
 // ตั้งค่าการเก็บไฟล์
 const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, "uploads/"); // เก็บไฟล์ในโฟลเดอร์ uploads
+  destination: (req, file, cb) => {
+    cb(null, 'uploads'); // โฟลเดอร์ที่เก็บไฟล์
   },
-  filename: function (req, file, cb) {
-    cb(null, Date.now() + path.extname(file.originalname)); // ตั้งชื่อไฟล์เป็น timestamp
+  filename: (req, file, cb) => {
+    const uniqueName = `${Date.now()}-${file.originalname}`;
+    cb(null, uniqueName);
   },
 });
 
-const upload = multer({ storage: storage });
+const upload = multer({ storage });
 
-app.post("/create", upload.single("image"), (req, res) => {
-  const name = req.body.name;
-  const description = req.body.description;
-  const category = req.body.category;
-  const image = req.file ? req.file.filename : null; // เก็บชื่อไฟล์ของภาพ
+// API สำหรับการเพิ่มอุปกรณ์
+app.post('/create', upload.single('image'), (req, res) => {
+  const { name, description, category } = req.body;
+  const image = req.file ? req.file.filename : null;
 
-  // บันทึกข้อมูลอุปกรณ์ในฐานข้อมูล
-  db.query(
-    "INSERT INTO equipment (name, description, category, image) VALUES(?, ?, ?, ?)",
-    [name, description, category, image],
-    (err, result) => {
-      if (err) {
-        console.log(err);
-        return res.status(500).json({ message: "Error saving equipment" });
-      }
-      res.status(200).json({ message: "Equipment added successfully" });
+  const sql = 'INSERT INTO equipment (name, description, category, image) VALUES (?, ?, ?, ?)';
+  db.query(sql, [name, description, category, image], (err, result) => {
+    if (err) {
+      console.error(err);
+      res.status(500).send('Error inserting equipment');
+    } else {
+      res.status(200).send('Equipment added successfully');
     }
-  );
+  });
 });
 
 
