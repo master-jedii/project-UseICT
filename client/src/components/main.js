@@ -31,7 +31,7 @@ const Main = () => {
           setError('User data not found');
         }
       } catch (error) {
-        console.error('Error fetching main data:', error);
+        // console.error('Error fetching main data:', error);
         setError(error.response?.data?.message || error.message || 'Error fetching main data');
       } finally {
         setLoading(false);
