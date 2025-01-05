@@ -11,6 +11,8 @@ import Footer from './components/Footer';
 import Main from './components/main';
 import Admin from './Admin/Admin.js';
 
+
+
 const MainLayout = ({ children }) => (
   <>
     <Navbar />
