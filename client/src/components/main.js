@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../service/axios';
 import NavbarMain from './NavbarMain'; // นำเข้า NavbarMain
+import DisplayEquipment from './DisplayEquipment';
 
 const Main = () => {
   const [data, setData] = useState(null);
@@ -64,6 +65,7 @@ const Main = () => {
       ) : (
         <div>No user data available</div> // ถ้าไม่มีข้อมูลผู้ใช้แสดงข้อความนี้
       )}
+      <DisplayEquipment />
     </div>
   );
 };
