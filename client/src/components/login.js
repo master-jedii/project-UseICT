@@ -26,7 +26,7 @@ const Login = () => {
       // ตรวจสอบว่า login สำเร็จ
       if (response.status === 200) {
         // เก็บ token และข้อมูลผู้ใช้ลงใน localStorage และ sessionStorage
-        localStorage.setItem('authToken', response.data.token);
+        localStorage.setItem('token', response.data.token);
         sessionStorage.setItem('authToken', response.data.token);
 
         // เรียกใช้งาน Swal เพื่อแสดงผลการ login

@@ -11,7 +11,7 @@ const Main = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const token = localStorage.getItem('authToken'); // ตรวจสอบ token ที่เก็บใน localStorage
+    const token = localStorage.getItem('token'); // ตรวจสอบ token ที่เก็บใน localStorage
     if (!token) {
       navigate('/login'); // ถ้าไม่มี token ให้พาผู้ใช้ไปหน้า login
       return;
@@ -43,7 +43,7 @@ const Main = () => {
 
   const handleLogout = () => {
     console.log("Logging out...");
-    localStorage.removeItem('authToken'); // ลบ token ออกจาก localStorage
+    localStorage.removeItem('token'); // ลบ token ออกจาก localStorage
     sessionStorage.removeItem('authToken'); // ลบ token ออกจาก sessionStorage
     console.log("localStorage and sessionStorage cleaned");
 
