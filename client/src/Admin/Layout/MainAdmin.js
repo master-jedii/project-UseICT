@@ -110,6 +110,7 @@ const MainAdmin = () => {
                     เลือกหมวดหมู่
                   </option>
                   <option value="กล้อง">กล้อง</option>
+                  <option value="เลนส์">เลนส์</option>
                   <option value="ขาตั้งกล้อง">ขาตั้งกล้อง</option>
                   <option value="ไฟสำหรับถ่ายทำ">ไฟสำหรับถ่ายทำ</option>
                   <option value="อุปกรณ์ด้านเสียง">อุปกรณ์ด้านเสียง</option>

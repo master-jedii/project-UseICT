@@ -57,7 +57,7 @@ const Main = () => {
   if (error) return <div>{error}</div>;
 
   return (
-    <div>
+    <div style={{ backgroundColor: "#E3E6E6" }}>
       {/* ตรวจสอบว่า data.user มีข้อมูลหรือไม่ */}
       {data && data.user ? (
         <>
@@ -70,6 +70,8 @@ const Main = () => {
 
 
       <DisplayEquipment />
+      
+      
 
 
     </div>
