@@ -2,3 +2,6 @@
 body {
     font-family: 'Prompt', sans-serif;
 }
+html {
+    scroll-behavior: smooth;
+}
