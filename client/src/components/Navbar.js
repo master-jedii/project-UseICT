@@ -57,6 +57,7 @@ const Navbar = () => {
     console.log(userFirstName); 
 
     return (
+        
         <nav className="navbar navbar-light bg-white px-5">
             <div className="d-flex align-items-center">
                 <a className="navbar-brand" href="/">
@@ -69,10 +70,10 @@ const Navbar = () => {
                         <a className="nav-link" href="#" style={{ fontSize: '20px' }}>หมวดหมู่อุปกรณ์</a>
                     </li>
                     <li className="nav-item mx-4">
-                        <a className="nav-link" href="#" style={{ fontSize: '20px' }}>วิธีใช้งานอุปกรณ์</a>
+                        <a className="nav-link" href="#" style={{ fontSize: '20px' }}>วิธียืมอุปกรณ์</a>
                     </li>
                     <li className="nav-item mx-4">
-                        <a className="nav-link" href="#" style={{ fontSize: '20px' }}>ศึกษาเพิ่มเติม</a>
+                        <a className="nav-link" href="#" style={{ fontSize: '20px' }}>คำถามที่พบบ่อย</a>
                     </li>
                     <li className="nav-item mx-4">
                         <a className="nav-link" href="#" style={{ fontSize: '20px' }}>ติดต่อเรา</a>
