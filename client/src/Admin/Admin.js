@@ -1,14 +1,13 @@
 import React from 'react';
-import MainAdmin from './Layout/MainAdmin';
 import FormAddEquiment from './Layout/FormAddEquiment';
+import MainAdmin from './Layout/MainAdmin';
 
 
 
 const Admin = () => {
   return (
 
-   
-    <FormAddEquiment/>
+    <MainAdmin/>
   );
 };
 
