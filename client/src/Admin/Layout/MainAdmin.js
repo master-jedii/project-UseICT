@@ -7,18 +7,18 @@ import Axios from 'axios';
 const MainAdmin = () => {
   const [showModal, setShowModal] = useState(false);
   const [equipments, setEquipments] = useState([
-    { name: '', description: '', category: '', image: null },
+    { name: '', description: '', category: '', image: null, imagePreview: null },
   ]);
 
   // เปิด/ปิด Modal
   const toggleModal = () => {
     setShowModal(!showModal);
-    setEquipments([{ name: '', description: '', category: '', image: null }]);
+    setEquipments([{ name: '', description: '', category: '', image: null, imagePreview: null }]);
   };
 
   // ฟังก์ชันเพิ่มอุปกรณ์ในรายการ
   const addEquipmentField = () => {
-    setEquipments([...equipments, { name: '', description: '', category: '', image: null }]);
+    setEquipments([...equipments, { name: '', description: '', category: '', image: null, imagePreview: null }]);
   };
 
   // ฟังก์ชันลบอุปกรณ์จากรายการ
@@ -31,6 +31,14 @@ const MainAdmin = () => {
   const handleFieldChange = (index, field, value) => {
     const updatedEquipments = [...equipments];
     updatedEquipments[index][field] = value;
+    setEquipments(updatedEquipments);
+  };
+
+  // ฟังก์ชันสำหรับแสดงตัวอย่างรูปภาพ
+  const handleImageChange = (index, file) => {
+    const updatedEquipments = [...equipments];
+    updatedEquipments[index].image = file;
+    updatedEquipments[index].imagePreview = URL.createObjectURL(file); // แสดงตัวอย่างภาพ
     setEquipments(updatedEquipments);
   };
 
@@ -133,10 +141,15 @@ const MainAdmin = () => {
                     <label>เลือกไฟล์:</label>
                     <input
                       type="file"
-                      onChange={(e) => handleFieldChange(index, 'image', e.target.files[0])}
+                      onChange={(e) => handleImageChange(index, e.target.files[0])}
                       required
                     />
-                    <button type="button"className="btn-danger" onClick={() => removeEquipmentField(index)}>
+                    {equipment.imagePreview && (
+                      <div className="image-preview">
+                        <img src={equipment.imagePreview} alt="Preview" width="300" height="300" />
+                      </div>
+                    )}
+                    <button type="button" className="btn-danger" onClick={() => removeEquipmentField(index)}>
                       ลบ
                     </button>
                   </div>
