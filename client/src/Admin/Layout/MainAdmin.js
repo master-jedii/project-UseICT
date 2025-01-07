@@ -6,38 +6,54 @@ import Axios from 'axios';
 
 const MainAdmin = () => {
   const [showModal, setShowModal] = useState(false);
-  const [name, setName] = useState("");
-  const [description, setDescription] = useState("");
-  const [category, setCategory] = useState("");
-  const [image, setImage] = useState(null);
+  const [equipments, setEquipments] = useState([
+    { name: '', description: '', category: '', image: null },
+  ]);
 
   // เปิด/ปิด Modal
   const toggleModal = () => {
     setShowModal(!showModal);
-    // Reset ค่า input เมื่อปิด Modal
-    setName("");
-    setDescription("");
-    setCategory("");
-    setImage(null);
+    setEquipments([{ name: '', description: '', category: '', image: null }]);
   };
 
-  // ฟังก์ชันเพิ่มอุปกรณ์
-  const addEquipment = (e) => {
-    e.preventDefault();
-    const formData = new FormData();
-    formData.append("name", name);
-    formData.append("description", description);
-    formData.append("category", category);
-    formData.append("image", image);
+  // ฟังก์ชันเพิ่มอุปกรณ์ในรายการ
+  const addEquipmentField = () => {
+    setEquipments([...equipments, { name: '', description: '', category: '', image: null }]);
+  };
 
-    Axios.post("http://localhost:3333/create", formData)
+  // ฟังก์ชันลบอุปกรณ์จากรายการ
+  const removeEquipmentField = (index) => {
+    const updatedEquipments = equipments.filter((_, i) => i !== index);
+    setEquipments(updatedEquipments);
+  };
+
+  // ฟังก์ชันจัดการการเปลี่ยนแปลงของฟิลด์
+  const handleFieldChange = (index, field, value) => {
+    const updatedEquipments = [...equipments];
+    updatedEquipments[index][field] = value;
+    setEquipments(updatedEquipments);
+  };
+
+  // ฟังก์ชันส่งข้อมูลไปยังเซิร์ฟเวอร์
+  const submitEquipments = (e) => {
+    e.preventDefault();
+    const promises = equipments.map((equipment) => {
+      const formData = new FormData();
+      formData.append('name', equipment.name);
+      formData.append('description', equipment.description);
+      formData.append('category', equipment.category);
+      formData.append('image', equipment.image);
+      return Axios.post('http://localhost:3333/create', formData);
+    });
+
+    Promise.all(promises)
       .then(() => {
-        alert("เพิ่มอุปกรณ์เรียบร้อย!");
+        alert('เพิ่มอุปกรณ์ทั้งหมดเรียบร้อย!');
         toggleModal();
       })
       .catch((err) => {
         console.error(err);
-        alert("เกิดข้อผิดพลาดในการเพิ่มอุปกรณ์");
+        alert('เกิดข้อผิดพลาดในการเพิ่มอุปกรณ์');
       });
   };
 
@@ -79,53 +95,57 @@ const MainAdmin = () => {
               <span className="close" onClick={toggleModal}>
                 &times;
               </span>
-              <h2>เพิ่มอุปกรณ์</h2>
-              <form onSubmit={addEquipment}>
-                <label htmlFor="name">ชื่ออุปกรณ์:</label>
-                <input
-                  type="text"
-                  className="form-control"
-                  placeholder="Enter equipment name"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  required
-                />
-                <label htmlFor="description">รายละเอียด:</label>
-                <input
-                  type="text"
-                  className="form-control"
-                  placeholder="Enter equipment description"
-                  value={description}
-                  onChange={(e) => setDescription(e.target.value)}
-                  required
-                />
-                <label htmlFor="category">หมวดหมู่:</label>
-                <select
-                  className="form-control"
-                  value={category}
-                  onChange={(e) => setCategory(e.target.value)}
-                  required
-                >
-                  <option value="" disabled>
-                    เลือกหมวดหมู่
-                  </option>
-                  <option value="กล้อง">กล้อง</option>
-                  <option value="เลนส์">เลนส์</option>
-                  <option value="ขาตั้งกล้อง">ขาตั้งกล้อง</option>
-                  <option value="ไฟสำหรับถ่ายทำ">ไฟสำหรับถ่ายทำ</option>
-                  <option value="อุปกรณ์ด้านเสียง">อุปกรณ์ด้านเสียง</option>
-                  <option value="อุปกรณ์จัดแสง">อุปกรณ์จัดแสง</option>
-                  <option value="อุปกรณ์อื่นๆ">อุปกรณ์อื่นๆ</option>
-                </select>
-                <label htmlFor="file">เลือกไฟล์:</label>
-                <input
-                  type="file"
-                  className="form-control"
-                  onChange={(e) => setImage(e.target.files[0])}
-                  required
-                />
+              <h2 className='text-headadd'>เพิ่มอุปกรณ์</h2>
+              <form onSubmit={submitEquipments}>
+                {equipments.map((equipment, index) => (
+                  <div key={index} className="equipment-group">
+                    <label>ชื่ออุปกรณ์:</label>
+                    <input
+                      type="text"
+                      value={equipment.name}
+                      onChange={(e) => handleFieldChange(index, 'name', e.target.value)}
+                      required
+                    />
+                    <label>รายละเอียด:</label>
+                    <input
+                      type="text"
+                      value={equipment.description}
+                      onChange={(e) => handleFieldChange(index, 'description', e.target.value)}
+                      required
+                    />
+                    <label>หมวดหมู่:</label>
+                    <select
+                      value={equipment.category}
+                      onChange={(e) => handleFieldChange(index, 'category', e.target.value)}
+                      required
+                    >
+                      <option value="" disabled>
+                        เลือกหมวดหมู่
+                      </option>
+                      <option value="กล้อง">กล้อง</option>
+                      <option value="เลนส์">เลนส์</option>
+                      <option value="ขาตั้งกล้อง">ขาตั้งกล้อง</option>
+                      <option value="ไฟสำหรับถ่ายทำ">ไฟสำหรับถ่ายทำ</option>
+                      <option value="อุปกรณ์ด้านเสียง">อุปกรณ์ด้านเสียง</option>
+                      <option value="อุปกรณ์จัดแสง">อุปกรณ์จัดแสง</option>
+                      <option value="อุปกรณ์อื่นๆ">อุปกรณ์อื่นๆ</option>
+                    </select>
+                    <label>เลือกไฟล์:</label>
+                    <input
+                      type="file"
+                      onChange={(e) => handleFieldChange(index, 'image', e.target.files[0])}
+                      required
+                    />
+                    <button type="button"className="btn-danger" onClick={() => removeEquipmentField(index)}>
+                      ลบ
+                    </button>
+                  </div>
+                ))}
+                <button type="button" onClick={addEquipmentField}>
+                  เพิ่มรายการใหม่
+                </button>
                 <button type="submit" className="btn btn-success">
-                  เพิ่มอุปกรณ์
+                  เพิ่มอุปกรณ์ทั้งหมด
                 </button>
               </form>
             </div>

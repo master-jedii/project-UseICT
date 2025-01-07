@@ -180,15 +180,15 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage: storage });
 
-app.post("/create", upload.single("image"), (req, res) => {
+// กรณีอัปโหลดหลายฟิลด์
+app.post("/create", upload.fields([{ name: "image", maxCount: 1 }]), (req, res) => {
   const name = req.body.name;
   const description = req.body.description;
   const category = req.body.category;
-  const image = req.file ? req.file.filename : null; // เก็บชื่อไฟล์ของภาพ
+  const image = req.files?.image ? req.files.image[0].filename : null;
 
-  // บันทึกข้อมูลอุปกรณ์ในฐานข้อมูล
   db.query(
-    "INSERT INTO equipment (name, description, category, image) VALUES(?, ?, ?, ?)",
+    "INSERT INTO equipment (name, description, category, image) VALUES (?, ?, ?, ?)",
     [name, description, category, image],
     (err, result) => {
       if (err) {
