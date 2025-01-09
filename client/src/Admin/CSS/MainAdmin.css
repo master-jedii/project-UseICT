@@ -166,3 +166,7 @@ form .btn {
   position: relative;
   right: 50px;
 }
+
+.btn-primary {
+  font-size: 20px;
+}

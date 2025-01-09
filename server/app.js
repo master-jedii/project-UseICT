@@ -154,8 +154,6 @@ app.post('/signup', async (req, res) => {
 
 
 
-
-
 // แสดงรายการอุปกรณ์
 app.get("/admin", (req, res) => {
   db.query("SELECT * FROM equipment", (err, result) => {
@@ -200,6 +198,45 @@ app.post("/create", upload.fields([{ name: "image", maxCount: 1 }]), (req, res) 
   );
 });
 
+// แสดงรายการอุปกรณ์พร้อมกรองหมวดหมู่
+app.get("/showequipment", (req, res) => {
+  const { category } = req.query;  // รับค่าหมวดหมู่จาก query string
+
+  // ถ้ามีหมวดหมู่ให้กรองตามหมวดหมู่
+  let query = "SELECT * FROM equipment";
+  if (category && category !== 'ทั้งหมด') {
+    query += " WHERE category = ?";
+  }
+
+  db.query(query, [category], (err, result) => {
+    if (err) {
+      console.log("เกิดข้อผิดพลาดอะไรบางอย่าง", err);
+      return res.status(500).json({ message: "Error fetching equipment" });
+    } else {
+      res.send(result); // ส่งข้อมูลที่กรองแล้ว
+    }
+  });
+});
+
+app.delete('/api/equipments/:id', (req, res) => {
+  const equipmentId = req.params.id;
+
+  // สร้าง query SQL สำหรับลบอุปกรณ์ที่มี equipment_id
+  const query = 'DELETE FROM equipment WHERE equipment_id = ?';
+
+  db.query(query, [equipmentId], (err, result) => {
+    if (err) {
+      console.error('Error deleting equipment:', err);
+      return res.status(500).json({ message: 'Error deleting equipment' });
+    }
+
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ message: 'Equipment not found' });
+    }
+
+    res.status(200).json({ message: 'Equipment deleted successfully' });
+  });
+});
 
 
 

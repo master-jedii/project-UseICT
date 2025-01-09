@@ -1,0 +1,102 @@
+/* Styles for the equipment list page */
+.equipment-containerAdmin {
+    width: 100%;
+    margin: 20px auto;
+    padding: 20px;
+    border-radius: 8px;
+    background-color: #f9f9f9;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  .equipment-container h1 {
+    text-align: center;
+    font-size: 2rem;
+    margin-bottom: 20px;
+  }
+  
+  .category-buttons {
+    text-align: left;
+    margin-top: 20px;
+    margin-bottom: 20px;
+  }
+  
+  .category-btn {
+    padding: 10px 20px;
+    margin: 0 10px;
+    font-size: 1rem;
+    background-color: #2196F3;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  .category-btn:hover {
+    background-color: #1976D2;
+  }
+  
+  .equipment-listAdmin {
+    list-style-type: none;
+    padding: 0;
+  }
+  
+  .equipment-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px;
+    margin-bottom: 10px;
+    background-color: #ffffff;
+    border-radius: 6px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  
+  .equipment-item h2 {
+    margin: 0;
+    font-size: 1.5rem;
+    color: #333;
+  }
+  
+  .equipment-item p {
+    margin: 5px 0;
+    color: #777;
+    font-size: 1rem;
+  }
+  
+  .equipment-actions {
+    display: flex;
+    gap: 10px;
+  }
+  
+  .update-btn, .delete-btn {
+    padding: 8px 16px;
+    font-size: 1rem;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  
+  .update-btn {
+    background-color: #4CAF50;
+    color: white;
+  }
+  
+  .update-btn:hover {
+    background-color: #45a049;
+  }
+  
+  .delete-btn {
+    background-color: #f44336;
+    color: white;
+  }
+  
+  .delete-btn:hover {
+    background-color: #e53935;
+  }
+  
+  .Notfound-eq{
+    color: black;
+    text-align: center;
+    background-color: #e4e4e4;
+    border-radius: 5px;
+  }

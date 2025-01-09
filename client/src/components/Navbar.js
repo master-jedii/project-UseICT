@@ -50,21 +50,30 @@ const Navbar = () => {
 
     const scrollToSection = (id) => {
         if (location.pathname === '/') {
+          const section = document.getElementById(id);
+          if (section) {
+            const topPosition = section.offsetTop;
+            window.scrollTo({
+              top: topPosition,
+              behavior: 'smooth',
+            });
+          }
+        } else {
+          navigate('/'); // กลับไปหน้าแรก
+          setTimeout(() => {
             const section = document.getElementById(id);
             if (section) {
-                section.scrollIntoView({ behavior: 'smooth' });
+              const topPosition = section.offsetTop;
+              window.scrollTo({
+                top: topPosition,
+                behavior: 'smooth',
+              });
             }
-        } else {
-            navigate('/'); // กลับไปหน้าแรก
-            setTimeout(() => {
-                const section = document.getElementById(id);
-                if (section) {
-                    section.scrollIntoView({ behavior: 'smooth' });
-                }
-            }, 500); // รอให้หน้าแรกโหลดก่อนเลื่อน
+          }, 500); // รอให้หน้าโหลดก่อน
         }
-    };
-
+      };
+      
+      
     return (
         <nav className="navbar navbar-light bg-white px-5">
             <div className="d-flex align-items-center">

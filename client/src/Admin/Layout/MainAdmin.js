@@ -3,6 +3,9 @@ import '../CSS/MainAdmin.css';
 import myLogo from '../../assets/LOGO.png';
 import '../CSS/NavbarAdmin.css';
 import Axios from 'axios';
+import ShowEquipment from './ShowEquipment';
+
+
 
 const MainAdmin = () => {
   const [showModal, setShowModal] = useState(false);
@@ -73,6 +76,10 @@ const MainAdmin = () => {
           <h1 className="title">SU Kits</h1>
         </div>
         <ul className="menu">
+        <li className="menu-item ">
+            <i className="fa-solid fa-chart-simple"></i> Dashboard
+            
+          </li>
           <li className="menu-item active">
             <i className="fas fa-tools"></i> รายการอุปกรณ์
           </li>
@@ -90,11 +97,14 @@ const MainAdmin = () => {
             <h1>Dashboard</h1>
           </div>
         </header>
+        
 
         {/* ปุ่มสำหรับเปิด Modal */}
-        <button className="btn btn-primary" onClick={toggleModal}>
+        <button className="btn btn-primary " onClick={toggleModal}>
           เพิ่มอุปกรณ์
         </button>
+
+        <ShowEquipment/>
 
         {/* Modal สำหรับกรอกข้อมูล */}
         {showModal && (

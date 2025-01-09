@@ -17,7 +17,7 @@ const DisplayEquipment = () => {
 
   // ฟังก์ชันดึงข้อมูลอุปกรณ์
   const getEquipment = () => {
-    Axios.get("http://localhost:3333/admin")
+    Axios.get("http://localhost:3333/showequipment")
       .then((response) => {
         setEquipment(response.data);
       })
@@ -117,7 +117,6 @@ const DisplayEquipment = () => {
             </div>
             <p className="category-text">อุปกรณ์อื่นๆ</p>
           </div>
-
           
         </div>
 
