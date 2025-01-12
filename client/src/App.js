@@ -10,6 +10,7 @@ import About from './components/About';
 import Footer from './components/Footer';
 import Main from './components/main';
 import Admin from './Admin/Admin.js';
+import Showborrow from './interface/Showborrow.js';
 
 const MainLayout = ({ children }) => (
     <>
@@ -48,6 +49,7 @@ const App = () => {
                 <Route path="/signup" element={<Signup />} />
                 <Route path="/main" element={<Main />} />
                 <Route path="/admin" element={<Admin />} />
+                <Route path="/showborrow" element={<Showborrow />} />
             </Routes>
         </Router>
     );
