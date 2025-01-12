@@ -88,23 +88,45 @@ body {
     object-fit: cover;
   }
   
-  /* ส่วน body ของ card */
+  .card {
+    width: 290px;
+    margin: 10px;
+    display: flex;
+    flex-direction: column; /* จัด layout ในแนวตั้ง */
+    justify-content: space-between; /* กระจายเนื้อหาระหว่างพื้นที่ */
+    height: 400px; /* กำหนดความสูงคงที่ให้การ์ด */
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+  
+  .card-img-top {
+    height: 150px; /* ความสูงคงที่สำหรับรูปภาพ */
+    object-fit: cover; /* ทำให้รูปภาพอยู่ในขอบเขต */
+  }
+  
   .card-body {
     padding: 15px;
-    text-align: left;
+    display: flex;
+    flex-direction: column; /* จัด layout แนวตั้งใน body */
+    justify-content: space-between; /* จัดระยะห่างระหว่างเนื้อหา */
+    align-items: flex-start; /* จัดข้อความและปุ่มให้อยู่ด้านซ้าย */
   }
   
   .card-title {
-    font-size: 1.2rem;
+    font-size: 1.1rem;
     color: #343a40;
     margin-bottom: 10px;
+    text-align: left; /* จัดข้อความชิดซ้าย */
   }
   
   .card-text {
     font-size: 0.8rem;
     color: #6c757d;
+    margin-bottom: 10px;
+    text-align: left; /* จัดข้อความชิดซ้าย */
   }
-  
   /* ปุ่มใน card */
   .card .btn-primary {
     background-color: #009498;

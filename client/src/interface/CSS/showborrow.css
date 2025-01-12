@@ -1,13 +1,15 @@
 
   .open-modal-btn {
-    padding: 10px 20px;
-    font-size: 16px;
-    border: none;
-    border-radius: 4px;
     background-color: #009498;
-    color: white;
+    border: none;
+    padding: 8px 30px;
+    font-family: 'Prompt', sans-serif;
+    font-size: 0.9rem;
+    border-radius: 5px;
     cursor: pointer;
-    transition: background-color 0.3s ease;
+    transition: background-color 0.2s ease;
+    
+    
   }
   
   .open-modal-btn:hover {

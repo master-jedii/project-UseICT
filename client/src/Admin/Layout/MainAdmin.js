@@ -9,6 +9,7 @@ import NavbarAdmin from './NavbarAdmin';
 
 
 
+
 const MainAdmin = () => {
   const [showModal, setShowModal] = useState(false);
   const [equipments, setEquipments] = useState([
@@ -73,11 +74,12 @@ const MainAdmin = () => {
   return (
     <div className="admin-dashboard">
       <NavbarAdmin/>
+      
       <div className="main-content">
 
         <header className="admin-header">
           <div className="admin-header-info">
-            <h1>Dashboard</h1>
+            <h1>รายการอุปกรณ์</h1>
           </div>
         </header>
         
