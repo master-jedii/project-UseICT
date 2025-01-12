@@ -53,34 +53,33 @@ const AllEquipment = () => {
   };
 
   return (
-    <>
+    <div className="all-equipment">
       <NavbarMain userData={user} onLogout={handleLogout} />
-      <div className="all-equipment">
-        <h1 style={{ textAlign: "center", margin: "20px 0" }}>หมวดหมู่: {category}</h1>
-        <div className="equipment-list">
-          {equipment.length > 0 ? (
-            equipment.map((item, idx) => (
-              <div className="equipment-item" key={idx}>
-                <div className="equipment-image">
-                  <img
-                    src={`http://localhost:3333/uploads/${item.image}`}
-                    alt={item.name}
-                  />
-                </div>
-                <div className="equipment-details">
-                  <h4>{item.name}</h4>
-                  <p>{item.description}</p>
-                  <span>จำนวน: {item.quantity}</span>
-                  <a href="#" className="btn custom-borrow-btn">ยืมอุปกรณ์</a>
-                </div>
+      <h1 style={{ textAlign: "center", margin: "20px 0" }}>หมวดหมู่: {category}</h1>
+
+      <div className="equipment-list">
+        {equipment.length > 0 ? (
+          equipment.map((item, idx) => (
+            <div className="equipment-item" key={idx}>
+              <div className="equipment-image">
+                <img
+                  src={`http://localhost:3333/uploads/${item.image}`}
+                  alt={item.name}
+                />
               </div>
-            ))
-          ) : (
-            <p style={{ textAlign: "center" }}>ไม่มีข้อมูลในหมวดหมู่ "{category}"</p>
-          )}
-        </div>
+              <div className="equipment-details">
+                <h4>{item.name}</h4>
+                <p>{item.description}</p>
+                <span>จำนวน: {item.quantity}</span>
+                <a href="#" className="btn custom-borrow-btn">ยืมอุปกรณ์</a>
+              </div>
+            </div>
+          ))
+        ) : (
+          <p style={{ textAlign: "center" }}>ไม่มีข้อมูลในหมวดหมู่ "{category}"</p>
+        )}
       </div>
-    </>
+    </div>
   );
 };
 
