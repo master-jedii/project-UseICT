@@ -1,4 +1,4 @@
-.modal {
+.new-modal {
     display: flex;
     position: fixed;
     top: 0;
@@ -9,54 +9,69 @@
     justify-content: center;
     align-items: center;
     z-index: 9999;
+    animation: fadeIn 0.3s ease-out;
 }
-  
-.modal-header {
+
+.new-modal-content {
+    width: 1056px;
+    height: 650px;
+    background-color: white;
+    border-radius: 10px;
+    padding: 20px;
+    position: relative;
+    animation: modalScaleIn 0.3s ease-out forwards;
+}
+
+.new-modal-header {
     background-color: #009498;
     color: white;
-    width: 103.2%;
+    width: 104%;
     display: flex;
     justify-content: space-between;
     align-items: center;
     font-size: 20px;
+    padding: 10px;
     position: relative;
     bottom: 20px;
     right: 20px;
+    border-radius: 5px 5px 0 0;
 }
 
-.modal-header h2 {
+.new-modal-header h2 {
     margin: 0;
     color: white;
-    margin-right: 30px; /* Distance between title and close button */
 }
 
-.modal-body {
+.new-modal-body {
     padding: 20px;
+    height: calc(100% - 60px);
+    overflow-y: auto;
 }
-  
-.form-container {
+
+.new-form-container {
     width: 100%;
 }
-  
-.form-grid {
+
+.new-form-grid {
     display: grid;
     grid-template-columns: 0.5fr 0.5fr;
     gap: 15px;
     margin-bottom: 15px;
 }
-  
-.form-row.note {
+
+.new-form-row.note {
     font-size: 12px;
     color: red;
-    text-align: center;
+    text-align: left;
 }
-  
-.form-buttons {
+
+.new-form-buttons {
     display: flex;
-    justify-content: space-between;
+    margin: 50px 5px 0 5px;
+    gap: 30px;
 }
-  
-.submit-btn {
+
+.new-submit-btn {
     background-color: #009498;
     border: none;
     padding: 8px 30px;
@@ -66,8 +81,8 @@
     cursor: pointer;
     transition: background-color 0.2s ease;
 }
-  
-.cancel-btn {
+
+.new-cancel-btn {
     background-color: #ccc;
     color: white;
     padding: 10px 20px;
@@ -76,12 +91,12 @@
     border: none;
 }
 
-.form-grid > div {
+.new-form-grid > div {
     display: flex;
     flex-direction: column;
 }
 
-.form-grid label {
+.new-form-grid label {
     margin-bottom: 5px;
 }
 
@@ -92,19 +107,43 @@ input, select {
     border: 1px solid #ccc;
 }
 
-.form-grid #user-id,
-.form-grid #subject,
-.form-grid #equipment,
-.form-grid #location,
-.form-grid #borrow-date,
-.form-grid #return-date {
+.new-form-grid #user-id,
+.new-form-grid #subject,
+.new-form-grid #equipment,
+.new-form-grid #location,
+.new-form-grid #borrow-date,
+.new-form-grid #return-date {
     width: 100%;
 }
 
-.form-grid .form-grid {
-    grid-template-columns: 1fr 1fr; /* Ensures the inputs are evenly sized */
+.new-form-grid .new-form-grid {
+    grid-template-columns: 1fr 1fr;
 }
 
-.form-grid .form-row {
-    grid-template-columns: 1fr 1fr; /* Align all form fields to the same width */
+.new-form-grid .new-form-row {
+    grid-template-columns: 1fr 1fr;
+}
+
+label{
+    text-align: left;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+
+
+.new-submit-btn:hover {
+    background-color: #007f7f;
+    transform: scale(1.05);
+}
+.new-cancel-btn:hover {
+    background-color: #b3b3b3;
+    transform: scale(1.05);
 }

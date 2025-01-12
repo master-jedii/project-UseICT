@@ -76,10 +76,8 @@ const Modal = ({ isOpen, onClose, borrowDate, returnDate, onBorrowDateChange, mi
       onClose();
     } catch (error) {
       if (error.response) {
-        // เมื่อมี response error จาก server
         alert(error.response.data.message || "เกิดข้อผิดพลาดในการบันทึกข้อมูล");
       } else {
-        // เมื่อไม่มีการตอบกลับ (เช่น network error)
         alert("เกิดข้อผิดพลาดในการเชื่อมต่อกับเซิร์ฟเวอร์");
       }
       console.error("Error:", error);
@@ -89,14 +87,14 @@ const Modal = ({ isOpen, onClose, borrowDate, returnDate, onBorrowDateChange, mi
   if (!isOpen) return null;
 
   return (
-    <div className="modal">
-      <div className="modal-content">
-        <div className="modal-header">
+    <div className="new-modal">
+      <div className="new-modal-content">
+        <div className="new-modal-header">
           <h2>คำร้องขอยืมอุปกรณ์</h2>
         </div>
-        <div className="modal-body">
-          <form onSubmit={handleSubmit} className="form-container">
-            <div className="form-grid">
+        <div className="new-modal-body">
+          <form onSubmit={handleSubmit} className="new-form-container">
+            <div className="new-form-grid">
               <div>
                 <label htmlFor="userId">รหัสผู้ยืม</label>
                 <input
@@ -121,7 +119,7 @@ const Modal = ({ isOpen, onClose, borrowDate, returnDate, onBorrowDateChange, mi
                 </select>
               </div>
             </div>
-            <div className="form-grid">
+            <div className="new-form-grid">
               <div>
                 <label htmlFor="equipment">วัสดุประสงค์ในการยืมอุปกรณ์</label>
                 <input
@@ -143,7 +141,7 @@ const Modal = ({ isOpen, onClose, borrowDate, returnDate, onBorrowDateChange, mi
                 />
               </div>
             </div>
-            <div className="form-grid">
+            <div className="new-form-grid">
               <div>
                 <label htmlFor="borrow-date">วันที่ยืม</label>
                 <input
@@ -168,14 +166,14 @@ const Modal = ({ isOpen, onClose, borrowDate, returnDate, onBorrowDateChange, mi
                 />
               </div>
             </div>
-            <div className="form-row note">
+            <div className="new-form-row note">
               <span>*สามารถยืมอุปกรณ์ได้สูงสุด 7 วัน</span>
             </div>
-            <div className="form-buttons">
-              <button type="submit" className="submit-btn">
+            <div className="new-form-buttons">
+              <button type="submit" className="new-submit-btn">
                 ยืนยันอุปกรณ์
               </button>
-              <button type="button" className="cancel-btn" onClick={onClose}>
+              <button type="button" className="new-cancel btn-danger" onClick={onClose}>
                 ยกเลิก
               </button>
             </div>
