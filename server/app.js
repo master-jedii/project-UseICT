@@ -9,7 +9,7 @@ const multer = require('multer');
 app.use(cors());
 // CORS
 app.use(cors({
-  origin: 'http://localhost:3000', // ให้ frontend ที่รันที่ localhost:3000 สามารถเข้าถึงได้
+  origin: 'http://localhost:3001', // ให้ frontend ที่รันที่ localhost:3000 สามารถเข้าถึงได้
   methods: 'GET,POST',
 }));
 
@@ -96,6 +96,8 @@ app.post('/login', async (req, res) => {
     res.status(500).json({ error: 'Internal server error' });
   }
 });
+
+
 
 
 app.post('/signup', async (req, res) => {
@@ -223,6 +225,35 @@ app.get("/showequipment", (req, res) => {
     }
   });
 });
+
+
+
+// fetch ในหน้าแต่ละอุปกรณ์
+app.get("/showcategory", (req, res) => {
+  const { category } = req.query; // รับค่าหมวดหมู่จาก query string
+
+  // สร้าง query พื้นฐาน
+  let query = "SELECT * FROM equipment";
+  const queryParams = [];
+
+  // ถ้ามีหมวดหมู่ที่ระบุ กรองตามหมวดหมู่
+  if (category && category !== "ทั้งหมด") {
+    query += " WHERE category = ?";
+    queryParams.push(category);
+  }
+
+  // รัน query
+  db.query(query, queryParams, (err, result) => {
+    if (err) {
+      console.error("เกิดข้อผิดพลาด:", err);
+      return res.status(500).json({ message: "Error fetching equipment" });
+    }
+
+    // ส่งข้อมูลกลับ client
+    res.json(result);
+  });
+});
+
 
 app.delete('/api/equipments/:id', (req, res) => {
   const equipmentId = req.params.id;

@@ -1,0 +1,65 @@
+.all-equipment {
+    margin: 0 auto;
+    padding: 20px;
+    max-width: 1200px;
+  }
+  
+  .equipment-list {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+  
+  .equipment-item {
+    display: flex;
+    align-items: flex-start;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  }
+  
+  .equipment-image img {
+    width: 150px;
+    height: 150px;
+    object-fit: cover;
+    border-right: 1px solid #ddd;
+  }
+  
+  .equipment-details {
+    flex: 1;
+    padding: 10px 15px;
+  }
+  
+  .equipment-details h4 {
+    margin: 0 0 10px;
+    font-size: 18px;
+    color: #333;
+  }
+  
+  .equipment-details p {
+    margin: 0 0 10px;
+    font-size: 14px;
+    color: #555;
+  }
+  
+  .equipment-details span {
+    display: block;
+    margin-bottom: 10px;
+    font-weight: bold;
+    color: #555;
+  }
+  
+  .custom-borrow-btn {
+    display: inline-block;
+    padding: 8px 15px;
+    background-color: #007bff;
+    color: #fff;
+    border-radius: 4px;
+    text-decoration: none;
+  }
+  
+  .custom-borrow-btn:hover {
+    background-color: #0056b3;
+  }
+  
