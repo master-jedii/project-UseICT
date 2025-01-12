@@ -101,6 +101,7 @@ const MainAdmin = () => {
 
         {/* ปุ่มสำหรับเปิด Modal */}
         <button className="btn btn-primary " onClick={toggleModal}>
+        <i className="fas fa-tools" style={{marginRight:'10px'}}></i> 
           เพิ่มอุปกรณ์
         </button>
 
@@ -148,7 +149,7 @@ const MainAdmin = () => {
                       <option value="อุปกรณ์จัดแสง">อุปกรณ์จัดแสง</option>
                       <option value="อุปกรณ์อื่นๆ">อุปกรณ์อื่นๆ</option>
                     </select>
-                    <label>เลือกไฟล์:</label>
+                    <label>เลือกรูปภาพ:</label>
                     <input
                       type="file"
                       onChange={(e) => handleImageChange(index, e.target.files[0])}
@@ -156,7 +157,7 @@ const MainAdmin = () => {
                     />
                     {equipment.imagePreview && (
                       <div className="image-preview">
-                        <img src={equipment.imagePreview} alt="Preview" width="300" height="300" />
+                        <img src={equipment.imagePreview} alt="Preview" width="200" height="200" />
                       </div>
                     )}
                     <button type="button" className="btn-danger" onClick={() => removeEquipmentField(index)}>
