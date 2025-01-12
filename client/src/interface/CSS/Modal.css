@@ -26,14 +26,13 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    
+    font-size: 20px;
 }
 
 .modal-header h2 {
     margin: 0;
     color: white;
     margin-right: 30px; /* Distance between title and close button */
-    font-size: 24px;
 }
 
 .modal-body {
@@ -46,7 +45,7 @@
   
 .form-grid {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 0.5fr 0.5fr;
     gap: 15px;
     margin-bottom: 15px;
 }
