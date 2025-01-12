@@ -3,6 +3,7 @@ import Axios from "axios";
 import { useLocation, useNavigate } from "react-router-dom";
 import "../interface/CSS/AllEquipment.css"; // ไฟล์ CSS
 import NavbarMain from "../components/NavbarMain.js";
+import Showborrow from "./showborrow.js";
 
 const AllEquipment = () => {
   const [equipment, setEquipment] = useState([]);
@@ -71,7 +72,7 @@ const AllEquipment = () => {
                 <h4>{item.name}</h4>
                 <p>{item.description}</p>
                 <span>จำนวน: {item.quantity}</span>
-                <a href="#" className="btn custom-borrow-btn">ยืมอุปกรณ์</a>
+                <Showborrow></Showborrow>
               </div>
             </div>
           ))
