@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import Axios from "axios";
 import { useLocation } from "react-router-dom";
 import "../interface/CSS/AllEquipment.css"; // ไฟล์ CSS
+import Navbarmain  from "../components/NavbarMain";
 
 const AllEquipment = () => {
   const [equipment, setEquipment] = useState([]);
@@ -26,6 +27,7 @@ const AllEquipment = () => {
 
   return (
     <div className="all-equipment">
+        <Navbarmain ></Navbarmain >
       <h1 style={{ textAlign: "center", margin: "20px 0" }}>หมวดหมู่: {category}</h1>
 
       <div className="equipment-list">

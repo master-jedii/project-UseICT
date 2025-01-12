@@ -8,7 +8,6 @@ const Navbar = () => {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [userFirstName, setUserFirstName] = useState('');
     const [loading, setLoading] = useState(true);
-
     const navigate = useNavigate();
     const location = useLocation(); // ใช้ตรวจสอบตำแหน่งของเส้นทางปัจจุบัน
 
