@@ -5,8 +5,6 @@ const mysql = require("mysql2"); // ใช้ MySQL (หรือเปลี่
 const jwt = require("jsonwebtoken"); // ใช้ JWT สำหรับการสร้าง Token
 const app = express();
 const multer = require('multer');
-const path = require("path");
-
 
 app.use(cors());
 // CORS
@@ -14,10 +12,6 @@ app.use(cors({
   origin: 'http://localhost:3000', // ให้ frontend ที่รันที่ localhost:3000 สามารถเข้าถึงได้
   methods: 'GET,POST',
 }));
-
-// ให้ Express สามารถเข้าถึงไฟล์ในโฟลเดอร์ 'uploads'
-app.use('/uploads', express.static('uploads'));
-
 
 // Body parser
 app.use(express.json());
@@ -40,23 +34,23 @@ db.connect((err) => {
 });
 
 app.get('/main', (req, res) => {
-  const token = req.headers.authorization?.split(' ')[1]; // ดึง token จาก header
-
-  if (!token) {
-    return res.status(401).json({ message: 'Unauthorized: No token provided' }); // ถ้าไม่มี token
-  }
-
-  jwt.verify(token, 'your_jwt_secret_key', (err, decoded) => { // ตรวจสอบ token
-    if (err) {
-      return res.status(401).json({ message: 'Unauthorized: Invalid token' }); // ถ้า token ไม่ถูกต้อง
+    const token = req.headers.authorization?.split(' ')[1]; // ดึง token จาก header
+  
+    if (!token) {
+      return res.status(401).json({ message: 'Unauthorized: No token provided' }); // ถ้าไม่มี token
     }
-
-    const userId = decoded.id;
-    const userFirstname = decoded.firstname;
-    res.status(200).json({ user: { id: userId, firstname: userFirstname } }); // ส่งข้อมูลกลับ
+  
+    jwt.verify(token, 'your_jwt_secret_key', (err, decoded) => { // ตรวจสอบ token
+      if (err) {
+        return res.status(401).json({ message: 'Unauthorized: Invalid token' }); // ถ้า token ไม่ถูกต้อง
+      }
+  
+      const userId = decoded.id;
+      const userFirstname = decoded.firstname;
+      res.status(200).json({ user: { id: userId, firstname: userFirstname } }); // ส่งข้อมูลกลับ
+    });
   });
-});
-
+  
 
 // Login endpoint
 app.post('/login', async (req, res) => {
@@ -105,51 +99,62 @@ app.post('/login', async (req, res) => {
 
 
 app.post('/signup', async (req, res) => {
-  const { UserID, firstname, lastname, grade, branch, email, password, phone_number } = req.body;
-
-  // ตรวจสอบว่า UserID ซ้ำหรือไม่
-  const userIdExists = await new Promise((resolve, reject) => {
-    db.query('SELECT * FROM users WHERE UserID = ?', [UserID], (err, result) => {
-      if (err) {
-        reject(err);
-      } else {
-        resolve(result.length > 0); // ถ้ามีแถวที่พบ UserID ซ้ำ
-      }
+    const { UserID, firstname, lastname, grade, branch, email, password, phone_number } = req.body;
+  
+    // ตรวจสอบว่า UserID ซ้ำหรือไม่
+    const userIdExists = await new Promise((resolve, reject) => {
+      db.query('SELECT * FROM users WHERE UserID = ?', [UserID], (err, result) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve(result.length > 0); // ถ้ามีแถวที่พบ UserID ซ้ำ
+        }
+      });
     });
-  });
-
-  if (userIdExists) {
-    return res.status(400).json({ error: 'UserID already exists' });
-  }
-
-  // ตรวจสอบว่า email ซ้ำหรือไม่
-  const emailExists = await new Promise((resolve, reject) => {
-    db.query('SELECT * FROM users WHERE email = ?', [email], (err, result) => {
-      if (err) {
-        reject(err);
-      } else {
-        resolve(result.length > 0); // ถ้ามีแถวที่พบ email ซ้ำ
-      }
-    });
-  });
-
-  if (emailExists) {
-    return res.status(400).json({ error: 'Email already exists' });
-  }
-
-  // เข้ารหัสรหัสผ่าน
-  const hashedPassword = await bcrypt.hash(password, 10);
-
-  // เพิ่มข้อมูลผู้ใช้ใหม่
-  const query = 'INSERT INTO users (UserID, firstname, lastname, grade, branch, email, password, phone_number) VALUES (?, ?, ?, ?, ?, ?, ?, ?)';
-  const values = [UserID, firstname, lastname, grade, branch, email, hashedPassword, phone_number];
-
-  db.query(query, values, (err, result) => {
-    if (err) {
-      return res.status(500).json({ error: 'Error saving user' });
+  
+    if (userIdExists) {
+      return res.status(400).json({ error: 'UserID already exists' });
     }
-    res.status(200).json({ message: 'User registered successfully' });
+  
+    // ตรวจสอบว่า email ซ้ำหรือไม่
+    const emailExists = await new Promise((resolve, reject) => {
+      db.query('SELECT * FROM users WHERE email = ?', [email], (err, result) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve(result.length > 0); // ถ้ามีแถวที่พบ email ซ้ำ
+        }
+      });
+    });
+  
+    if (emailExists) {
+      return res.status(400).json({ error: 'Email already exists' });
+    }
+  
+    // เข้ารหัสรหัสผ่าน
+    const hashedPassword = await bcrypt.hash(password, 10);
+  
+    // เพิ่มข้อมูลผู้ใช้ใหม่
+    const query = 'INSERT INTO users (UserID, firstname, lastname, grade, branch, email, password, phone_number) VALUES (?, ?, ?, ?, ?, ?, ?, ?)';
+    const values = [UserID, firstname, lastname, grade, branch, email, hashedPassword, phone_number];
+  
+    db.query(query, values, (err, result) => {
+      if (err) {
+        return res.status(500).json({ error: 'Error saving user' });
+      }
+      res.status(200).json({ message: 'User registered successfully' });
+    });
   });
+  
+  app.get('/admin', (req, res) => {
+    db.query("SELECT * FROM equipment", (err, result) => {
+        if (err) {
+            console.log(err);
+        }
+        else {
+            res.send(result);
+        }
+    })
 });
 
 
@@ -293,6 +298,41 @@ app.put('/api/equipments/:id', upload.single('image'), (req, res) => {
       res.json({ message: 'Equipment updated successfully!', updatedId: id });
   });
 });
+
+
+app.post('/api/borrow', (req, res) => {
+  const borrowData = req.body; // รับข้อมูลที่ส่งมาจาก client
+  console.log("Received data:", borrowData); // ตรวจสอบข้อมูลที่ได้รับจาก client
+
+  if (!borrowData.subject || !borrowData.objective || !borrowData.place || !borrowData.borrow_d || !borrowData.return_d) {
+    return res.status(400).json({ message: 'กรุณากรอกข้อมูลให้ครบถ้วน' });
+  }
+
+  const query = `
+    INSERT INTO borrow (subject, objective, place, borrow_d, return_d)
+    VALUES (?, ?, ?, ?, ?)
+  `;
+  const values = [
+    borrowData.subject,
+    borrowData.objective,
+    borrowData.place,
+    borrowData.borrow_d,
+    borrowData.return_d
+  ];
+
+  console.log("SQL values:", values); // ตรวจสอบข้อมูลที่จะส่งไปยังฐานข้อมูล
+
+  db.query(query, values, (err, result) => {
+    if (err) {
+      console.error("Database error:", err);
+      return res.status(500).json({ message: 'เกิดข้อผิดพลาดในการเพิ่มข้อมูล' });
+    }
+    res.status(200).json({ message: 'เพิ่มข้อมูลการยืมสำเร็จ!', borrow_id: result.insertId });
+  });
+});
+
+
+
 
 
 

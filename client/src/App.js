@@ -9,11 +9,13 @@ import Howtoborrow from './components/Howtoborrow';
 import About from './components/About';
 import Footer from './components/Footer';
 import Main from './components/main';
-import Showborrow from './interface/Showborrow.js';
+import Showborrow from './interface/showborrow.js';
 import Dashboard from './Admin/Layout/Dashboard.js';
 import MainAdmin from './Admin/Layout/MainAdmin.js';
 import Admin from './Admin/Admin.js';
 import AllEquipment from './interface/AllEquipment.js';
+
+
 
 const MainLayout = ({ children }) => (
     <>
