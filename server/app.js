@@ -156,23 +156,123 @@ app.post('/signup', async (req, res) => {
     })
 });
 
-app.post('/create', (req, res) => {
-    const name = req.body.name;
-    const description = req.body.description;
-    const category = req.body.category;
-    db.query("INSERT INTO equipment (name,description,category) VALUES(?,?,?)",
-        [name, description, category],
-        (err, result) => {
-            if (err) {
-                console.log(err)
-            }
-            else {
-                res.send('ข้อมูลเข้าแล้ว')
-            }
-        })
-})
-  
-  
+
+
+// แสดงรายการอุปกรณ์
+app.get("/admin", (req, res) => {
+  db.query("SELECT * FROM equipment", (err, result) => {
+    if (err) {
+      console.log(err);
+    } else {
+      res.send(result);
+    }
+  });
+});
+
+
+
+// ตั้งค่าการเก็บไฟล์
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, "uploads/"); // เก็บไฟล์ในโฟลเดอร์ uploads
+  },
+  filename: function (req, file, cb) {
+    cb(null, Date.now() + path.extname(file.originalname)); // ตั้งชื่อไฟล์เป็น timestamp
+  },
+});
+
+const upload = multer({ storage: storage });
+
+// กรณีอัปโหลดหลายฟิลด์
+app.post("/create", upload.fields([{ name: "image", maxCount: 1 }]), (req, res) => {
+  const name = req.body.name;
+  const description = req.body.description;
+  const category = req.body.category;
+  const image = req.files?.image ? req.files.image[0].filename : null;
+
+  db.query(
+    "INSERT INTO equipment (name, description, category, image) VALUES (?, ?, ?, ?)",
+    [name, description, category, image],
+    (err, result) => {
+      if (err) {
+        console.log(err);
+        return res.status(500).json({ message: "Error saving equipment" });
+      }
+      res.status(200).json({ message: "Equipment added successfully" });
+    }
+  );
+});
+
+// แสดงรายการอุปกรณ์พร้อมกรองหมวดหมู่
+app.get("/showequipment", (req, res) => {
+  const { category } = req.query;  // รับค่าหมวดหมู่จาก query string
+
+  // ถ้ามีหมวดหมู่ให้กรองตามหมวดหมู่
+  let query = "SELECT * FROM equipment";
+  if (category && category !== 'ทั้งหมด') {
+    query += " WHERE category = ?";
+  }
+
+  db.query(query, [category], (err, result) => {
+    if (err) {
+      console.log("เกิดข้อผิดพลาดอะไรบางอย่าง", err);
+      return res.status(500).json({ message: "Error fetching equipment" });
+    } else {
+      res.send(result); // ส่งข้อมูลที่กรองแล้ว
+    }
+  });
+});
+
+app.delete('/api/equipments/:id', (req, res) => {
+  const equipmentId = req.params.id;
+
+  // สร้าง query SQL สำหรับลบอุปกรณ์ที่มี equipment_id
+  const query = 'DELETE FROM equipment WHERE equipment_id = ?';
+
+  db.query(query, [equipmentId], (err, result) => {
+    if (err) {
+      console.error('Error deleting equipment:', err);
+      return res.status(500).json({ message: 'Error deleting equipment' });
+    }
+
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ message: 'Equipment not found' });
+    }
+
+    res.status(200).json({ message: 'Equipment deleted successfully' });
+  });
+});
+
+app.put('/api/equipments/:id', upload.single('image'), (req, res) => {
+  const id = parseInt(req.params.id, 10);
+  const { name, description, category } = req.body;
+  const image = req.file ? req.file.filename : null;
+
+  // คำสั่ง SQL สำหรับอัปเดตข้อมูล
+  const query = `
+      UPDATE equipment 
+      SET 
+          name = ?, 
+          description = ?, 
+          category = ?, 
+          image = COALESCE(?, image) 
+      WHERE 
+          equipment_id = ?`;
+
+  db.query(query, [name, description, category, image, id], (err, result) => {
+      if (err) {
+          console.error('Failed to update equipment:', err);
+          return res.status(500).json({ message: 'Database update failed' });
+      }
+
+      res.json({ message: 'Equipment updated successfully!', updatedId: id });
+  });
+});
+
+
+
+
+
 
 // เริ่มเซิร์ฟเวอร์
 app.listen(3333, () => {

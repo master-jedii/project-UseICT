@@ -7,6 +7,7 @@
 
 .faq-block1,
 .faq-block2 {
+  position: relative;
   flex: 1;
 }
 
@@ -72,11 +73,11 @@
 }
 
 .faq-block2 img {
-  max-width: 1030%;
-  height: auto;
+  max-width: 1060%;
+  height: 497px;
   border: 1px solid #ddd;
-  border-radius: 5px;
   margin-left: 50px;
+  margin-top: 70px
 
 }
 .Header-ques{

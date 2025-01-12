@@ -3,8 +3,8 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../service/axios';
 import NavbarMain from './NavbarMain'; // นำเข้า NavbarMain
-import DisplayEquipment from './DisplayEquipment';
-import Type from './type';
+import DisplayEquipment from '../interface/DisplayEquipment';
+
 
 const Main = () => {
   const [data, setData] = useState(null);
@@ -57,16 +57,23 @@ const Main = () => {
   if (error) return <div>{error}</div>;
 
   return (
-    <div>
+    <div style={{ backgroundColor: "#E3E6E6" }}>
       {/* ตรวจสอบว่า data.user มีข้อมูลหรือไม่ */}
       {data && data.user ? (
         <>
           <NavbarMain userData={data.user} onLogout={handleLogout} /> {/* ส่งฟังก์ชัน Logout */}
-          <Type />
+          
         </>
       ) : (
         <div>No user data available</div> // ถ้าไม่มีข้อมูลผู้ใช้แสดงข้อความนี้
       )}
+
+
+      <DisplayEquipment />
+      
+      
+
+
     </div>
   );
 };

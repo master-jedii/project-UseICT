@@ -1,0 +1,156 @@
+@import url('https://fonts.googleapis.com/css2?family=Prompt:wght@400;500;700&display=swap');
+
+body {
+    font-family: 'Prompt', sans-serif;
+    
+}
+
+.header-category {
+    width: 1300px;
+    height: 61px;
+    margin: 0 auto;
+    text-align: center;
+    margin-bottom: 50px;
+}
+
+
+.header-category h1 {
+    width: 1298px;
+    height: 61px;
+    background-color: #009498;
+    font-size: 32px;
+    font-weight: bold;
+    color: white;
+    text-align: center;
+    font-family: 'Prompt', sans-serif;
+    margin-top: 110px;
+}
+
+
+/* DisplayEquipment.css */
+
+
+/* จัดวาง container หลัก */
+.equipment-list {
+    padding: 20px;
+    min-height: 600vh;
+    background-color: #E3E6E6;
+    min-height: 790vh;
+  }
+  
+  /* ส่วน header */
+  .header-category {
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  
+  .header-category h1 {
+    font-size: 2rem;
+    color: #ffffff;
+    margin-bottom: 20px;
+    padding-top: 10px;
+    
+  }
+  
+  
+  /* Container ของอุปกรณ์ */
+  .equipment-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 20px;
+    margin-top: 55px;
+    
+  }
+  
+  /* Card ของแต่ละอุปกรณ์ */
+  .card {
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    
+  }
+
+  .category-text{
+   position: absolute;
+    top: 110px;
+    font-size: 16px;
+    
+  }
+  
+  
+  
+  /* รูปภาพใน card */
+  .card-img-top {
+    width: 100%;
+    height: 180px;
+    object-fit: cover;
+  }
+  
+  /* ส่วน body ของ card */
+  .card-body {
+    padding: 15px;
+    text-align: left;
+  }
+  
+  .card-title {
+    font-size: 1.2rem;
+    color: #343a40;
+    margin-bottom: 10px;
+  }
+  
+  .card-text {
+    font-size: 0.8rem;
+    color: #6c757d;
+  }
+  
+  /* ปุ่มใน card */
+  .card .btn-primary {
+    background-color: #009498;
+    border: none;
+    padding: 8px 30px;
+    font-family: 'Prompt', sans-serif;
+    font-size: 0.9rem;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    
+  }
+  
+  .card .btn-primary:hover {
+    background-color: #585858;
+  }
+  
+  /* ปรับระยะห่าง */
+  .card + .card {
+    margin-left: 15px;
+  }
+
+  .btn-secondary {
+    font-family: 'Prompt', sans-serif;
+    background-color: white;
+    color: #009498;
+    border: none;
+    font-size: 18px;
+    font-weight: bold;
+    padding: 16px 60px;
+    transition: background-color 0.2s ease;
+}
+
+.card .btn-primary {
+    font-family: 'Prompt', sans-serif;
+}
+
+
+  .category-icons{
+    display: flex;
+    cursor: pointer;
+  }
+  
+  
+
+
+
+
+  

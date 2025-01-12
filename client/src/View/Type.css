@@ -67,12 +67,10 @@
     justify-content: center;
     align-items: center;
     background-color: #ffffff;
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
     position: relative; /* เพิ่ม position เพื่อให้ข้อความอยู่ข้างล่างกล่อง */
     top: 50px;
   }
   
- 
   
   /* ข้อความที่อยู่ข้างล่างของกล่อง */
   .category-text {
@@ -83,5 +81,19 @@
     width: 100%;
   }
   
+.categoryhomepage{
+  width: 193px; /* ความกว้างของกล่อง */
+  height: 144px; /* ความสูงของกล่อง */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #ffffff;
+  position: relative; /* เพิ่ม position เพื่อให้ข้อความอยู่ข้างล่างกล่อง */
+  top: 50px;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+  cursor: pointer;
+}
+  
 
+  
   
