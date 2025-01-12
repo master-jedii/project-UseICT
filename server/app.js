@@ -4,6 +4,7 @@ const bcrypt = require("bcryptjs");
 const mysql = require("mysql2"); // ใช้ MySQL (หรือเปลี่ยนเป็น DB ที่คุณใช้งาน)
 const jwt = require("jsonwebtoken"); // ใช้ JWT สำหรับการสร้าง Token
 const app = express();
+const multer = require('multer');
 
 app.use(cors());
 // CORS
