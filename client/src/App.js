@@ -14,7 +14,7 @@ import Dashboard from './Admin/Layout/Dashboard.js';
 import MainAdmin from './Admin/Layout/MainAdmin.js';
 import Admin from './Admin/Admin.js';
 import AllEquipment from './interface/AllEquipment.js';
-import Status from './components/status.js';
+
 
 
 const MainLayout = ({ children }) => (
@@ -53,7 +53,6 @@ const App = () => {
                 <Route path="/login" element={<Login />} />
                 <Route path="/signup" element={<Signup />} />
                 <Route path="/main" element={<Main />} />
-                <Route path="/status" element={<Status />} />
                 
                 {/* หน้า Admin */}
                 <Route path="/admin" element={<Admin />} />
