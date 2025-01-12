@@ -4,6 +4,7 @@ import { faPhone, faClock, faMapMarkerAlt, faFacebook, faInstagram } from '@fort
 import '../View/Footer.css'; // อย่าลืมสร้างไฟล์ CSS เพื่อจัดการกับการออกแบบ
 import logo from '../assets/LOGO.png'
 
+
 const Footer = () => {
   return (
     <footer className="footer">
@@ -27,6 +28,7 @@ const Footer = () => {
       <div className="footer-section logo">
         <img src={logo} alt="Logo" className="logo-image" />
       </div>
+      
     </footer>
   );
 };
