@@ -5,12 +5,12 @@
     background-color: #009498; /* สีพื้นหลัง */
     color: white;
     padding: 20px 40px; /* เพิ่ม Padding ให้มีความสมดุล */
-    height: 148px; /* ปรับความสูงของ navbar_main ให้ใหญ่ขึ้น */
+    height: 100px; /* ปรับความสูงของ navbar_main ให้ใหญ่ขึ้น */
 }
 
 .navbar-left img{
-    height: 108px; /* ปรับขนาดโลโก้ให้ใหญ่ขึ้น */
-    width: 108px;
+    height: 80px; /* ปรับขนาดโลโก้ให้ใหญ่ขึ้น */
+    width: 80px;
     margin-right: 20px; /* เพิ่มระยะห่างระหว่างโลโก้กับข้อความ */
     background-color: white;
     border-radius: 100px;
@@ -25,7 +25,7 @@
 }
 
 .user-info span {
-    font-size: 18px; /* เพิ่มขนาดตัวอักษรชื่อผู้ใช้ */
+    font-size: 16px; /* เพิ่มขนาดตัวอักษรชื่อผู้ใช้ */
     font-weight: bold;
 }
 
@@ -60,7 +60,7 @@
   .navbar-links p {
     margin: 0;
     padding: 0 15px;
-    font-size: 20px;
+    font-size: 18px;
     font-weight: 100;
     
     
