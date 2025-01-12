@@ -32,10 +32,10 @@ const Dashboard = () => {
       {/* Main Content */}
       <div className="main-content">
         <div className="dashboard-container">
-          {/* Header */}
-          <header className="dashboard-header">
-            <h1>แดชบอร์ดผู้ดูแลระบบ</h1>
-            <p>ติดตามกิจกรรมการยืมและคืนอุปกรณ์อย่างละเอียด</p>
+          <header className="admin-header">
+            <div className="admin-header-info">
+              <h1>Dashboard</h1>
+            </div>
           </header>
 
           {/* Card Section */}

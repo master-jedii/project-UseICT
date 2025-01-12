@@ -9,6 +9,8 @@ import audioIcon from '../assets/music.png';
 import lightEquipmentIcon from '../assets/Source Four Par.png';
 import otherIcon from '../assets/Camera Addon Identification.png';
 import '../View/DisplayEquipment.css';
+import ShowBorrow from '../interface/showborrow'
+
 
 const DisplayEquipment = () => {
   const [equipment, setEquipment] = useState([]);
@@ -124,22 +126,19 @@ const DisplayEquipment = () => {
 
         {/* แสดงข้อมูลที่กรองแล้ว */}
         {selectedCategory ? (
-          <div>
-            <h1 style={{ textAlign: "center", margin: "110px 0 0 0" }}>{selectedCategory}</h1>
-            <div className="equipment-container">
-              {selectedCategoryItems.length > 0 ? (
-                selectedCategoryItems.slice(0, 8).map((item, idx) => (
-                  <div className="card" style={{ width: "18rem", margin: "10px" }} key={idx}>
-                    <img
-                      src={`http://localhost:3333/uploads/${item.image}`}
-                      className="card-img-top"
-                      alt={item.name}
-                    />
-                    <div className="card-body">
-                      <h4 className="card-title">{item.name}</h4>
-                      <p className="card-text">{item.description}</p>
-                      <a href="#" className="btn btn-primary custom-borrow-btn">ยืมอุปกรณ์</a>
-                    </div>
+          <div className="equipment-container">
+            {selectedCategoryItems.length > 0 ? (
+              selectedCategoryItems.slice(0, 8).map((item, idx) => (
+                <div className="card" style={{ width: "18rem", margin: "10px" }} key={idx}>
+                  <img
+                    src={`http://localhost:3333/uploads/${item.image}`}
+                    className="card-img-top"
+                    alt={item.name}
+                  />
+                  <div className="card-body">
+                    <h4 className="card-title">{item.name}</h4>
+                    <p className="card-text">{item.description}</p>
+                    <ShowBorrow></ShowBorrow>
                   </div>
                 ))
               ) : (
@@ -162,7 +161,7 @@ const DisplayEquipment = () => {
               <div className="equipment-container">
                 {categoryData.items.length > 0 ? (
                   categoryData.items.slice(0, 8).map((item, idx) => (
-                    <div className="card" style={{ width: "18rem", margin: "10px" }} key={idx}>
+                    <div className="card" style={{ width: "290px", margin: "10px" }} key={idx}>
                       <img
                         src={`http://localhost:3333/uploads/${item.image}`}
                         className="card-img-top"
@@ -171,7 +170,7 @@ const DisplayEquipment = () => {
                       <div className="card-body">
                         <h4 className="card-title">{item.name}</h4>
                         <p className="card-text">{item.description}</p>
-                        <a href="#" className="btn btn-primary custom-borrow-btn">ยืมอุปกรณ์</a>
+                        <ShowBorrow></ShowBorrow>
                       </div>
                     </div>
                   ))
