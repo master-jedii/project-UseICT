@@ -39,6 +39,7 @@
     font-weight: bold;
     cursor: pointer;
     transition: background-color 0.3s, color 0.3s;
+    margin-top: 5px;
 }
 
 .logout-button:hover {
@@ -59,7 +60,7 @@
   .navbar-links p {
     margin: 0;
     padding: 0 15px;
-    font-size: 24px;
+    font-size: 20px;
     font-weight: 100;
     
     

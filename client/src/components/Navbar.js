@@ -131,6 +131,7 @@ const Navbar = () => {
                                 fontSize: '20px',
                                 marginRight: '20px',
                                 fontFamily: "'Sarabun', sans-serif",
+                                marginTop: '20px',
                             }}
                         >
                             สวัสดี, {userFirstName}
