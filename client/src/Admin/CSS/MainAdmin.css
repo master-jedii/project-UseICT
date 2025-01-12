@@ -64,7 +64,7 @@ button.btn-danger:hover {
   z-index: 10;
   left: 0;
   top: 0;
-  width: 100%;
+  width: 90%;
   height: 100%;
   background-color: rgba(0, 0, 0, 0.6);
   animation: fadeIn 0.3s;
@@ -85,10 +85,14 @@ button.btn-danger:hover {
   padding: 20px 30px;
   border-radius: 8px;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-  width: 40%;
+  width: 30%;
   text-align: left;
   position: relative;
   animation: slideDown 0.4s;
+  overflow-x: hidden; /* ซ่อน scrollbar ด้านข้าง */
+  overflow-y: auto; /* ให้ scrollbar ปรากฏเฉพาะแนวตั้ง */
+  height: 100vh; /* กำหนดความสูงให้เต็มจอ */
+
 }
 
 @keyframes slideDown {
@@ -143,7 +147,7 @@ form select:focus {
 form .btn {
   width: 100%;
   padding: 10px;
-  margin-top: 10px;
+  margin-top: 200px;
 }
 
 /* การ์ดอุปกรณ์ */

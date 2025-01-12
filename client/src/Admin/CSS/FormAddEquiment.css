@@ -1,5 +1,62 @@
-.card-text{
-    color: black;
-    font-size: 16px;
-    font-weight: normal;
+/* ตั้งค่าพื้นฐานสำหรับ container */
+.App.container {
+    max-width: 100%;
+    margin: 0 auto;
+    padding: 20px;
+    box-sizing: border-box;
+    overflow-x: hidden; /* ซ่อน scrollbar ด้านข้าง */
+    overflow-y: auto; /* ให้ scrollbar ปรากฏเฉพาะแนวตั้ง */
+    height: 100vh; /* กำหนดความสูงให้เต็มจอ */
+}
+
+/* การจัดการฟอร์มและข้อมูล */
+.information {
+    margin-bottom: 20px;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background-color: #f8f9fa;
+}
+
+/* ปุ่มในฟอร์ม */
+.information .btn {
+    margin-top: 10px;
+}
+
+/* การจัดการรายการอุปกรณ์ */
+.employees {
+    margin-top: 20px;
+    max-height: 60vh; /* จำกัดความสูงของ list */
+    overflow-y: auto; /* ให้เลื่อนดูได้ในแนวตั้ง */
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 10px;
+}
+
+/* การ์ดแต่ละใบ */
+.equipment.card {
+    margin-bottom: 15px;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+/* ข้อความในการ์ด */
+.equipment .card-body {
+    padding: 15px;
+    background-color: #fff;
+    color: #333;
+    border: 1px solid #ddd;
+}
+
+/* Scrollbar แบบกำหนดเอง */
+.employees::-webkit-scrollbar {
+    width: 8px;
+}
+.employees::-webkit-scrollbar-thumb {
+    background-color: #007bff;
+    border-radius: 4px;
+}
+.employees::-webkit-scrollbar-thumb:hover {
+    background-color: #0056b3;
 }
