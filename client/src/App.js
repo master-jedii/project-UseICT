@@ -13,7 +13,7 @@ import Showborrow from './interface/Showborrow.js';
 import Dashboard from './Admin/Layout/Dashboard.js';
 import MainAdmin from './Admin/Layout/MainAdmin.js';
 import Admin from './Admin/Admin.js';
-
+import AllEquipment from './interface/AllEquipment.js';
 
 const MainLayout = ({ children }) => (
     <>
@@ -57,6 +57,7 @@ const App = () => {
                 <Route path="/showborrow" element={<Showborrow />} />
                 <Route path="/dashboard" element={<Dashboard />} />
                 <Route path="/mainadmin" element={<MainAdmin />} />
+                <Route path="/allEquipment" element={<AllEquipment />} />
             </Routes>
         </Router>
     );
