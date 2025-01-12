@@ -166,6 +166,7 @@ app.get("/admin", (req, res) => {
 });
 
 
+
 // ตั้งค่าการเก็บไฟล์
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
@@ -238,6 +239,31 @@ app.delete('/api/equipments/:id', (req, res) => {
   });
 });
 
+app.put('/api/equipments/:id', upload.single('image'), (req, res) => {
+  const id = parseInt(req.params.id, 10);
+  const { name, description, category } = req.body;
+  const image = req.file ? req.file.filename : null;
+
+  // คำสั่ง SQL สำหรับอัปเดตข้อมูล
+  const query = `
+      UPDATE equipment 
+      SET 
+          name = ?, 
+          description = ?, 
+          category = ?, 
+          image = COALESCE(?, image) 
+      WHERE 
+          equipment_id = ?`;
+
+  db.query(query, [name, description, category, image, id], (err, result) => {
+      if (err) {
+          console.error('Failed to update equipment:', err);
+          return res.status(500).json({ message: 'Database update failed' });
+      }
+
+      res.json({ message: 'Equipment updated successfully!', updatedId: id });
+  });
+});
 
 
 
