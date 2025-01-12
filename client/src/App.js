@@ -11,6 +11,8 @@ import Footer from './components/Footer';
 import Main from './components/main';
 import Admin from './Admin/Admin.js';
 import Showborrow from './interface/Showborrow.js';
+import Dashboard from './Admin/Layout/Dashboard.js';
+import MainAdmin from './Admin/Layout/MainAdmin.js';
 
 const MainLayout = ({ children }) => (
     <>
@@ -48,11 +50,16 @@ const App = () => {
                 <Route path="/login" element={<Login />} />
                 <Route path="/signup" element={<Signup />} />
                 <Route path="/main" element={<Main />} />
+                
+                {/* หน้า Admin */}
                 <Route path="/admin" element={<Admin />} />
                 <Route path="/showborrow" element={<Showborrow />} />
+                <Route path="/dashboard" element={<Dashboard />} />
+                <Route path="/mainadmin" element={<MainAdmin />} />
             </Routes>
         </Router>
     );
 };
 
 export default App;
+

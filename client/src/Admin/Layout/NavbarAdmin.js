@@ -16,11 +16,12 @@ const NavbarAdmin = () => {
         </div>
         <ul className="menu">
           <li className="menu-item ">
-            <i className="fa-solid fa-chart-simple"></i> Dashboard
+            <i className="fa-solid fa-chart-simple"></i> 
+            <Link to="/dashboard">Dashboard</Link>
           </li>
           <li className="menu-item active">
             <i className="fas fa-tools"></i> 
-            <a href='/MainAdmin'>รายการอุปกรณ์</a>
+            <Link to="/mainadmin">รายการอุปกรณ์</Link>
           </li>
           <li className="menu-item">
             <i className="fas fa-handshake"></i> สถานะการยืม
