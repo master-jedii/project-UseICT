@@ -29,8 +29,8 @@ const NavbarMain = ({ userData, onLogout }) => {
       </div>
 
       <div className="navbar-links">
-            <Link to="/equipment"><p>รายการอุปกรณ์</p></Link>
-            <Link to="/status"><p>สถานะการยืม</p></Link>
+            <Link to="/main"><p>รายการอุปกรณ์</p></Link>
+            <Link to="/Status"><p>สถานะการยืม</p></Link>
             <Link to="/return"><p>กำหนดการคืน</p></Link>
       </div>
       
