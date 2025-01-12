@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import axios from "axios";
 import "../interface/CSS/showborrow.css";
 import "../interface/CSS/Modal.css";
 
@@ -10,13 +11,11 @@ const Showborrow = () => {
   const openModal = () => setIsModalOpen(true);
   const closeModal = () => setIsModalOpen(false);
 
-  // Helper to get today's date in YYYY-MM-DD format
   function getToday() {
     const today = new Date();
     return today.toISOString().split("T")[0];
   }
 
-  // Helper to calculate the return date (7 days after the borrow date)
   function getDefaultReturnDate(startDate) {
     const startDateObj = new Date(startDate);
     startDateObj.setDate(startDateObj.getDate() + 7);
@@ -27,7 +26,6 @@ const Showborrow = () => {
     const newBorrowDate = event.target.value;
     setBorrowDate(newBorrowDate);
 
-    // Set return date to 7 days after the borrow date
     const newReturnDate = getDefaultReturnDate(newBorrowDate);
     setReturnDate(newReturnDate);
   };
@@ -50,6 +48,44 @@ const Showborrow = () => {
 };
 
 const Modal = ({ isOpen, onClose, borrowDate, returnDate, onBorrowDateChange, minDate }) => {
+  const [formData, setFormData] = useState({
+    userId: "",
+    subject: "",
+    equipment: "",
+    location: "",
+    borrowDate,
+    returnDate,
+  });
+
+  const handleChange = (e) => {
+    const { id, value } = e.target;
+    setFormData((prev) => ({ ...prev, [id]: value }));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const dataToSend = {
+      ...formData,
+      borrowDate,
+      returnDate,
+    };
+
+    try {
+      const response = await axios.post("/api/borrow", dataToSend);
+      alert(response.data.message || "บันทึกข้อมูลสำเร็จ");
+      onClose();
+    } catch (error) {
+      if (error.response) {
+        // เมื่อมี response error จาก server
+        alert(error.response.data.message || "เกิดข้อผิดพลาดในการบันทึกข้อมูล");
+      } else {
+        // เมื่อไม่มีการตอบกลับ (เช่น network error)
+        alert("เกิดข้อผิดพลาดในการเชื่อมต่อกับเซิร์ฟเวอร์");
+      }
+      console.error("Error:", error);
+    }
+  };
+
   if (!isOpen) return null;
 
   return (
@@ -59,15 +95,26 @@ const Modal = ({ isOpen, onClose, borrowDate, returnDate, onBorrowDateChange, mi
           <h2>คำร้องขอยืมอุปกรณ์</h2>
         </div>
         <div className="modal-body">
-          <div className="form-container">
+          <form onSubmit={handleSubmit} className="form-container">
             <div className="form-grid">
               <div>
-                <label htmlFor="user-id">รหัสผู้ยืม</label>
-                <input type="text" id="user-id" />
+                <label htmlFor="userId">รหัสผู้ยืม</label>
+                <input
+                  type="text"
+                  id="userId"
+                  value={formData.userId}
+                  onChange={handleChange}
+                  required
+                />
               </div>
               <div>
                 <label htmlFor="subject">รายวิชา / โครงการ</label>
-                <select id="subject">
+                <select
+                  id="subject"
+                  value={formData.subject}
+                  onChange={handleChange}
+                  required
+                >
                   <option value="">เลือกวิชา</option>
                   <option value="subject1">โครงการ 1</option>
                   <option value="subject2">โครงการ 2</option>
@@ -77,11 +124,23 @@ const Modal = ({ isOpen, onClose, borrowDate, returnDate, onBorrowDateChange, mi
             <div className="form-grid">
               <div>
                 <label htmlFor="equipment">วัสดุประสงค์ในการยืมอุปกรณ์</label>
-                <input type="text" id="equipment" />
+                <input
+                  type="text"
+                  id="equipment"
+                  value={formData.equipment}
+                  onChange={handleChange}
+                  required
+                />
               </div>
               <div>
                 <label htmlFor="location">สถานที่ใช้งาน</label>
-                <input type="text" id="location" />
+                <input
+                  type="text"
+                  id="location"
+                  value={formData.location}
+                  onChange={handleChange}
+                  required
+                />
               </div>
             </div>
             <div className="form-grid">
@@ -89,17 +148,21 @@ const Modal = ({ isOpen, onClose, borrowDate, returnDate, onBorrowDateChange, mi
                 <label htmlFor="borrow-date">วันที่ยืม</label>
                 <input
                   type="date"
-                  id="borrow-date"
+                  id="borrowDate"
                   value={borrowDate}
-                  onChange={onBorrowDateChange}
-                  min={minDate} // Restrict past dates
+                  onChange={(e) => {
+                    onBorrowDateChange(e);
+                    handleChange(e);
+                  }}
+                  min={minDate}
+                  required
                 />
               </div>
               <div>
                 <label htmlFor="return-date">กำหนดคืน</label>
                 <input
                   type="date"
-                  id="return-date"
+                  id="returnDate"
                   value={returnDate}
                   readOnly
                 />
@@ -109,12 +172,14 @@ const Modal = ({ isOpen, onClose, borrowDate, returnDate, onBorrowDateChange, mi
               <span>*สามารถยืมอุปกรณ์ได้สูงสุด 7 วัน</span>
             </div>
             <div className="form-buttons">
-              <button className="submit-btn">ยืนยันอุปกรณ์</button>
-              <button className="cancel-btn" onClick={onClose}>
+              <button type="submit" className="submit-btn">
+                ยืนยันอุปกรณ์
+              </button>
+              <button type="button" className="cancel-btn" onClick={onClose}>
                 ยกเลิก
               </button>
             </div>
-          </div>
+          </form>
         </div>
       </div>
     </div>

@@ -2,9 +2,7 @@ import React from 'react';
 import '../CSS/MainAdmin.css';
 import myLogo from '../../assets/LOGO.png';
 import '../CSS/NavbarAdmin.css';
-import { Link } from 'react-router-dom';
-import MainAdmin from './MainAdmin';
-
+import { NavLink } from 'react-router-dom';  // ใช้ NavLink แทน Link
 
 const NavbarAdmin = () => {
   return (
@@ -12,16 +10,26 @@ const NavbarAdmin = () => {
       <div className="sidebar">
         <div className="logo-container">
           <img src={myLogo} alt="SU Kits Logo" className="logo" />
-          <h1 className="title">SU Kits</h1>
+          <h1 className="title"></h1>
         </div>
         <ul className="menu">
-          <li className="menu-item ">
+          <li className="menu-item">
             <i className="fa-solid fa-chart-simple"></i> 
-            <Link to="/dashboard">Dashboard</Link>
+            <NavLink 
+              to="/dashboard" 
+              className={({ isActive }) => isActive ? 'menu-item active' : 'menu-item'} // ใช้ isActive เพื่อตรวจสอบเส้นทาง
+            >
+              Dashboard
+            </NavLink>
           </li>
-          <li className="menu-item active">
+          <li className="menu-item">
             <i className="fas fa-tools"></i> 
-            <Link to="/mainadmin">รายการอุปกรณ์</Link>
+            <NavLink 
+              to="/mainadmin" 
+              className={({ isActive }) => isActive ? 'menu-item active' : 'menu-item'}
+            >
+              รายการอุปกรณ์
+            </NavLink>
           </li>
           <li className="menu-item">
             <i className="fas fa-handshake"></i> สถานะการยืม

@@ -271,6 +271,42 @@ app.put('/api/equipments/:id', upload.single('image'), (req, res) => {
 });
 
 
+app.post('/api/borrow', (req, res) => {
+  const borrowData = req.body; // รับข้อมูลที่ส่งมาจาก client
+  console.log("Received data:", borrowData); // ตรวจสอบข้อมูลที่ได้รับจาก client
+
+  if (!borrowData.subject || !borrowData.objective || !borrowData.place || !borrowData.borrow_d || !borrowData.return_d) {
+    return res.status(400).json({ message: 'กรุณากรอกข้อมูลให้ครบถ้วน' });
+  }
+
+  const query = `
+    INSERT INTO borrow (subject, objective, place, borrow_d, return_d)
+    VALUES (?, ?, ?, ?, ?)
+  `;
+  const values = [
+    borrowData.subject,
+    borrowData.objective,
+    borrowData.place,
+    borrowData.borrow_d,
+    borrowData.return_d
+  ];
+
+  console.log("SQL values:", values); // ตรวจสอบข้อมูลที่จะส่งไปยังฐานข้อมูล
+
+  db.query(query, values, (err, result) => {
+    if (err) {
+      console.error("Database error:", err);
+      return res.status(500).json({ message: 'เกิดข้อผิดพลาดในการเพิ่มข้อมูล' });
+    }
+    res.status(200).json({ message: 'เพิ่มข้อมูลการยืมสำเร็จ!', borrow_id: result.insertId });
+  });
+});
+
+
+
+
+
+
 
 
 
