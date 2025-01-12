@@ -1,23 +1,34 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import "../interface/CSS/showborrow.css";
 import "../interface/CSS/Modal.css";
 
 const Showborrow = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [borrowDate, setBorrowDate] = useState("2024-01-01");
-  const [returnDate, setReturnDate] = useState("2024-01-08");
+  const [borrowDate, setBorrowDate] = useState(getToday());
+  const [returnDate, setReturnDate] = useState(getDefaultReturnDate(getToday()));
 
   const openModal = () => setIsModalOpen(true);
   const closeModal = () => setIsModalOpen(false);
+
+  // Helper to get today's date in YYYY-MM-DD format
+  function getToday() {
+    const today = new Date();
+    return today.toISOString().split("T")[0];
+  }
+
+  // Helper to calculate the return date (7 days after the borrow date)
+  function getDefaultReturnDate(startDate) {
+    const startDateObj = new Date(startDate);
+    startDateObj.setDate(startDateObj.getDate() + 7);
+    return startDateObj.toISOString().split("T")[0];
+  }
 
   const handleBorrowDateChange = (event) => {
     const newBorrowDate = event.target.value;
     setBorrowDate(newBorrowDate);
 
     // Set return date to 7 days after the borrow date
-    const borrowDateObj = new Date(newBorrowDate);
-    borrowDateObj.setDate(borrowDateObj.getDate() + 7);
-    const newReturnDate = borrowDateObj.toISOString().split('T')[0]; // Get date in YYYY-MM-DD format
+    const newReturnDate = getDefaultReturnDate(newBorrowDate);
     setReturnDate(newReturnDate);
   };
 
@@ -32,12 +43,13 @@ const Showborrow = () => {
         borrowDate={borrowDate}
         returnDate={returnDate}
         onBorrowDateChange={handleBorrowDateChange}
+        minDate={getToday()}
       />
     </div>
   );
 };
 
-const Modal = ({ isOpen, onClose, borrowDate, returnDate, onBorrowDateChange }) => {
+const Modal = ({ isOpen, onClose, borrowDate, returnDate, onBorrowDateChange, minDate }) => {
   if (!isOpen) return null;
 
   return (
@@ -80,6 +92,7 @@ const Modal = ({ isOpen, onClose, borrowDate, returnDate, onBorrowDateChange }) 
                   id="borrow-date"
                   value={borrowDate}
                   onChange={onBorrowDateChange}
+                  min={minDate} // Restrict past dates
                 />
               </div>
               <div>
