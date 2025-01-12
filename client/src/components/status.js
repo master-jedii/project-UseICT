@@ -1,10 +1,10 @@
+import NavbarMain from './NavbarMain';
 import React, { useState, useEffect } from "react";
 import Axios from "axios";
 import { useLocation, useNavigate } from "react-router-dom";
-import "../interface/CSS/AllEquipment.css"; // ไฟล์ CSS
-import NavbarMain from "../components/NavbarMain.js";
 
-const AllEquipment = () => {
+
+const Status = () => {
   const [equipment, setEquipment] = useState([]);
   const [user, setUser] = useState(null); // เก็บข้อมูลผู้ใช้
   const location = useLocation();
@@ -41,9 +41,8 @@ const AllEquipment = () => {
   };
 
   useEffect(() => {
-    fetchEquipment(); // ดึงข้อมูลอุปกรณ์
     fetchUser(); // ดึงข้อมูลผู้ใช้
-  }, [category]); // โหลดข้อมูลใหม่เมื่อเปลี่ยน category
+  }); // โหลดข้อมูลใหม่เมื่อเปลี่ยน category
 
   // ฟังก์ชัน Logout
   const handleLogout = () => {
@@ -53,35 +52,12 @@ const AllEquipment = () => {
   };
 
   return (
-    <>
+    <div className="">
       <NavbarMain userData={user} onLogout={handleLogout} />
-      <div className="all-equipment">
-        <h1 style={{ textAlign: "center", margin: "20px 0" }}>หมวดหมู่: {category}</h1>
-        <div className="equipment-list">
-          {equipment.length > 0 ? (
-            equipment.map((item, idx) => (
-              <div className="equipment-item" key={idx}>
-                <div className="equipment-image">
-                  <img
-                    src={`http://localhost:3333/uploads/${item.image}`}
-                    alt={item.name}
-                  />
-                </div>
-                <div className="equipment-details">
-                  <h4>{item.name}</h4>
-                  <p>{item.description}</p>
-                  <span>จำนวน: {item.quantity}</span>
-                  <a href="#" className="btn custom-borrow-btn">ยืมอุปกรณ์</a>
-                </div>
-              </div>
-            ))
-          ) : (
-            <p style={{ textAlign: "center" }}>ไม่มีข้อมูลในหมวดหมู่ "{category}"</p>
-          )}
-        </div>
-      </div>
-    </>
+
+      
+    </div>
   );
 };
 
-export default AllEquipment;
+export default Status
