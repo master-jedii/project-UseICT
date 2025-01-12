@@ -11,7 +11,7 @@ const path = require("path");
 app.use(cors());
 // CORS
 app.use(cors({
-  origin: 'http://localhost:3001', // ให้ frontend ที่รันที่ localhost:3000 สามารถเข้าถึงได้
+  origin: 'http://localhost:3000', // ให้ frontend ที่รันที่ localhost:3000 สามารถเข้าถึงได้
   methods: 'GET,POST',
 }));
 
