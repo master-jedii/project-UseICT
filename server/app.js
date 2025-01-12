@@ -270,6 +270,7 @@ app.put('/api/equipments/:id', upload.single('image'), (req, res) => {
 
 
 
+
 // เริ่มเซิร์ฟเวอร์
 app.listen(3333, () => {
   console.log("Server running on http://localhost:3333");
