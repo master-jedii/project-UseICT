@@ -75,18 +75,18 @@ const Navbar = () => {
       
       
     return (
-        <nav className="navbar navbar-light bg-white px-5">
+        <nav className="navbar navbar-light bg-white px-5" >
             <div className="d-flex align-items-center">
                 <a className="navbar-brand" href="/">
-                    <img src={logo} alt="Logo" style={{ height: '105px' }} />
+                    <img src={logo} alt="Logo" style={{ height: '70px' }} />
                 </a>
             </div>
-            <div className="d-flex justify-content-center">
-                <ul className="navbar-nav flex-row">
+            <div className="d-flex justify-content-center  ">
+                <ul className="navbar-nav flex-row ">
                     <li className="nav-item mx-4">
                         <button
                             className="nav-link btn btn-link"
-                            style={{ fontSize: '20px', textDecoration: 'none' }}
+                            style={{ fontSize: '18px', textDecoration: 'none' }}
                             onClick={() => scrollToSection('type')}
                         >
                             หมวดหมู่อุปกรณ์
@@ -95,7 +95,7 @@ const Navbar = () => {
                     <li className="nav-item mx-4">
                         <button
                             className="nav-link btn btn-link"
-                            style={{ fontSize: '20px', textDecoration: 'none' }}
+                            style={{ fontSize: '18px', textDecoration: 'none' }}
                             onClick={() => scrollToSection('Howtoborrow')}
                         >
                             วิธียืมอุปกรณ์
@@ -104,7 +104,7 @@ const Navbar = () => {
                     <li className="nav-item mx-4">
                         <button
                             className="nav-link btn btn-link"
-                            style={{ fontSize: '20px', textDecoration: 'none' }}
+                            style={{ fontSize: '18px', textDecoration: 'none' }}
                             onClick={() => scrollToSection('About')}
                         >
                             คำถามที่พบบ่อย
@@ -113,7 +113,7 @@ const Navbar = () => {
                     <li className="nav-item mx-4">
                         <button
                             className="nav-link btn btn-link"
-                            style={{ fontSize: '20px', textDecoration: 'none' }}
+                            style={{ fontSize: '18px', textDecoration: 'none' }}
                             onClick={() => scrollToSection('Footer')}
                         >
                             ติดต่อเรา

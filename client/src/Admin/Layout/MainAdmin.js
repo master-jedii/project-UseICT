@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
 import '../CSS/MainAdmin.css';
-import myLogo from '../../assets/LOGO.png';
 import '../CSS/NavbarAdmin.css';
 import Axios from 'axios';
 import ShowEquipment from './ShowEquipment';
+import NavbarAdmin from './NavbarAdmin';
+
+
 
 
 
@@ -70,28 +72,9 @@ const MainAdmin = () => {
 
   return (
     <div className="admin-dashboard">
-      <div className="sidebar">
-        <div className="logo-container">
-          <img src={myLogo} alt="SU Kits Logo" className="logo" />
-          <h1 className="title">SU Kits</h1>
-        </div>
-        <ul className="menu">
-        <li className="menu-item ">
-            <i className="fa-solid fa-chart-simple"></i> Dashboard
-            
-          </li>
-          <li className="menu-item active">
-            <i className="fas fa-tools"></i> รายการอุปกรณ์
-          </li>
-          <li className="menu-item">
-            <i className="fas fa-handshake"></i> สถานะการยืม
-          </li>
-          <li className="menu-item">
-            <i className="fas fa-history"></i> กำหนดการคืน
-          </li>
-        </ul>
-      </div>
+      <NavbarAdmin/>
       <div className="main-content">
+
         <header className="admin-header">
           <div className="admin-header-info">
             <h1>Dashboard</h1>
