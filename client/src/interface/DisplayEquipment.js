@@ -76,11 +76,17 @@ const DisplayEquipment = () => {
     <div className="equipment-list">
       <div className="header-category">
         {/* เพิ่ม input ค้นหา */}
-        <input
-          placeholder={selectedCategory ? selectedCategory : "ค้นหา...."}
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-        />
+        <div className='search-cata-bar'>
+          <div className="input-container">
+            <i className="fa fa-search search-icon" aria-hidden="true"></i>
+            <input
+              placeholder={selectedCategory ? selectedCategory : "ค้นหา...."}
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
+          </div>
+        </div>
+
         <div className="category-icons">
           <div className="category" onClick={() => handleIconClick("กล้อง")}>
             <div className="image-box">

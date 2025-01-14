@@ -54,7 +54,7 @@ const Status = () => {
   return (
     <div className="">
       <NavbarMain userData={user} onLogout={handleLogout} />
-
+      
       
     </div>
   );

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import NavbarAdmin from './NavbarAdmin';
 import '../CSS/Dashboard.css';
 import {
@@ -13,6 +13,7 @@ import {
   Bar,
   Legend,
 } from 'recharts';
+import axios from 'axios';
 
 const data = [
   { month: 'ม.ค.', borrowed: 40, returned: 30 },
@@ -24,6 +25,48 @@ const data = [
 ];
 
 const Dashboard = () => {
+  const [equipmentStats, setEquipmentStats] = useState(null); // ข้อมูลสถิติอุปกรณ์
+  const [error, setError] = useState('');
+  const [showDetails, setShowDetails] = useState(false); // สำหรับควบคุมการแสดง/ซ่อนรายละเอียด
+  const [users, setUsers] = useState([]); // เก็บข้อมูลผู้ใช้งาน
+  const [showUserDetails, setShowUserDetails] = useState(false); // แสดง/ซ่อนข้อมูลผู้ใช้งาน
+
+  // ดึงข้อมูลจำนวนอุปกรณ์ตามหมวดหมู่
+  useEffect(() => {
+    const fetchEquipmentStats = async () => {
+      try {
+        const response = await axios.get('http://localhost:3333/equipment-stats'); // API ดึงข้อมูล
+        if (response.data) {
+          setEquipmentStats(response.data); // เก็บข้อมูลใน State
+        } else {
+          setEquipmentStats({});
+          setError('ไม่มีข้อมูลอุปกรณ์');
+        }
+      } catch (error) {
+        console.error('Error fetching equipment stats:', error);
+        setError('ไม่สามารถดึงข้อมูลสถิติอุปกรณ์ได้');
+      }
+    };
+
+    const fetchUsers = async () => {
+      try {
+        const response = await axios.get('http://localhost:3333/users'); // API ดึงข้อมูลผู้ใช้งาน
+        setUsers(response.data);
+      } catch (error) {
+        console.error('Error fetching users:', error);
+        setError('ไม่สามารถดึงข้อมูลผู้ใช้งานได้');
+      }
+    };
+
+    fetchEquipmentStats();
+    fetchUsers();
+  }, []);
+
+  // คำนวณจำนวนอุปกรณ์ทั้งหมด
+  const totalEquipment = equipmentStats
+    ? Object.values(equipmentStats).reduce((total, count) => total + count, 0)
+    : 0;
+
   return (
     <div className="admin-dashboard">
       {/* Navbar */}
@@ -42,8 +85,25 @@ const Dashboard = () => {
           <div className="dashboard-content cards-grid">
             <div className="dashboard-card">
               <h2>อุปกรณ์ทั้งหมด</h2>
-              <p>ดูและจัดการอุปกรณ์ทั้งหมดที่มีอยู่ในระบบ</p>
-              <button className="dashboard-button">ดูรายละเอียด</button>
+              <p>จำนวนอุปกรณ์ทั้งหมด: {totalEquipment} ชิ้น</p>
+              <button
+                className="dashboard-button"
+                onClick={() => setShowDetails(!showDetails)}
+              >
+                {showDetails ? 'ซ่อนรายละเอียด' : 'ดูรายละเอียด'}
+              </button>
+              {showDetails && equipmentStats && (
+                <ul className="equipment-list">
+                  {Object.entries(equipmentStats).map(([category, count]) => (
+                    <li key={category} className="equipment-item">
+                      <strong>{category}:</strong> {count} ชิ้น
+                    </li>
+                  ))}
+                </ul>
+              )}
+              {showDetails && !equipmentStats && (
+                <p>{error || 'กำลังโหลดข้อมูล...'}</p>
+              )}
             </div>
             <div className="dashboard-card">
               <h2>สถานะการยืม</h2>
@@ -52,8 +112,22 @@ const Dashboard = () => {
             </div>
             <div className="dashboard-card">
               <h2>ผู้ใช้งานทั้งหมด</h2>
-              <p>จัดการข้อมูลผู้ใช้งานในระบบทั้งหมด</p>
-              <button className="dashboard-button">จัดการผู้ใช้งาน</button>
+              <p>จำนวนผู้ใช้งานทั้งหมด: {users.length}</p>
+              <button
+                className="dashboard-button"
+                onClick={() => setShowUserDetails(!showUserDetails)}
+              >
+                {showUserDetails ? 'ซ่อนรายละเอียด' : 'ดูรายละเอียดผู้ใช้งาน'}
+              </button>
+              {showUserDetails && (
+                <ul className="equipment-list">
+                  {users.map((user) => (
+                    <li key={user.UserID} className="equipment-item">
+                      <strong>{user.firstname} {user.lastname}</strong> ({user.email})
+                    </li>
+                  ))}
+                </ul>
+              )}
             </div>
           </div>
 
