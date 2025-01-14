@@ -310,6 +310,7 @@ app.post('/api/borrow', (req, res) => {
   const borrowData = req.body; // รับข้อมูลที่ส่งมาจาก client
   console.log("Received data:", borrowData); // ตรวจสอบข้อมูลที่ได้รับจาก client
 
+  // ตรวจสอบข้อมูลที่ได้รับ
   if (!borrowData.subject || !borrowData.objective || !borrowData.place || !borrowData.borrow_d || !borrowData.return_d) {
     return res.status(400).json({ message: 'กรุณากรอกข้อมูลให้ครบถ้วน' });
   }
@@ -320,10 +321,10 @@ app.post('/api/borrow', (req, res) => {
   `;
   const values = [
     borrowData.subject,
-    borrowData.objective,
-    borrowData.place,
-    borrowData.borrow_d,
-    borrowData.return_d
+    borrowData.objective,  // ใช้ objective แทน equipment
+    borrowData.place,      // ใช้ place แทน location
+    borrowData.borrow_d,   // ใช้ borrow_d แทน borrowDate
+    borrowData.return_d    // ใช้ return_d แทน returnDate
   ];
 
   console.log("SQL values:", values); // ตรวจสอบข้อมูลที่จะส่งไปยังฐานข้อมูล
@@ -333,9 +334,13 @@ app.post('/api/borrow', (req, res) => {
       console.error("Database error:", err);
       return res.status(500).json({ message: 'เกิดข้อผิดพลาดในการเพิ่มข้อมูล' });
     }
+
+    // ส่งข้อความตอบกลับเมื่อบันทึกข้อมูลสำเร็จ
     res.status(200).json({ message: 'เพิ่มข้อมูลการยืมสำเร็จ!', borrow_id: result.insertId });
   });
 });
+
+
 
 
 
