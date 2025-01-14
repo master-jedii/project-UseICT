@@ -75,12 +75,15 @@ const AllEquipment = () => {
       <NavbarMain userData={user} onLogout={handleLogout} />
       <h1 style={{ textAlign: "center", margin: "20px 0", backgroundColor: "#009498", color: "#ffffff" }}>{category}</h1>
       {/* เพิ่ม input ค้นหา */}
-      <div style={{ textAlign: 'center' }}>
-        <input
-          placeholder="ค้นหา ....."
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-        />
+      <div className='search-cata-bar1'>
+        <div className="input-container1">
+          <i className="fa fa-search search-icon" aria-hidden="true"></i>
+          <input
+            placeholder={ "ค้นหา...."}
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
+         </div>
       </div>
       <div className="equipment-list">
         {equipment.length > 0 ? (

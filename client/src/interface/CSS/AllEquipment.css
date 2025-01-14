@@ -63,4 +63,32 @@
     background-color: #0056b3;
   }
 
+  .search-cata-bar1 {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 25px;
+  }
+  
+  .input-container1 {
+    position: relative;
+  }
+  
+  .input-container1 input {
+    width: 500px;
+    padding: 10px 20px;
+    padding-left: 40px; /* เพิ่ม padding ให้มีพื้นที่สำหรับไอคอน */
+    border-radius: 10px;
+    border: 1px solid #ccc;
+    font-size: 16px;
+  }
+  
+  .search-icon {
+    position: absolute;
+    left: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 20px; /* ปรับขนาดไอคอน */
+    color: #009498;
+  }
   

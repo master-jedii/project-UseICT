@@ -47,15 +47,14 @@ const Showborrow = () => {
   );
 };
 
-
 const Modal = ({ isOpen, onClose, borrowDate, returnDate, onBorrowDateChange, minDate }) => {
   const [formData, setFormData] = useState({
     userId: "",
     subject: "",
-    objective: "",  // เปลี่ยนจาก equipment เป็น objective
-    place: "",      // เปลี่ยนจาก location เป็น place
-    borrow_d: borrowDate,  // เปลี่ยนจาก borrowDate เป็น borrow_d
-    return_d: returnDate,  // เปลี่ยนจาก returnDate เป็น return_d
+    equipment: "",
+    location: "",
+    borrowDate,
+    returnDate,
   });
 
   const handleChange = (e) => {
@@ -67,12 +66,12 @@ const Modal = ({ isOpen, onClose, borrowDate, returnDate, onBorrowDateChange, mi
     e.preventDefault();
     const dataToSend = {
       ...formData,
-      borrow_d: borrowDate,  // ใช้ borrow_d
-      return_d: returnDate,  // ใช้ return_d
+      borrowDate,
+      returnDate,
     };
-  
+
     try {
-      const response = await axios.post("http://localhost:3333/api/borrow", dataToSend);
+      const response = await axios.post("/api/borrow", dataToSend);
       alert(response.data.message || "บันทึกข้อมูลสำเร็จ");
       onClose();
     } catch (error) {
@@ -84,7 +83,6 @@ const Modal = ({ isOpen, onClose, borrowDate, returnDate, onBorrowDateChange, mi
       console.error("Error:", error);
     }
   };
-  
 
   if (!isOpen) return null;
 
@@ -123,21 +121,21 @@ const Modal = ({ isOpen, onClose, borrowDate, returnDate, onBorrowDateChange, mi
             </div>
             <div className="new-form-grid">
               <div>
-                <label htmlFor="objective">วัสดุประสงค์ในการยืมอุปกรณ์</label>
+                <label htmlFor="equipment">วัสดุประสงค์ในการยืมอุปกรณ์</label>
                 <input
                   type="text"
-                  id="objective"
-                  value={formData.objective}  // ใช้ objective แทน equipment
+                  id="equipment"
+                  value={formData.equipment}
                   onChange={handleChange}
                   required
                 />
               </div>
               <div>
-                <label htmlFor="place">สถานที่ใช้งาน</label>
+                <label htmlFor="location">สถานที่ใช้งาน</label>
                 <input
                   type="text"
-                  id="place"
-                  value={formData.place}  // ใช้ place แทน location
+                  id="location"
+                  value={formData.location}
                   onChange={handleChange}
                   required
                 />
@@ -145,11 +143,11 @@ const Modal = ({ isOpen, onClose, borrowDate, returnDate, onBorrowDateChange, mi
             </div>
             <div className="new-form-grid">
               <div>
-                <label htmlFor="borrow_d">วันที่ยืม</label>
+                <label htmlFor="borrow-date">วันที่ยืม</label>
                 <input
                   type="date"
-                  id="borrow_d"
-                  value={borrowDate}  // ใช้ borrow_d แทน borrowDate
+                  id="borrowDate"
+                  value={borrowDate}
                   onChange={(e) => {
                     onBorrowDateChange(e);
                     handleChange(e);
@@ -159,11 +157,11 @@ const Modal = ({ isOpen, onClose, borrowDate, returnDate, onBorrowDateChange, mi
                 />
               </div>
               <div>
-                <label htmlFor="return_d">กำหนดคืน</label>
+                <label htmlFor="return-date">กำหนดคืน</label>
                 <input
                   type="date"
-                  id="return_d"
-                  value={returnDate}  // ใช้ return_d แทน returnDate
+                  id="returnDate"
+                  value={returnDate}
                   readOnly
                 />
               </div>

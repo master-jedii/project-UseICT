@@ -155,18 +155,18 @@ const MainAdmin = () => {
                       <option value="อยู่ในระหว่างการใช้งาน">อยู่ในระหว่างการใช้งาน</option>
                       <option value="ซ่อมบำรุง">ซ่อมบำรุง</option>
                     </select>
-                    <label>ประเภทอุปกรณ์ (type_id):</label>
+                    <label>รหัสอุปกรณ์:</label>
                     <select
                       value={equipment.type_id}
                       onChange={(e) => handleFieldChange(index, 'type_id', e.target.value)}
                       required
                     >
                       <option value="" disabled>
-                        เลือกประเภทอุปกรณ์
+                        เลือกรหัสอุปกรณ์
                       </option>
                       {serialTypes.map((serialType) => (
                         <option key={serialType.type_id} value={serialType.type_id}>
-                          {serialType.type_id}{serialType.type_serial}
+                          {serialType.type_serial} {serialType.type_id}
                         </option>
                       ))}
                     </select>

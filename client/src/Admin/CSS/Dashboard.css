@@ -1,50 +1,77 @@
 .cards-grid {
-    display: flex;
-    justify-content: space-between;
-    gap: 20px;
-    margin-bottom: 20px;
-  }
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  margin-bottom: 20px;
+}
 
-  .main-content {
-     background-color: #f8f9fa
-  }
-  .dashboard-card {
-    background-color: #ffffff;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    padding: 20px;
-    border-radius: 10px;
-    flex: 1;
-    text-align: center;
-    transition: transform 0.2s ease;
-  }
-  
-  .dashboard-card:hover {
-    transform: translateY(-5px);
-  }
-  
-  .dashboard-card h2 {
-    font-size: 20px;
-    color: #333;
-    margin-bottom: 10px;
-  }
-  
-  .dashboard-card p {
-    font-size: 14px;
-    color: #666;
-    margin-bottom: 15px;
-  }
-  
-  .dashboard-button {
-    background-color: #009688;
-    color: #fff;
-    border: none;
-    padding: 10px 15px;
-    font-size: 14px;
-    border-radius: 5px;
-    cursor: pointer;
-  }
-  
-  .dashboard-button:hover {
-    background-color: #00796b;
-  }
+.main-content {
+  background-color: #f8f9fa;
+}
 
+.dashboard-card {
+  background-color: #ffffff;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  border-radius: 10px;
+  flex: 1;
+  text-align: center;
+  transition: transform 0.2s ease;
+}
+
+.dashboard-card:hover {
+  transform: translateY(-5px);
+}
+
+.dashboard-card h2 {
+  font-size: 20px;
+  color: #333;
+  margin-bottom: 10px;
+}
+
+.dashboard-card p {
+  font-size: 14px;
+  color: #666;
+  margin-bottom: 15px;
+}
+
+.dashboard-button {
+  background-color: #009688;
+  color: #fff;
+  border: none;
+  padding: 10px 15px;
+  font-size: 14px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.dashboard-button:hover {
+  background-color: #00796b;
+}
+
+.equipment-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  max-height: 300px; /* กำหนดความสูงสูงสุด */
+  overflow-y: auto; /* เพิ่ม scroll หากเนื้อหาเกิน */
+  background: #ffffff;
+  border-radius: 10px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  padding: 10px;
+}
+
+.equipment-item {
+  font-size: 1rem;
+  margin-bottom: 10px;
+  color: #555;
+  padding: 8px;
+  background: #f8f9fa;
+  border-radius: 5px;
+  text-align: left;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.equipment-item:last-child {
+  margin-bottom: 0; /* เอาช่องว่างออกสำหรับรายการสุดท้าย */
+}
