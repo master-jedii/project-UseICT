@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Axios from 'axios';
 import { useParams } from 'react-router-dom';
+import Showborrow from './showborrow';
 
 const EquipmentListByType = () => {
   const { typeId } = useParams(); // ดึง type_id จาก URL
@@ -24,6 +25,7 @@ const EquipmentListByType = () => {
             <div className="card-body">
               <h5 className="card-title">{item.name}</h5>
               <p className="card-text">{item.description}</p>
+              <Showborrow></Showborrow>
             </div>
           </div>
         ))}
