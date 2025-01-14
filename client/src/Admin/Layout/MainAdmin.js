@@ -5,26 +5,21 @@ import Axios from 'axios';
 import ShowEquipment from './ShowEquipment';
 import NavbarAdmin from './NavbarAdmin';
 
-
-
-
-
-
 const MainAdmin = () => {
   const [showModal, setShowModal] = useState(false);
   const [equipments, setEquipments] = useState([
-    { name: '', description: '', category: '', image: null, imagePreview: null },
+    { name: '', description: '', category: '', image: null, imagePreview: null, status: '' },
   ]);
 
   // เปิด/ปิด Modal
   const toggleModal = () => {
     setShowModal(!showModal);
-    setEquipments([{ name: '', description: '', category: '', image: null, imagePreview: null }]);
+    setEquipments([{ name: '', description: '', category: '', image: null, imagePreview: null, status: '' }]);
   };
 
   // ฟังก์ชันเพิ่มอุปกรณ์ในรายการ
   const addEquipmentField = () => {
-    setEquipments([...equipments, { name: '', description: '', category: '', image: null, imagePreview: null }]);
+    setEquipments([...equipments, { name: '', description: '', category: '', image: null, imagePreview: null, status: '' }]);
   };
 
   // ฟังก์ชันลบอุปกรณ์จากรายการ
@@ -56,6 +51,7 @@ const MainAdmin = () => {
       formData.append('name', equipment.name);
       formData.append('description', equipment.description);
       formData.append('category', equipment.category);
+      formData.append('status', equipment.status);
       formData.append('image', equipment.image);
       return Axios.post('http://localhost:3333/create', formData);
     });
@@ -74,7 +70,7 @@ const MainAdmin = () => {
   return (
     <div className="admin-dashboard">
       <NavbarAdmin/>
-      
+
       <div className="main-content">
 
         <header className="admin-header">
@@ -82,11 +78,10 @@ const MainAdmin = () => {
             <h1>รายการอุปกรณ์</h1>
           </div>
         </header>
-        
 
         {/* ปุ่มสำหรับเปิด Modal */}
         <button className="btn btn-primary " onClick={toggleModal}>
-        <i className="fas fa-tools" style={{marginRight:'10px'}}></i> 
+          <i className="fas fa-tools" style={{marginRight:'10px'}}></i> 
           เพิ่มอุปกรณ์
         </button>
 
@@ -133,6 +128,20 @@ const MainAdmin = () => {
                       <option value="อุปกรณ์ด้านเสียง">อุปกรณ์ด้านเสียง</option>
                       <option value="อุปกรณ์จัดแสง">อุปกรณ์จัดแสง</option>
                       <option value="อุปกรณ์อื่นๆ">อุปกรณ์อื่นๆ</option>
+                    </select>
+                    <label>สถานะ:</label>
+                    <select
+                      value={equipment.status}
+                      onChange={(e) => handleFieldChange(index, 'status', e.target.value)}
+                      required
+                    >
+                      <option value="" disabled>
+                        เลือกสถานะ
+                      </option>
+                      <option value="พร้อมใช้งาน">พร้อมใช้งาน</option>
+                      <option value="ไม่พร้อมใช้งาน">ไม่พร้อมใช้งาน</option>
+                      <option value="อยู่ในระหว่างการใช้งาน">อยู่ในระหว่างการใช้งาน</option>
+                      <option value="ซ่อมบำรุง">ซ่อมบำรุง</option>
                     </select>
                     <label>เลือกรูปภาพ:</label>
                     <input
