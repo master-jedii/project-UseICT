@@ -13,7 +13,7 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 app.use(cors());
 // CORS
 app.use(cors({
-  origin: 'http://localhost:3001', // ให้ frontend ที่รันที่ localhost:3000 สามารถเข้าถึงได้
+  origin: 'http://localhost:3000', // ให้ frontend ที่รันที่ localhost:3000 สามารถเข้าถึงได้
   methods: 'GET,POST',
 }));
 
@@ -195,11 +195,12 @@ app.post("/create", upload.fields([{ name: "image", maxCount: 1 }]), (req, res) 
   const name = req.body.name;
   const description = req.body.description;
   const category = req.body.category;
+  const status = req.body.status;
   const image = req.files?.image ? req.files.image[0].filename : null;
 
   db.query(
-    "INSERT INTO equipment (name, description, category, image) VALUES (?, ?, ?, ?)",
-    [name, description, category, image],
+    "INSERT INTO equipment (name, description, category, image, status) VALUES (?, ?, ?, ?,?)",
+    [name, description, category, image,status],
     (err, result) => {
       if (err) {
         console.log(err);
