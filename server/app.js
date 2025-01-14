@@ -13,7 +13,7 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 app.use(cors());
 // CORS
 app.use(cors({
-  origin: 'http://localhost:3001', // ให้ frontend ที่รันที่ localhost:3000 สามารถเข้าถึงได้
+  origin: 'http://localhost:3000', // ให้ frontend ที่รันที่ localhost:3000 สามารถเข้าถึงได้
   methods: 'GET,POST',
 }));
 
@@ -178,6 +178,8 @@ app.get("/admin", (req, res) => {
 
 
 
+
+
 // ตั้งค่าการเก็บไฟล์
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
@@ -190,25 +192,65 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage: storage });
 
-// กรณีอัปโหลดหลายฟิลด์
+// Endpoint สำหรับเพิ่มอุปกรณ์ใหม่
 app.post("/create", upload.fields([{ name: "image", maxCount: 1 }]), (req, res) => {
-  const name = req.body.name;
-  const description = req.body.description;
-  const category = req.body.category;
+  // รับค่าจาก frontend
+  const { name, description, category, type_id } = req.body;
   const image = req.files?.image ? req.files.image[0].filename : null;
 
-  db.query(
-    "INSERT INTO equipment (name, description, category, image) VALUES (?, ?, ?, ?)",
-    [name, description, category, image],
-    (err, result) => {
+  // ตรวจสอบค่าที่ได้รับจาก frontend
+  console.log("Received data:", { name, description, category, type_id });
+
+  // เช็คว่า type_id ที่รับมามีอยู่ในฐานข้อมูลหรือไม่
+  const checkTypeQuery = 'SELECT * FROM serialnumber WHERE type_id = ?';
+
+  db.query(checkTypeQuery, [type_id], (err, result) => {
+    if (err) {
+      console.log("Error checking type_id:", err);
+      return res.status(500).json({ message: "Error checking serial type" });
+    }
+
+    if (result.length === 0) {
+      return res.status(400).json({ message: "Invalid type_id, no such serial type exists" });
+    }
+
+    // ถ้า type_id ถูกต้องแล้ว ทำการเพิ่มข้อมูลในตาราง equipment
+    const insertQuery = `
+      INSERT INTO equipment (name, description, category, image, type_id)
+      VALUES (?, ?, ?, ?, ?)
+    `;
+
+    db.query(insertQuery, [name, description, category, image, type_id], (err, result) => {
       if (err) {
-        console.log(err);
+        console.log("Error inserting equipment:", err);
+        // ลบไฟล์หากเกิดข้อผิดพลาด
+        if (image) {
+          fs.unlinkSync(path.join(__dirname, 'uploads', image));
+        }
         return res.status(500).json({ message: "Error saving equipment" });
       }
-      res.status(200).json({ message: "Equipment added successfully" });
-    }
-  );
+
+      res.status(200).json({ message: "Equipment added successfully", equipmentId: result.insertId });
+    });
+  });
 });
+
+// ดึงข้อมูลจากตาราง serialnumber
+app.get("/api/serialtypes", (req, res) => {
+  const query = 'SELECT type_id, type_serial FROM serialnumber'; // เปลี่ยนเป็น query ที่คุณใช้
+  db.query(query, (err, result) => {
+    if (err) {
+      console.error("Error fetching serial types:", err);
+      return res.status(500).json({ message: 'Error fetching serial types' });
+    }
+    res.status(200).json(result); // ส่งข้อมูลที่ได้รับจากฐานข้อมูล
+  });
+});
+
+
+
+
+
 
 // แสดงรายการอุปกรณ์พร้อมกรองหมวดหมู่
 app.get("/showequipment", (req, res) => {
@@ -229,6 +271,8 @@ app.get("/showequipment", (req, res) => {
     }
   });
 });
+
+
 
 
 
@@ -306,6 +350,13 @@ app.put('/api/equipments/:id', upload.single('image'), (req, res) => {
 });
 
 
+
+
+
+
+
+
+
 app.post('/api/borrow', (req, res) => {
   const borrowData = req.body; // รับข้อมูลที่ส่งมาจาก client
   console.log("Received data:", borrowData); // ตรวจสอบข้อมูลที่ได้รับจาก client
@@ -336,6 +387,7 @@ app.post('/api/borrow', (req, res) => {
     res.status(200).json({ message: 'เพิ่มข้อมูลการยืมสำเร็จ!', borrow_id: result.insertId });
   });
 });
+
 
 
 
