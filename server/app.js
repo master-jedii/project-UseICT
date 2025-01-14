@@ -258,6 +258,21 @@ app.get("/showequipment", (req, res) => {
   });
 });
 
+app.get("/showequipment/type/:typeId", (req, res) => {
+  const { typeId } = req.params;  // รับค่า type_id จาก URL path
+
+  let query = "SELECT * FROM equipment WHERE type_id = ?";
+
+  db.query(query, [typeId], (err, result) => {
+    if (err) {
+      console.log("เกิดข้อผิดพลาดอะไรบางอย่าง", err);
+      return res.status(500).json({ message: "Error fetching equipment" });
+    } else {
+      res.send(result); // ส่งข้อมูลอุปกรณ์ที่ตรงกับ type_id
+    }
+  });
+});
+
 
 
 
