@@ -93,7 +93,7 @@ const Dashboard = () => {
                 {showDetails ? 'ซ่อนรายละเอียด' : 'ดูรายละเอียด'}
               </button>
               {showDetails && equipmentStats && (
-                <ul className="equipment-list">
+                <ul className="equipment-list-dashboard ">
                   {Object.entries(equipmentStats).map(([category, count]) => (
                     <li key={category} className="equipment-item">
                       <strong>{category}:</strong> {count} ชิ้น
@@ -120,7 +120,7 @@ const Dashboard = () => {
                 {showUserDetails ? 'ซ่อนรายละเอียด' : 'ดูรายละเอียดผู้ใช้งาน'}
               </button>
               {showUserDetails && (
-                <ul className="equipment-list">
+                <ul className="equipment-list-dashboard ">
                   {users.map((user) => (
                     <li key={user.UserID} className="equipment-item">
                       <strong>{user.firstname} {user.lastname}</strong> ({user.email})
