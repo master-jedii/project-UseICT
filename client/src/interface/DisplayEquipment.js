@@ -10,8 +10,7 @@ import lightEquipmentIcon from '../assets/Source Four Par.png';
 import otherIcon from '../assets/Camera Addon Identification.png';
 import All from '../assets/Vector.png';
 import '../View/DisplayEquipment.css';
-import ShowBorrow from '../interface/showborrow'
-
+import ShowBorrow from '../interface/showborrow';
 
 const DisplayEquipment = () => {
   const [equipment, setEquipment] = useState([]);
@@ -36,7 +35,6 @@ const DisplayEquipment = () => {
   // ฟังก์ชันจัดการการคลิกไอคอนหมวดหมู่
   const handleIconClick = (category) => {
     setSelectedCategory(category);
-    setSearchTerm(category); // ตั้งค่าคำค้นหาให้ตรงกับหมวดหมู่ที่เลือก
   };
   
   useEffect(() => {
@@ -79,7 +77,7 @@ const DisplayEquipment = () => {
       <div className="header-category">
         {/* เพิ่ม input ค้นหา */}
         <input
-          placeholder="ค้นหาชื่อปุกรณ์เท่านั้น...."
+          placeholder={selectedCategory ? selectedCategory : "ค้นหา...."}
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
         />
