@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import '../CSS/MainAdmin.css';
 import '../CSS/NavbarAdmin.css';
 import Axios from 'axios';
@@ -8,18 +8,30 @@ import NavbarAdmin from './NavbarAdmin';
 const MainAdmin = () => {
   const [showModal, setShowModal] = useState(false);
   const [equipments, setEquipments] = useState([
-    { name: '', description: '', category: '', image: null, imagePreview: null, status: '' },
+    { name: '', description: '', category: '', image: null, imagePreview: null, status: '', type_id: '' },
   ]);
+  const [serialTypes, setSerialTypes] = useState([]); // สำหรับเก็บประเภทอุปกรณ์จากฐานข้อมูล
+
+  // ฟังก์ชันเพื่อดึงข้อมูลจาก API ที่คุณได้สร้างไว้
+  useEffect(() => {
+    Axios.get('http://localhost:3333/api/serialtypes') // ปรับ URL ให้ตรงกับ API ของคุณ
+      .then((response) => {
+        setSerialTypes(response.data); // เก็บข้อมูลประเภทอุปกรณ์ใน state
+      })
+      .catch((error) => {
+        console.error('Error fetching serial types:', error);
+      });
+  }, []);
 
   // เปิด/ปิด Modal
   const toggleModal = () => {
     setShowModal(!showModal);
-    setEquipments([{ name: '', description: '', category: '', image: null, imagePreview: null, status: '' }]);
+    setEquipments([{ name: '', description: '', category: '', image: null, imagePreview: null, status: '', type_id: '' }]);
   };
 
   // ฟังก์ชันเพิ่มอุปกรณ์ในรายการ
   const addEquipmentField = () => {
-    setEquipments([...equipments, { name: '', description: '', category: '', image: null, imagePreview: null, status: '' }]);
+    setEquipments([...equipments, { name: '', description: '', category: '', image: null, imagePreview: null, status: '', type_id: '' }]);
   };
 
   // ฟังก์ชันลบอุปกรณ์จากรายการ
@@ -53,6 +65,7 @@ const MainAdmin = () => {
       formData.append('category', equipment.category);
       formData.append('status', equipment.status);
       formData.append('image', equipment.image);
+      formData.append('type_id', equipment.type_id); // ส่งค่า type_id
       return Axios.post('http://localhost:3333/create', formData);
     });
 
@@ -69,10 +82,9 @@ const MainAdmin = () => {
 
   return (
     <div className="admin-dashboard">
-      <NavbarAdmin/>
+      <NavbarAdmin />
 
       <div className="main-content">
-
         <header className="admin-header">
           <div className="admin-header-info">
             <h1>รายการอุปกรณ์</h1>
@@ -80,12 +92,12 @@ const MainAdmin = () => {
         </header>
 
         {/* ปุ่มสำหรับเปิด Modal */}
-        <button className="btn btn-primary " onClick={toggleModal}>
-          <i className="fas fa-tools" style={{marginRight:'10px'}}></i> 
+        <button className="btn btn-primary" onClick={toggleModal}>
+          <i className="fas fa-tools" style={{ marginRight: '10px' }}></i>
           เพิ่มอุปกรณ์
         </button>
 
-        <ShowEquipment/>
+        <ShowEquipment />
 
         {/* Modal สำหรับกรอกข้อมูล */}
         {showModal && (
@@ -94,7 +106,7 @@ const MainAdmin = () => {
               <span className="close" onClick={toggleModal}>
                 &times;
               </span>
-              <h2 className='text-headadd'>เพิ่มอุปกรณ์</h2>
+              <h2 className="text-headadd">เพิ่มอุปกรณ์</h2>
               <form onSubmit={submitEquipments}>
                 {equipments.map((equipment, index) => (
                   <div key={index} className="equipment-group">
@@ -142,6 +154,21 @@ const MainAdmin = () => {
                       <option value="ไม่พร้อมใช้งาน">ไม่พร้อมใช้งาน</option>
                       <option value="อยู่ในระหว่างการใช้งาน">อยู่ในระหว่างการใช้งาน</option>
                       <option value="ซ่อมบำรุง">ซ่อมบำรุง</option>
+                    </select>
+                    <label>ประเภทอุปกรณ์ (type_id):</label>
+                    <select
+                      value={equipment.type_id}
+                      onChange={(e) => handleFieldChange(index, 'type_id', e.target.value)}
+                      required
+                    >
+                      <option value="" disabled>
+                        เลือกประเภทอุปกรณ์
+                      </option>
+                      {serialTypes.map((serialType) => (
+                        <option key={serialType.type_id} value={serialType.type_id}>
+                          {serialType.type_id}{serialType.type_serial}
+                        </option>
+                      ))}
                     </select>
                     <label>เลือกรูปภาพ:</label>
                     <input

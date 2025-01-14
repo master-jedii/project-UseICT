@@ -195,16 +195,16 @@ const upload = multer({ storage: storage });
 // Endpoint สำหรับเพิ่มอุปกรณ์ใหม่
 app.post("/create", upload.fields([{ name: "image", maxCount: 1 }]), (req, res) => {
   // รับค่าจาก frontend
-  const { name, description, category, type_id } = req.body;
-  const name = req.body.name;
-  const description = req.body.description;
-  const category = req.body.category;
-  const status = req.body.status;
+  const { name, description, category, type_id, status } = req.body;  // เพิ่ม type_id และ status
   const image = req.files?.image ? req.files.image[0].filename : null;
 
+  // แสดงค่าที่ได้รับมาจาก frontend
+  console.log("Received data:", { name, description, category, type_id, status, image });
+
+  // คำสั่ง SQL สำหรับการเพิ่มข้อมูล
   db.query(
-    "INSERT INTO equipment (name, description, category, image) VALUES (?, ?, ?, ?)",
-    [name, description, category, image],
+    "INSERT INTO equipment (name, description, category, image, status, type_id) VALUES (?, ?, ?, ?, ?, ?)",  // เพิ่ม type_id
+    [name, description, category, image, status, type_id],  // ส่ง type_id เข้าไปด้วย
     (err, result) => {
       if (err) {
         console.log("Error inserting equipment:", err);
@@ -216,9 +216,10 @@ app.post("/create", upload.fields([{ name: "image", maxCount: 1 }]), (req, res) 
       }
 
       res.status(200).json({ message: "Equipment added successfully", equipmentId: result.insertId });
-    });
-  });
+    }
+  );
 });
+
 
 // ดึงข้อมูลจากตาราง serialnumber
 app.get("/api/serialtypes", (req, res) => {
