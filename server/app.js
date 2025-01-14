@@ -164,20 +164,6 @@ app.post('/signup', async (req, res) => {
 });
 
 
-
-// แสดงรายการอุปกรณ์
-app.get("/admin", (req, res) => {
-  db.query("SELECT * FROM equipment", (err, result) => {
-    if (err) {
-      console.log(err);
-    } else {
-      res.send(result);
-    }
-  });
-});
-
-
-
 // ตั้งค่าการเก็บไฟล์
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
@@ -411,6 +397,10 @@ app.get("/api/serialtypes", (req, res) => {
     res.status(200).json(result); // ส่งข้อมูลที่ได้รับจากฐานข้อมูล
   });
 });
+
+
+
+
 
 
 // เริ่มเซิร์ฟเวอร์
