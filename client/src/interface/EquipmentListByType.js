@@ -12,6 +12,7 @@ const EquipmentListByType = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState(''); // เพิ่ม state สำหรับคำค้นหา
+  
 
   // ดึงค่าหมวดหมู่จาก query string
   const queryParams = new URLSearchParams(location.search);
@@ -50,9 +51,22 @@ const EquipmentListByType = () => {
     }
   };
 
+  // ดึงข้อมูลอุปกรณ์จากประเภท typeId
+  const fetchEquipmentByType = () => {
+    Axios.get(`http://localhost:3333/showequipment/type/${typeId}`)
+      .then((response) => {
+        setEquipment(response.data);
+      })
+      .catch((err) => console.error("Error fetching equipment by type:", err));
+  };
+
   useEffect(() => {
-    fetchEquipment(); // ดึงข้อมูลอุปกรณ์
     fetchUser(); // ดึงข้อมูลผู้ใช้
+    fetchEquipmentByType(); // ดึงข้อมูลอุปกรณ์ตาม typeId
+  }, [typeId]); // โหลดข้อมูลใหม่เมื่อเปลี่ยน typeId
+
+  useEffect(() => {
+    fetchEquipment(); // ดึงข้อมูลอุปกรณ์ตามหมวดหมู่
   }, [category]); // โหลดข้อมูลใหม่เมื่อเปลี่ยน category
 
   useEffect(() => {
@@ -60,7 +74,7 @@ const EquipmentListByType = () => {
       const filteredEquipment = filterBySearch(equipment);
       setEquipment(filteredEquipment);
     } else {
-      fetchEquipment(); // รีเฟรชข้อมูลทั้งหมดหากไม่มีคำค้นหา
+      fetchEquipmentByType(); // รีเฟรชข้อมูลเมื่อไม่มีคำค้นหา
     }
   }, [searchTerm]); // อัปเดตข้อมูลเมื่อคำค้นหาเปลี่ยนแปลง
 
@@ -71,39 +85,34 @@ const EquipmentListByType = () => {
     navigate('/');
   };
 
-  // ฟังก์ชันดึงข้อมูลอุปกรณ์ตาม type_id
-  useEffect(() => {
-    Axios.get(`http://localhost:3333/showequipment/type/${typeId}`)
-      .then((response) => {
-        setEquipment(response.data);
-      })
-      .catch((err) => console.error(err));
-  }, [typeId]);
-
   return (
     <div>
       <NavbarMain userData={user} onLogout={handleLogout} />
       <div className="equipment-list">
         <div className='search-cata-bar1'>
-        <div className="input-container1">
-          <i className="fa fa-search search-icon" aria-hidden="true"></i>
-          <input
-            placeholder={ "ค้นหา...."}
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-          />
-         </div>
-      </div>
+          <div className="input-container1">
+            <i className="fa fa-search search-icon" aria-hidden="true"></i>
+            <input
+              placeholder={"ค้นหา...."}
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
+          </div>
+        </div>
         <div className="equipment-cards">
-          {equipment.map((item) => (
-            <div key={item.id} className="card">
-              <div className="card-body">
-                <h5 className="card-title">{item.name}</h5>
-                <p className="card-text">{item.description}</p>
-                <Showborrow></Showborrow>
+          {equipment.length > 0 ? (
+            equipment.map((item) => (
+              <div key={item.id} className="card">
+                <div className="card-body">
+                  <h5 className="card-title">{item.name}</h5>
+                  <p className="card-text">{item.description}</p>
+                  <Showborrow />
+                </div>
               </div>
-            </div>
-          ))}
+            ))
+          ) : (
+            <p>ไม่มีข้อมูลอุปกรณ์ในหมวดหมู่นี้</p>
+          )}
         </div>
       </div>
     </div>
