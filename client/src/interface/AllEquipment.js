@@ -54,10 +54,9 @@ const AllEquipment = () => {
   };
 
   return (
-    <div className="all-equipment">
+    <div>
       <NavbarMain userData={user} onLogout={handleLogout} />
-      <h1 style={{ textAlign: "center", margin: "20px 0" }}>หมวดหมู่: {category}</h1>
-
+      <h1 style={{ textAlign: "center", margin: "20px 0", backgroundColor: "#009498", color: "#ffffff" }}>{category}</h1>
       <div className="equipment-list">
         {equipment.length > 0 ? (
           equipment.map((item, idx) => (
@@ -81,7 +80,7 @@ const AllEquipment = () => {
         )}
       </div>
     </div>
-  );
+  );  
 };
 
 export default AllEquipment;
