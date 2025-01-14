@@ -10,6 +10,7 @@ const AllEquipment = () => {
   const [user, setUser] = useState(null); // เก็บข้อมูลผู้ใช้
   const location = useLocation();
   const navigate = useNavigate();
+  const [searchTerm, setSearchTerm] = useState(''); // เพิ่ม state สำหรับคำค้นหา
 
   // ดึงค่าหมวดหมู่จาก query string
   const queryParams = new URLSearchParams(location.search);
@@ -22,6 +23,13 @@ const AllEquipment = () => {
         setEquipment(response.data);
       })
       .catch((err) => console.error("Error fetching equipment:", err));
+  };
+
+  const filterBySearch = (items) => {
+    if (!searchTerm) return items; // ถ้าไม่มีคำค้นหาให้คืนค่าทั้งหมด
+    return items.filter((item) =>
+      item.name.toLowerCase().includes(searchTerm.toLowerCase())
+    );
   };
 
   // ฟังก์ชันดึงข้อมูลผู้ใช้
@@ -46,6 +54,15 @@ const AllEquipment = () => {
     fetchUser(); // ดึงข้อมูลผู้ใช้
   }, [category]); // โหลดข้อมูลใหม่เมื่อเปลี่ยน category
 
+  useEffect(() => {
+    if (searchTerm) {
+      const filteredEquipment = filterBySearch(equipment);
+      setEquipment(filteredEquipment);
+    } else {
+      fetchEquipment(); // รีเฟรชข้อมูลทั้งหมดหากไม่มีคำค้นหา
+    }
+  }, [searchTerm]); // อัปเดตข้อมูลเมื่อคำค้นหาเปลี่ยนแปลง
+
   // ฟังก์ชัน Logout
   const handleLogout = () => {
     localStorage.removeItem('token');
@@ -57,6 +74,14 @@ const AllEquipment = () => {
     <div>
       <NavbarMain userData={user} onLogout={handleLogout} />
       <h1 style={{ textAlign: "center", margin: "20px 0", backgroundColor: "#009498", color: "#ffffff" }}>{category}</h1>
+      {/* เพิ่ม input ค้นหา */}
+      <div style={{ textAlign: 'center' }}>
+        <input
+          placeholder="ค้นหา ....."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+        />
+      </div>
       <div className="equipment-list">
         {equipment.length > 0 ? (
           equipment.map((item, idx) => (
