@@ -36,7 +36,7 @@ const DisplayEquipment = () => {
   const handleIconClick = (category) => {
     setSelectedCategory(category);
   };
-  
+
   useEffect(() => {
     if (!searchTerm) {
       getEquipment(); // ดึงข้อมูลทั้งหมดหากไม่มีคำค้นหา
@@ -45,7 +45,7 @@ const DisplayEquipment = () => {
       setEquipment(filteredEquipment);
     }
   }, [searchTerm]); // อัปเดตข้อมูลเมื่อคำค้นหาเปลี่ยนแปลง
-  
+
 
   // ฟังก์ชันกรองอุปกรณ์ตามคำค้นหา
   const filterBySearch = (items) => {
@@ -68,9 +68,15 @@ const DisplayEquipment = () => {
   // กรองเฉพาะหมวดหมู่ที่เลือก
   const selectedCategoryItems = selectedCategory
     ? filterBySearch(
-        filteredEquipment.find((categoryData) => categoryData.category === selectedCategory)?.items || []
-      )
+      filteredEquipment.find((categoryData) => categoryData.category === selectedCategory)?.items || []
+    )
     : [];
+
+    const handleViewAllClick = (typeId) => {
+      // ใช้ navigate เพื่อไปยังหน้าที่กรองข้อมูลโดยใช้ type_id
+      navigate(`/equipment/${typeId}`);
+    };
+    
 
   return (
     <div className="equipment-list">
@@ -187,8 +193,9 @@ const DisplayEquipment = () => {
                       <div className="card-body">
                         <h4 className="card-title">{item.name}</h4>
                         <p className="card-text">{item.description}</p>
-                        {/* <ShowBorrow></ShowBorrow> */}
+                        <button onClick={() => handleViewAllClick(item.type_id)}>ยืมอุปกรณ์</button>
                       </div>
+
                     </div>
                   ))
                 ) : (

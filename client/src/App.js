@@ -15,6 +15,7 @@ import MainAdmin from './Admin/Layout/MainAdmin.js';
 import Admin from './Admin/Admin.js';
 import AllEquipment from './interface/AllEquipment.js';
 import Status from './components/status.js';
+import EquipmentListByType from './interface/EquipmentListByType'
 
 
 
@@ -55,6 +56,7 @@ const App = () => {
                 <Route path="/signup" element={<Signup />} />
                 <Route path="/main" element={<Main />} />
                 <Route path="/status" element={<Status />} />
+                <Route path="/equipment/:typeId" element={<EquipmentListByType />} />
 
                 {/* หน้า Admin */}
                 <Route path="/admin" element={<Admin />} />

@@ -306,19 +306,6 @@ app.put('/api/equipments/:id', upload.single('image'), (req, res) => {
 });
 
 
-app.post('/api/borrow', (req, res) => {
-  const borrowData = req.body; // รับข้อมูลที่ส่งมาจาก client
-  console.log("Received data:", borrowData); // ตรวจสอบข้อมูลที่ได้รับจาก client
-
-  if (!borrowData.subject || !borrowData.objective || !borrowData.place || !borrowData.borrow_d || !borrowData.return_d) {
-    return res.status(400).json({ message: 'กรุณากรอกข้อมูลให้ครบถ้วน' });
-  }
-
-
-
-
-
-
 app.post('/api/borrow', async (req, res) => {
   try {
     const { subject, objective, place, borrow_d, return_d } = req.body;
@@ -327,58 +314,70 @@ app.post('/api/borrow', async (req, res) => {
     if (!subject || !objective || !place || !borrow_d || !return_d) {
       return res.status(400).json({ message: 'กรุณากรอกข้อมูลให้ครบถ้วน' });
     }
+    } catch (error) {
+      console.error('Error processing request:', error);
+    }
+});
 
+//dashboard
+app.get('/equipment-stats', (req, res) => {
   const query = `
-    INSERT INTO borrow (subject, objective, place, borrow_d, return_d)
-    VALUES (?, ?, ?, ?, ?)
+    SELECT category, COUNT(*) as count
+    FROM equipment
+    GROUP BY category;
   `;
-  const values = [
-    borrowData.subject,
-    borrowData.objective,
-    borrowData.place,
-    borrowData.borrow_d,
-    borrowData.return_d
-  ];
 
-  console.log("SQL values:", values); // ตรวจสอบข้อมูลที่จะส่งไปยังฐานข้อมูล
-
-  db.query(query, values, (err, result) => {
+  db.query(query, (err, results) => {
     if (err) {
-      console.error("Database error:", err);
-      return res.status(500).json({ message: 'เกิดข้อผิดพลาดในการเพิ่มข้อมูล' });
-    }
-    // ตรวจสอบว่าค่า borrow_d และ return_d อยู่ในรูปแบบวันที่ที่ถูกต้อง
-    if (isNaN(new Date(borrow_d)) || isNaN(new Date(return_d))) {
-      return res.status(400).json({ message: 'รูปแบบวันที่ไม่ถูกต้อง' });
+      console.error('Error fetching equipment stats:', err);
+      return res.status(500).json({ message: 'Error fetching equipment stats' });
     }
 
-    // SQL Query
-    const query = `
-      INSERT INTO borrow (subject, objective, place, borrow_d, return_d)
-      VALUES (?, ?, ?, ?, ?)
-    `;
-    const values = [subject, objective, place, borrow_d, return_d];
+    // แปลงผลลัพธ์ให้อยู่ในรูปแบบ JSON ที่อ่านง่าย
+    const stats = results.reduce((acc, row) => {
+      acc[row.category] = row.count;
+      return acc;
+    }, {});
 
-    // ใช้ Promise ในการ query
-    const result = await new Promise((resolve, reject) => {
-      db.query(query, values, (err, result) => {
-        if (err) return reject(err);
-        resolve(result);
-      });
-    });
+    res.json(stats); // ส่งข้อมูลกลับ
+  });
+});
 
-    // ส่งข้อความตอบกลับเมื่อบันทึกข้อมูลสำเร็จ
-    res.status(200).json({ message: 'เพิ่มข้อมูลการยืมสำเร็จ!', borrow_id: result.insertId });
-  } catch (error) {
-    console.error('Error processing request:', error);
+// API แสดงรายการอุปกรณ์ทั้งหมดหรือกรองตามหมวดหมู่
+app.get('/showequipment', (req, res) => {
+  const { category } = req.query; // รับค่าหมวดหมู่จาก query string
 
-    // ตรวจสอบประเภทของ error
-    if (error.code === 'ER_BAD_FIELD_ERROR') {
-      res.status(400).json({ message: 'ฟิลด์ข้อมูลไม่ถูกต้อง' });
-    } else {
-      res.status(500).json({ message: 'เกิดข้อผิดพลาดในการเพิ่มข้อมูล' });
-    }
+  let query = "SELECT * FROM equipment";
+  const params = [];
+
+  if (category && category !== "ทั้งหมด") {
+    query += " WHERE category = ?";
+    params.push(category);
   }
+
+  db.query(query, params, (err, results) => {
+    if (err) {
+      console.error('Error fetching equipment:', err);
+      return res.status(500).json({ message: 'Error fetching equipment' });
+    }
+    res.json(results); // ส่งข้อมูลกลับในรูปแบบ JSON
+  });
+});
+
+
+app.get("/showequipment/type/:typeId", (req, res) => {
+  const { typeId } = req.params;  // รับค่า type_id จาก URL path
+
+  let query = "SELECT * FROM equipment WHERE type_id = ?";
+
+  db.query(query, [typeId], (err, result) => {
+    if (err) {
+      console.log("เกิดข้อผิดพลาดอะไรบางอย่าง", err);
+      return res.status(500).json({ message: "Error fetching equipment" });
+    } else {
+      res.send(result); // ส่งข้อมูลอุปกรณ์ที่ตรงกับ type_id
+    }
+  });
 });
 
 
@@ -387,8 +386,31 @@ app.post('/api/borrow', async (req, res) => {
 
 
 
+//ดึงข้อมูลผู้ใช้งาน dashboard
+app.get('/users', (req, res) => {
+  db.query('SELECT * FROM users', (err, results) => {
+    if (err) {
+      console.error(err);
+      res.status(500).send('Error fetching users');
+    } else {
+      res.json(results);
+    }
+  });
+});
 
 
+
+// ดึงข้อมูลจากตาราง serialnumber
+app.get("/api/serialtypes", (req, res) => {
+  const query = 'SELECT type_id, type_serial FROM serialnumber'; // เปลี่ยนเป็น query ที่คุณใช้
+  db.query(query, (err, result) => {
+    if (err) {
+      console.error("Error fetching serial types:", err);
+      return res.status(500).json({ message: 'Error fetching serial types' });
+    }
+    res.status(200).json(result); // ส่งข้อมูลที่ได้รับจากฐานข้อมูล
+  });
+});
 
 
 // เริ่มเซิร์ฟเวอร์
