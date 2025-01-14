@@ -196,31 +196,16 @@ const upload = multer({ storage: storage });
 app.post("/create", upload.fields([{ name: "image", maxCount: 1 }]), (req, res) => {
   // รับค่าจาก frontend
   const { name, description, category, type_id } = req.body;
+  const name = req.body.name;
+  const description = req.body.description;
+  const category = req.body.category;
+  const status = req.body.status;
   const image = req.files?.image ? req.files.image[0].filename : null;
 
-  // ตรวจสอบค่าที่ได้รับจาก frontend
-  console.log("Received data:", { name, description, category, type_id });
-
-  // เช็คว่า type_id ที่รับมามีอยู่ในฐานข้อมูลหรือไม่
-  const checkTypeQuery = 'SELECT * FROM serialnumber WHERE type_id = ?';
-
-  db.query(checkTypeQuery, [type_id], (err, result) => {
-    if (err) {
-      console.log("Error checking type_id:", err);
-      return res.status(500).json({ message: "Error checking serial type" });
-    }
-
-    if (result.length === 0) {
-      return res.status(400).json({ message: "Invalid type_id, no such serial type exists" });
-    }
-
-    // ถ้า type_id ถูกต้องแล้ว ทำการเพิ่มข้อมูลในตาราง equipment
-    const insertQuery = `
-      INSERT INTO equipment (name, description, category, image, type_id)
-      VALUES (?, ?, ?, ?, ?)
-    `;
-
-    db.query(insertQuery, [name, description, category, image, type_id], (err, result) => {
+  db.query(
+    "INSERT INTO equipment (name, description, category, image) VALUES (?, ?, ?, ?)",
+    [name, description, category, image],
+    (err, result) => {
       if (err) {
         console.log("Error inserting equipment:", err);
         // ลบไฟล์หากเกิดข้อผิดพลาด
@@ -361,6 +346,7 @@ app.post('/api/borrow', (req, res) => {
   const borrowData = req.body; // รับข้อมูลที่ส่งมาจาก client
   console.log("Received data:", borrowData); // ตรวจสอบข้อมูลที่ได้รับจาก client
 
+  // ตรวจสอบข้อมูลที่ได้รับ
   if (!borrowData.subject || !borrowData.objective || !borrowData.place || !borrowData.borrow_d || !borrowData.return_d) {
     return res.status(400).json({ message: 'กรุณากรอกข้อมูลให้ครบถ้วน' });
   }
@@ -371,10 +357,10 @@ app.post('/api/borrow', (req, res) => {
   `;
   const values = [
     borrowData.subject,
-    borrowData.objective,
-    borrowData.place,
-    borrowData.borrow_d,
-    borrowData.return_d
+    borrowData.objective,  // ใช้ objective แทน equipment
+    borrowData.place,      // ใช้ place แทน location
+    borrowData.borrow_d,   // ใช้ borrow_d แทน borrowDate
+    borrowData.return_d    // ใช้ return_d แทน returnDate
   ];
 
   console.log("SQL values:", values); // ตรวจสอบข้อมูลที่จะส่งไปยังฐานข้อมูล
@@ -384,10 +370,11 @@ app.post('/api/borrow', (req, res) => {
       console.error("Database error:", err);
       return res.status(500).json({ message: 'เกิดข้อผิดพลาดในการเพิ่มข้อมูล' });
     }
+
+    // ส่งข้อความตอบกลับเมื่อบันทึกข้อมูลสำเร็จ
     res.status(200).json({ message: 'เพิ่มข้อมูลการยืมสำเร็จ!', borrow_id: result.insertId });
   });
 });
-
 
 
 

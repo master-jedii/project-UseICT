@@ -8,9 +8,9 @@ import lightIcon from '../assets/Searchlight.png';
 import audioIcon from '../assets/music.png';
 import lightEquipmentIcon from '../assets/Source Four Par.png';
 import otherIcon from '../assets/Camera Addon Identification.png';
+import All from '../assets/Vector.png';
 import '../View/DisplayEquipment.css';
-import ShowBorrow from '../interface/showborrow'
-
+import ShowBorrow from '../interface/showborrow';
 
 const DisplayEquipment = () => {
   const [equipment, setEquipment] = useState([]);
@@ -35,9 +35,17 @@ const DisplayEquipment = () => {
   // ฟังก์ชันจัดการการคลิกไอคอนหมวดหมู่
   const handleIconClick = (category) => {
     setSelectedCategory(category);
-    setSearchTerm(''); // เคลียร์คำค้นหาเมื่อเลือกหมวดหมู่ใหม่
-    console.log(`Category selected: ${category}`);
   };
+  
+  useEffect(() => {
+    if (!searchTerm) {
+      getEquipment(); // ดึงข้อมูลทั้งหมดหากไม่มีคำค้นหา
+    } else {
+      const filteredEquipment = filterBySearch(equipment);
+      setEquipment(filteredEquipment);
+    }
+  }, [searchTerm]); // อัปเดตข้อมูลเมื่อคำค้นหาเปลี่ยนแปลง
+  
 
   // ฟังก์ชันกรองอุปกรณ์ตามคำค้นหา
   const filterBySearch = (items) => {
@@ -69,7 +77,7 @@ const DisplayEquipment = () => {
       <div className="header-category">
         {/* เพิ่ม input ค้นหา */}
         <input
-          placeholder="ค้นหา ....."
+          placeholder={selectedCategory ? selectedCategory : "ค้นหา...."}
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
         />
@@ -117,8 +125,8 @@ const DisplayEquipment = () => {
             <p className="category-text">อุปกรณ์อื่นๆ</p>
           </div>
           <div className="category" onClick={() => window.location.reload()}>
-            <div className="image-box7">
-              <img src={otherIcon} alt="อุปกรณ์อื่นๆ" />
+            <div className="image-box8">
+              <img src={All} alt="อุปกรณ์อื่นๆ" />
             </div>
             <p className="category-text">ทั้งหมด</p>
           </div>
