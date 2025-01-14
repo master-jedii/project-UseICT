@@ -340,42 +340,49 @@ app.put('/api/equipments/:id', upload.single('image'), (req, res) => {
 
 
 
+app.post('/api/borrow', async (req, res) => {
+  try {
+    const { subject, objective, place, borrow_d, return_d } = req.body;
 
-
-
-app.post('/api/borrow', (req, res) => {
-  const borrowData = req.body; // รับข้อมูลที่ส่งมาจาก client
-  console.log("Received data:", borrowData); // ตรวจสอบข้อมูลที่ได้รับจาก client
-
-  // ตรวจสอบข้อมูลที่ได้รับ
-  if (!borrowData.subject || !borrowData.objective || !borrowData.place || !borrowData.borrow_d || !borrowData.return_d) {
-    return res.status(400).json({ message: 'กรุณากรอกข้อมูลให้ครบถ้วน' });
-  }
-
-  const query = `
-    INSERT INTO borrow (subject, objective, place, borrow_d, return_d)
-    VALUES (?, ?, ?, ?, ?)
-  `;
-  const values = [
-    borrowData.subject,
-    borrowData.objective,  // ใช้ objective แทน equipment
-    borrowData.place,      // ใช้ place แทน location
-    borrowData.borrow_d,   // ใช้ borrow_d แทน borrowDate
-    borrowData.return_d    // ใช้ return_d แทน returnDate
-  ];
-
-  console.log("SQL values:", values); // ตรวจสอบข้อมูลที่จะส่งไปยังฐานข้อมูล
-
-  db.query(query, values, (err, result) => {
-    if (err) {
-      console.error("Database error:", err);
-      return res.status(500).json({ message: 'เกิดข้อผิดพลาดในการเพิ่มข้อมูล' });
+    // ตรวจสอบว่า request body มีข้อมูลครบถ้วน
+    if (!subject || !objective || !place || !borrow_d || !return_d) {
+      return res.status(400).json({ message: 'กรุณากรอกข้อมูลให้ครบถ้วน' });
     }
+
+    // ตรวจสอบว่าค่า borrow_d และ return_d อยู่ในรูปแบบวันที่ที่ถูกต้อง
+    if (isNaN(new Date(borrow_d)) || isNaN(new Date(return_d))) {
+      return res.status(400).json({ message: 'รูปแบบวันที่ไม่ถูกต้อง' });
+    }
+
+    // SQL Query
+    const query = `
+      INSERT INTO borrow (subject, objective, place, borrow_d, return_d)
+      VALUES (?, ?, ?, ?, ?)
+    `;
+    const values = [subject, objective, place, borrow_d, return_d];
+
+    // ใช้ Promise ในการ query
+    const result = await new Promise((resolve, reject) => {
+      db.query(query, values, (err, result) => {
+        if (err) return reject(err);
+        resolve(result);
+      });
+    });
 
     // ส่งข้อความตอบกลับเมื่อบันทึกข้อมูลสำเร็จ
     res.status(200).json({ message: 'เพิ่มข้อมูลการยืมสำเร็จ!', borrow_id: result.insertId });
-  });
+  } catch (error) {
+    console.error('Error processing request:', error);
+
+    // ตรวจสอบประเภทของ error
+    if (error.code === 'ER_BAD_FIELD_ERROR') {
+      res.status(400).json({ message: 'ฟิลด์ข้อมูลไม่ถูกต้อง' });
+    } else {
+      res.status(500).json({ message: 'เกิดข้อผิดพลาดในการเพิ่มข้อมูล' });
+    }
+  }
 });
+
 
 
 

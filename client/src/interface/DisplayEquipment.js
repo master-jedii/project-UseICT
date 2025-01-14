@@ -148,7 +148,7 @@ const DisplayEquipment = () => {
                     <div className="card-body">
                       <h4 className="card-title">{item.name}</h4>
                       <p className="card-text">{item.description}</p>
-                      <ShowBorrow></ShowBorrow>
+                      {/* <ShowBorrow></ShowBorrow> */}
                     </div>
                   </div>
                 ))
@@ -181,7 +181,7 @@ const DisplayEquipment = () => {
                       <div className="card-body">
                         <h4 className="card-title">{item.name}</h4>
                         <p className="card-text">{item.description}</p>
-                        <ShowBorrow></ShowBorrow>
+                        {/* <ShowBorrow></ShowBorrow> */}
                       </div>
                     </div>
                   ))
