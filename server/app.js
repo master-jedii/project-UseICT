@@ -37,29 +37,33 @@ db.connect((err) => {
   console.log("Connected to database!");
 });
 
+
 app.get('/main', (req, res) => {
-    const token = req.headers.authorization?.split(' ')[1]; // ดึง token จาก header
-  
-    if (!token) {
-      return res.status(401).json({ message: 'Unauthorized: No token provided' }); // ถ้าไม่มี token
+  const token = req.headers.authorization?.split(' ')[1];
+
+  if (!token) {
+    return res.status(401).json({ message: 'Unauthorized: No token provided' });
+  }
+  jwt.verify(token, 'your_jwt_secret_key', (err, decoded) => {
+    if (err) {
+      return res.status(401).json({ message: 'Unauthorized: Invalid token', error: err.message });
     }
-  
-    jwt.verify(token, 'your_jwt_secret_key', (err, decoded) => { // ตรวจสอบ token
-      if (err) {
-        return res.status(401).json({ message: 'Unauthorized: Invalid token' }); // ถ้า token ไม่ถูกต้อง
-      }
-  
-      const userId = decoded.id;
-      const userFirstname = decoded.firstname;
-      res.status(200).json({ user: { id: userId, firstname: userFirstname } }); // ส่งข้อมูลกลับ
-    });
+
+    console.log("Decoded JWT payload:", decoded);  // ✅ เช็ค decoded payload
+
+    const userId = decoded.UserID;  // ตรวจสอบว่า UserID อยู่ใน decoded หรือไม่
+    const userFirstname = decoded.firstname;
+
+    // ส่งข้อมูล userId และ firstname
+    res.status(200).json({ user: { id: userId, firstname: userFirstname } });
   });
+});
+
   
 
 // Login endpoint
 app.post('/login', async (req, res) => {
   const { email, password } = req.body;
-
   try {
     // ตรวจสอบผู้ใช้ในฐานข้อมูล
     const query = "SELECT * FROM users WHERE email = ?";
@@ -79,27 +83,31 @@ app.post('/login', async (req, res) => {
         return res.status(400).json({ error: 'Invalid email or password' });
       }
 
-      // สร้าง JWT Token
+      // สร้าง JWT Token โดยใช้ UserID
       const token = jwt.sign(
-        { id: user.id, email: user.email, firstname: user.firstname },
+        { UserID: user.UserID, email: user.email, firstname: user.firstname },  // ส่ง UserID แทน id
         'your_jwt_secret_key', // ใส่ secret key ที่ปลอดภัย
         { expiresIn: '1h' } // กำหนดระยะเวลาหมดอายุของ token
       );
-
+    
       // ส่ง Token และข้อมูลของผู้ใช้กลับไป
       res.status(200).json({
         message: 'Login successful!',
         token,
         user: {
-          firstname: user.firstname, // ส่งข้อมูล firstname กลับไป
+          UserID: user.UserID,  // ส่งข้อมูล UserID กลับไปด้วย
+          firstname: user.firstname,
         }
       });
+      
     });
   } catch (error) {
     console.error("Login error:", error);
     res.status(500).json({ error: 'Internal server error' });
   }
 });
+
+
 
 
 
@@ -291,19 +299,98 @@ app.put('/api/equipments/:id', upload.single('image'), (req, res) => {
   });
 });
 
+// API สำหรับการเช็คข้อมูลจากตาราง equipment
+app.get('/api/equipment', (req, res) => {
+  const { equipment_id } = req.query;  // รับค่า equipment_id จาก query string
+
+  // แสดง equipment_id ใน console
+  console.log("Received equipment_id:", equipment_id);
+
+  // สร้าง query SQL พื้นฐาน
+  let query = "SELECT equipment_id, name FROM equipment WHERE status = 'พร้อมใช้งาน'";  // กรองเฉพาะอุปกรณ์ที่พร้อมใช้งาน
+  const queryParams = [];
+
+  // หากมีการกรองตาม equipment_id
+  if (equipment_id) {
+    query += " AND equipment_id = ?";
+    queryParams.push(equipment_id);  // ใส่ค่า equipment_id ที่ต้องการกรอง
+  }
+
+  // รัน query
+  db.query(query, queryParams, (err, result) => {
+    if (err) {
+      console.error("เกิดข้อผิดพลาดในการดึงข้อมูล:", err);
+      return res.status(500).json({ message: 'Error fetching equipment data' });
+    }
+
+    // หากไม่พบข้อมูลที่ตรงกับ query
+    if (result.length === 0) {
+      return res.status(404).json({ message: 'ไม่พบข้อมูลอุปกรณ์ที่ตรงกับที่ค้นหา' });
+    }
+
+    // ส่งข้อมูลผลลัพธ์กลับ โดยแสดงข้อมูลของอุปกรณ์ที่ตรงกับ equipment_id
+    const equipmentData = result.map((item) => ({
+      equipment_id: item.equipment_id,  // ส่ง equipment_id
+      equipment_name: item.name         // ส่งชื่ออุปกรณ์
+    }));
+
+    // ส่งข้อมูลทั้งหมด (หรือกรองเฉพาะที่ตรงกับ equipment_id)
+    res.json(equipmentData);
+  });
+});
+
+
+
+
+
 
 app.post('/api/borrow', async (req, res) => {
   try {
-    const { subject, objective, place, borrow_d, return_d } = req.body;
+    const { UserID, subject, objective, place, borrow_d, return_d, equipment_id } = req.body;
 
-    // ตรวจสอบว่า request body มีข้อมูลครบถ้วน
-    if (!subject || !objective || !place || !borrow_d || !return_d) {
+    // ตรวจสอบข้อมูลที่ส่งมา
+    if (!UserID || !subject || !objective || !place || !borrow_d || !return_d || !equipment_id) {
       return res.status(400).json({ message: 'กรุณากรอกข้อมูลให้ครบถ้วน' });
     }
-    } catch (error) {
-      console.error('Error processing request:', error);
-    }
+
+    // ตรวจสอบว่าอุปกรณ์ที่ยืมอยู่ในสถานะที่สามารถยืมได้
+    const equipmentQuery = "SELECT * FROM equipment WHERE equipment_id = ?";
+    db.query(equipmentQuery, [equipment_id], (err, result) => {
+      if (err) {
+        console.log('Error checking equipment:', err);
+        return res.status(500).json({ message: 'Error checking equipment' });
+      }
+
+      if (result.length === 0) {
+        return res.status(404).json({ message: 'อุปกรณ์ไม่พบในฐานข้อมูล' });
+      }
+
+      // อัปเดตสถานะการยืม (เช่น การลดจำนวนอุปกรณ์หรือสถานะการยืม)
+      const borrowQuery = `INSERT INTO borrow (UserID, subject, objective, place, borrow_d, return_d, equipment_id)
+                           VALUES (?, ?, ?, ?, ?, ?, ?)`;
+      const values = [UserID, subject, objective, place, borrow_d, return_d, equipment_id];
+
+      db.query(borrowQuery, values, (err) => {
+        if (err) {
+          console.error('Error saving borrow data:', err);
+          return res.status(500).json({ message: 'Error saving borrow data' });
+        }
+
+        // ส่งการตอบกลับหลังจากบันทึกสำเร็จ
+        res.status(200).json({ message: 'บันทึกข้อมูลการยืมสำเร็จ' });
+      });
+    });
+  } catch (error) {
+    console.error('Server error:', error);
+    res.status(500).json({ message: 'เกิดข้อผิดพลาดภายในเซิร์ฟเวอร์' });
+  }
 });
+
+
+
+
+
+
 
 //dashboard
 app.get('/equipment-stats', (req, res) => {

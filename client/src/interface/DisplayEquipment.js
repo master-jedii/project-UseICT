@@ -22,7 +22,9 @@ const DisplayEquipment = () => {
   const getEquipment = () => {
     Axios.get("http://localhost:3333/showequipment")
       .then((response) => {
-        setEquipment(response.data);
+        // กรองอุปกรณ์ที่มี status "พร้อมใช้งาน" เท่านั้น
+        const availableEquipment = response.data.filter(item => item.status === "พร้อมใช้งาน");
+        setEquipment(availableEquipment); // เก็บเฉพาะอุปกรณ์ที่พร้อมใช้งาน
       })
       .catch((err) => console.error(err));
   };
@@ -45,7 +47,6 @@ const DisplayEquipment = () => {
       setEquipment(filteredEquipment);
     }
   }, [searchTerm]); // อัปเดตข้อมูลเมื่อคำค้นหาเปลี่ยนแปลง
-
 
   // ฟังก์ชันกรองอุปกรณ์ตามคำค้นหา
   const filterBySearch = (items) => {
@@ -72,11 +73,10 @@ const DisplayEquipment = () => {
     )
     : [];
 
-    const handleViewAllClick = (typeId) => {
-      // ใช้ navigate เพื่อไปยังหน้าที่กรองข้อมูลโดยใช้ type_id
-      navigate(`/equipment/${typeId}`);
-    };
-    
+  const handleViewAllClick = (typeId) => {
+    // ใช้ navigate เพื่อไปยังหน้าที่กรองข้อมูลโดยใช้ type_id
+    navigate(`/equipment/${typeId}`);
+  };
 
   return (
     <div className="equipment-list">
@@ -160,7 +160,6 @@ const DisplayEquipment = () => {
                     <div className="card-body">
                       <h4 className="card-title">{item.name}</h4>
                       <p className="card-text">{item.description}</p>
-                      {/* <ShowBorrow></ShowBorrow> */}
                     </div>
                   </div>
                 ))
@@ -195,7 +194,6 @@ const DisplayEquipment = () => {
                         <p className="card-text">{item.description}</p>
                         <button onClick={() => handleViewAllClick(item.type_id)}>ยืมอุปกรณ์</button>
                       </div>
-
                     </div>
                   ))
                 ) : (
