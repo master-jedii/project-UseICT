@@ -5,7 +5,7 @@ const mysql = require("mysql2"); // ใช้ MySQL (หรือเปลี่
 const jwt = require("jsonwebtoken"); // ใช้ JWT สำหรับการสร้าง Token
 const app = express();
 const multer = require('multer');
-
+const router = express.Router();
 const path = require("path");
 
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
@@ -301,8 +301,25 @@ app.put('/api/equipments/:id', upload.single('image'), (req, res) => {
 
 
 
+app.get('/api/equipment', (req, res) => {
+  // เลือกเฉพาะ column equipment_id และ name
+  const query = "SELECT equipment_id, name FROM equipment";
 
-  
+  db.query(query, (err, result) => {
+    if (err) {
+      console.error("Error fetching equipment data:", err);
+      return res.status(500).json({ message: "Error fetching equipment data" });
+    }
+
+    // ส่งเฉพาะข้อมูลที่เลือกกลับไปในรูปแบบ JSON
+    res.status(200).json(result);
+  });
+});
+
+
+
+
+
 app.post('/api/borrow', async (req, res) => {
   try {
     const { UserID, subject, objective, place, borrow_d, return_d, equipment_id } = req.body;

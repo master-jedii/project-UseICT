@@ -84,17 +84,46 @@ const Modal = ({
     location: "",
     borrowDate,
     returnDate,
+    name: "", // เพิ่ม field name สำหรับชื่ออุปกรณ์
   });
+
+  useEffect(() => {
+    // Fetch UserID & Equipment data when Modal opens
+    const fetchEquipmentData = async () => {
+      try {
+        const response = await axios.get("http://localhost:3333/api/equipment");
+        const equipmentList = response.data; // ข้อมูลทั้งหมดจาก API
+    
+        console.log("Equipment List:", equipmentList);
+        
+        // ตัวอย่าง: อัปเดตข้อมูลใน state
+        if (equipmentList.length > 0) {
+          const { equipment_id, name } = equipmentList[0]; // เลือกตัวแรกในรายการ
+          setFormData((prev) => ({
+            ...prev,
+            equipment_id,
+            name,
+          }));
+        }
+      } catch (error) {
+        console.error("Error fetching equipment data:", error.response || error.message);
+      }
+    };
+    
+    if (isOpen) {
+      fetchEquipmentData();
+    }
+  }, [isOpen]);
+
   useEffect(() => {
     if (UserID) {
       setFormData((prev) => ({ ...prev, UserID }));
     }
-
-  }, [UserID, ]);
+  }, [UserID]);
 
   const handleChange = (e) => {
-    const { value } = e.target;
-    setFormData((prev) => ({ ...prev,value }));
+    const { id, value } = e.target;
+    setFormData((prev) => ({ ...prev, [id]: value }));
   };
 
   const handleSubmit = async (e) => {
@@ -105,7 +134,7 @@ const Modal = ({
       return;
     }
 
-    if (!formData.subject || !formData.equipment || !formData.location) {
+    if (!formData.subject || !formData.name || !formData.location) {
       alert("กรุณากรอกข้อมูลให้ครบถ้วน");
       return;
     }
@@ -113,7 +142,7 @@ const Modal = ({
     const dataToSend = {
       UserID: UserID,
       subject: formData.subject,
-      objective: formData.equipment,
+      name: formData.name, // ส่งชื่ออุปกรณ์
       place: formData.location,
       borrow_d: borrowDate,
       return_d: returnDate,
@@ -149,7 +178,7 @@ const Modal = ({
                 <input
                   type="text"
                   id="userId"
-                  value={formData.UserID || "กำลังโหลด..."} 
+                  value={formData.UserID || "กำลังโหลด..."}
                   readOnly
                 />
               </div>
@@ -170,13 +199,12 @@ const Modal = ({
 
             <div className="new-form-grid">
               <div>
-                <label htmlFor="equipment">ชื่ออุปกรณ์</label>
+                <label htmlFor="name">ชื่ออุปกรณ์</label>
                 <input
                   type="text"
-                  id="equipment"
-                  value={formData.equipment} // แสดงชื่ออุปกรณ์จาก formData
-                  onChange={handleChange} // อัปเดตค่าของ formData
-                  required
+                  id="name"
+                  value={formData.name || "กำลังโหลด..."}
+                  readOnly
                 />
               </div>
               <div>
@@ -215,7 +243,7 @@ const Modal = ({
                   readOnly
                 />
               </div>
-            </div>            
+            </div>
             <div className="new-form-row note">
               <span>*สามารถยืมอุปกรณ์ได้สูงสุด 7 วัน</span>
             </div>
@@ -234,7 +262,6 @@ const Modal = ({
     </div>
   );
 };
-
 
 
 
