@@ -299,51 +299,10 @@ app.put('/api/equipments/:id', upload.single('image'), (req, res) => {
   });
 });
 
-// API สำหรับการเช็คข้อมูลจากตาราง equipment
-app.get('/api/equipment', (req, res) => {
-  const { equipment_id } = req.query;  // รับค่า equipment_id จาก query string
-
-  // แสดง equipment_id ใน console
-  console.log("Received equipment_id:", equipment_id);
-
-  // สร้าง query SQL พื้นฐาน
-  let query = "SELECT equipment_id, name FROM equipment WHERE status = 'พร้อมใช้งาน'";  // กรองเฉพาะอุปกรณ์ที่พร้อมใช้งาน
-  const queryParams = [];
-
-  // หากมีการกรองตาม equipment_id
-  if (equipment_id) {
-    query += " AND equipment_id = ?";
-    queryParams.push(equipment_id);  // ใส่ค่า equipment_id ที่ต้องการกรอง
-  }
-
-  // รัน query
-  db.query(query, queryParams, (err, result) => {
-    if (err) {
-      console.error("เกิดข้อผิดพลาดในการดึงข้อมูล:", err);
-      return res.status(500).json({ message: 'Error fetching equipment data' });
-    }
-
-    // หากไม่พบข้อมูลที่ตรงกับ query
-    if (result.length === 0) {
-      return res.status(404).json({ message: 'ไม่พบข้อมูลอุปกรณ์ที่ตรงกับที่ค้นหา' });
-    }
-
-    // ส่งข้อมูลผลลัพธ์กลับ โดยแสดงข้อมูลของอุปกรณ์ที่ตรงกับ equipment_id
-    const equipmentData = result.map((item) => ({
-      equipment_id: item.equipment_id,  // ส่ง equipment_id
-      equipment_name: item.name         // ส่งชื่ออุปกรณ์
-    }));
-
-    // ส่งข้อมูลทั้งหมด (หรือกรองเฉพาะที่ตรงกับ equipment_id)
-    res.json(equipmentData);
-  });
-});
 
 
 
-
-
-
+  
 app.post('/api/borrow', async (req, res) => {
   try {
     const { UserID, subject, objective, place, borrow_d, return_d, equipment_id } = req.body;
