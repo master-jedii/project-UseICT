@@ -28,16 +28,19 @@ const Signup = () => {
 
   const handleSignup = async (e) => {
     e.preventDefault();
-  
+    
     // ตรวจสอบรหัสผ่านกับการยืนยันรหัสผ่าน
     if (formData.password !== formData.confirmPassword) {
       Swal.fire("Error", "Passwords do not match", "error");
       return;
     }
   
+    // เพิ่ม role ใน formData ก่อนส่งไปยัง Backend
+    const signupData = { ...formData, role: "user" };
+  
     try {
       // ส่งข้อมูล signup ไปยัง backend
-      const response = await axios.post("http://localhost:3333/signup", formData);
+      const response = await axios.post("http://localhost:3333/signup", signupData);
   
       if (response.status === 200) {
         Swal.fire("Success", "Account created successfully", "success").then(() => {
@@ -49,6 +52,7 @@ const Signup = () => {
       Swal.fire("Error", error.response?.data?.error || "Signup failed", "error");
     }
   };
+  
   
 
   return (

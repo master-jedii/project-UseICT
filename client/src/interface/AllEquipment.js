@@ -75,35 +75,39 @@ const AllEquipment = () => {
   return (
     <div>
       <NavbarMain userData={user} onLogout={handleLogout} />
-      <h1 style={{ textAlign: "center", margin: "20px 0", backgroundColor: "#009498", color: "#ffffff" }}>{category}</h1>
+      <div className='header-equipment-list-1'>
+        <h1 style={{ textAlign: "center", margin: "20px 0" }}>{category}</h1>
+      </div>
       {/* เพิ่ม input ค้นหา */}
       <div className='search-cata-bar1'>
-        <div className="input-container1">
-          <i className="fa fa-search search-icon" aria-hidden="true"></i>
-          <input
-            placeholder={"ค้นหา...."}
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-          />
+          <div className="input-container1">
+            <i className="fa fa-search search-icon" aria-hidden="true"></i>
+            <input
+              placeholder={ "ค้นหา...."}
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
+          </div>
         </div>
-      </div>
-      <div className="equipment-list">
+      <div className="equipment-list-1">
         {equipment.length > 0 ? (
           equipment.map((item, idx) => (
-            <div className="equipment-item" key={idx}>
-              <div className="equipment-image">
-                <img
-                  src={`http://localhost:3333/uploads/${item.image}`}
-                  alt={item.name}
-                />
+            <div className="equipment-item-1" key={idx}>
+                <div className="equipment-image-1">
+                  <img
+                    src={`http://localhost:3333/uploads/${item.image}`}
+                    alt={item.name}
+                  />
+                </div>
+                <div className="equipment-details-1">
+                  <h4>{item.name}</h4>
+                  <p>{item.description}</p>
+                  <span>จำนวน: {item.quantity}</span>
+                  <div className='showborrow-1'>
+                    <Showborrow equipmentId={item.equipment_id} equipmentName={item.name} />
+                  </div>
+                </div>
               </div>
-              <div className="equipment-details">
-                <h4>{item.name}</h4>
-                <p>{item.description}</p>
-                <span>จำนวน: {item.quantity}</span>
-                <Showborrow></Showborrow>
-              </div>
-            </div>
           ))
         ) : (
           <p style={{ textAlign: "center" }}>ไม่มีข้อมูลในหมวดหมู่ "{category}"</p>
