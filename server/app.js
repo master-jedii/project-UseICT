@@ -186,23 +186,32 @@ const upload = multer({ storage: storage });
 
 // กรณีอัปโหลดหลายฟิลด์
 app.post("/create", upload.fields([{ name: "image", maxCount: 1 }]), (req, res) => {
-  const name = req.body.name;
-  const description = req.body.description;
-  const category = req.body.category;
+  // รับค่าจาก frontend
+  const { name, description, category, type_id, status } = req.body;  // เพิ่ม type_id และ status
   const image = req.files?.image ? req.files.image[0].filename : null;
 
+  // แสดงค่าที่ได้รับมาจาก frontend
+  console.log("Received data:", { name, description, category, type_id, status, image });
+
+  // คำสั่ง SQL สำหรับการเพิ่มข้อมูล
   db.query(
-    "INSERT INTO equipment (name, description, category, image) VALUES (?, ?, ?, ?)",
-    [name, description, category, image],
+    "INSERT INTO equipment (name, description, category, image, status, type_id) VALUES (?, ?, ?, ?, ?, ?)",  // เพิ่ม type_id
+    [name, description, category, image, status, type_id],  // ส่ง type_id เข้าไปด้วย
     (err, result) => {
       if (err) {
-        console.log(err);
+        console.log("Error inserting equipment:", err);
+        // ลบไฟล์หากเกิดข้อผิดพลาด
+        if (image) {
+          fs.unlinkSync(path.join(__dirname, 'uploads', image));
+        }
         return res.status(500).json({ message: "Error saving equipment" });
       }
-      res.status(200).json({ message: "Equipment added successfully" });
+
+      res.status(200).json({ message: "Equipment added successfully", equipmentId: result.insertId });
     }
   );
 });
+
 
 // แสดงรายการอุปกรณ์พร้อมกรองหมวดหมู่
 app.get("/showequipment", (req, res) => {
@@ -320,6 +329,7 @@ app.get('/api/equipment', (req, res) => {
 
 
 
+
 app.post('/api/borrow', async (req, res) => {
   try {
     const { UserID, subject, objective, place, borrow_d, return_d, equipment_id } = req.body;
@@ -429,11 +439,6 @@ app.get("/showequipment/type/:typeId", (req, res) => {
     }
   });
 });
-
-
-
-
-
 
 
 
