@@ -4,6 +4,7 @@ import { useParams } from 'react-router-dom';
 import Showborrow from './showborrow';
 import NavbarMain from '../components/NavbarMain';
 import { useLocation, useNavigate } from "react-router-dom";
+import '../interface/CSS/EqListbyT.css';
 
 const EquipmentListByType = () => {
   const { typeId } = useParams(); // ดึง type_id จาก URL
@@ -91,12 +92,15 @@ const EquipmentListByType = () => {
   return (
     <div>
       <NavbarMain userData={user} onLogout={handleLogout} />
-      <div className="equipment-list">
-        <div className='search-cata-bar1'>
-          <div className="input-container1">
+      <div className='header-equipment-list-2'>
+        <h1 style={{ textAlign: "center", margin: "20px 0" }}>{category}</h1>
+      </div>
+      <div className="equipment-list-2">
+        <div className='search-cata-bar2'>
+          <div className="input-container2">
             <i className="fa fa-search search-icon" aria-hidden="true"></i>
             <input
-              placeholder={"ค้นหา...."}
+              placeholder={ "ค้นหา...."}
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
@@ -118,7 +122,7 @@ const EquipmentListByType = () => {
               </div>
             ))
           ) : (
-            <p>ไม่มีข้อมูลอุปกรณ์ในหมวดหมู่นี้</p>
+            <p style={{ textAlign: "center" }}>ไม่มีข้อมูลในหมวดหมู่ "{category}"</p>
           )}
         </div>
 
