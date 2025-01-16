@@ -1,17 +1,15 @@
 import React, { useState } from "react";
 import axios from "axios";
 import Swal from "sweetalert2";
-import { useNavigate } from "react-router-dom"; // ใช้ useNavigate เพื่อทำการ redirect
-import '../View/Login.css'
-
-
+import { useNavigate } from "react-router-dom"; 
+import '../View/Login.css';
 
 const Login = () => {
   const [formData, setFormData] = useState({
     email: "",
     password: "",
   });
-  const navigate = useNavigate(); // สร้างตัวแปรสำหรับใช้ navigate
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -25,16 +23,23 @@ const Login = () => {
       // ส่งข้อมูล login ไปยัง backend
       const response = await axios.post("http://localhost:3333/login", formData);
 
-      // ตรวจสอบว่า login สำเร็จ
       if (response.status === 200) {
-        // เก็บ token และข้อมูลผู้ใช้ลงใน localStorage และ sessionStorage
-        localStorage.setItem('token', response.data.token);
-        sessionStorage.setItem('authToken', response.data.token);
+        const { token, role } = response.data;
 
-        // เรียกใช้งาน Swal เพื่อแสดงผลการ login
+        // เก็บ token และข้อมูลผู้ใช้ลงใน localStorage
+        localStorage.setItem("token", token);
+        sessionStorage.setItem("authToken", token);
+
+        // แสดงข้อความสำเร็จ
         Swal.fire("Success", response.data.message, "success").then(() => {
-          // Redirect ไปหน้า /main
-          navigate('/main');
+          // ตรวจสอบ role
+          if (role === "admin") {
+            // หาก role เป็น admin ให้ redirect ไป Admin.js
+            navigate("/admin");
+          } else {
+            // หากเป็นผู้ใช้ทั่วไปให้ redirect ไป Main.js
+            navigate("/main");
+          }
         });
       }
     } catch (error) {
@@ -42,14 +47,15 @@ const Login = () => {
     }
   };
 
+
   return (
     <div className="login-container">
       <div className="login-left">
         <img
-            src="/logo.png"
-            alt="SU Kits Logo"
-            className="logo-login"
-          />
+          src="/logo.png"
+          alt="SU Kits Logo"
+          className="logo-login"
+        />
       </div>
       <div className="login-right">
         <form className="login-form" onSubmit={handleLogin}>

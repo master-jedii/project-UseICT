@@ -3,13 +3,16 @@ import '../CSS/MainAdmin.css';
 import myLogo from '../../assets/LOGO.png';
 import '../CSS/NavbarAdmin.css';
 import { NavLink } from 'react-router-dom';  // ใช้ NavLink แทน Link
+import { Link } from 'react-router-dom';
 
 const NavbarAdmin = () => {
   return (
     <div className="admin-dashboard">
       <div className="sidebar">
-        <div className="logo-container">
-          <img src={myLogo} alt="SU Kits Logo" className="logo" />
+      <div className="logo-container">
+          <Link to="/main">
+            <img src={myLogo} alt="SU Kits Logo" className="logo" />
+          </Link>
           <h1 className="title"></h1>
         </div>
         <ul className="menu">

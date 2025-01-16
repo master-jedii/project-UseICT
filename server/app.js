@@ -13,7 +13,7 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 app.use(cors());
 // CORS
 app.use(cors({
-  origin: 'http://localhost:3001', // ให้ frontend ที่รันที่ localhost:3000 สามารถเข้าถึงได้
+  origin: 'http://localhost:3000', // ให้ frontend ที่รันที่ localhost:3000 สามารถเข้าถึงได้
   methods: 'GET,POST',
 }));
 
@@ -83,13 +83,13 @@ app.post('/login', async (req, res) => {
         return res.status(400).json({ error: 'Invalid email or password' });
       }
 
-      // สร้าง JWT Token โดยใช้ UserID
+      // สร้าง JWT Token โดยเพิ่ม role เข้าไปด้วย
       const token = jwt.sign(
-        { UserID: user.UserID, email: user.email, firstname: user.firstname },  // ส่ง UserID แทน id
+        { UserID: user.UserID, email: user.email, firstname: user.firstname, role: user.role }, // role ถูกเพิ่มใน payload
         'your_jwt_secret_key', // ใส่ secret key ที่ปลอดภัย
         { expiresIn: '1h' } // กำหนดระยะเวลาหมดอายุของ token
       );
-    
+
       // ส่ง Token และข้อมูลของผู้ใช้กลับไป
       res.status(200).json({
         message: 'Login successful!',
@@ -97,9 +97,9 @@ app.post('/login', async (req, res) => {
         user: {
           UserID: user.UserID,  // ส่งข้อมูล UserID กลับไปด้วย
           firstname: user.firstname,
+          role: user.role,     // ส่ง role ของผู้ใช้กลับไป
         }
       });
-      
     });
   } catch (error) {
     console.error("Login error:", error);
@@ -113,63 +113,107 @@ app.post('/login', async (req, res) => {
 
 
 app.post('/signup', async (req, res) => {
-    const { UserID, firstname, lastname, grade, branch, email, password, phone_number } = req.body;
-  
-    // ตรวจสอบว่า UserID ซ้ำหรือไม่
-    const userIdExists = await new Promise((resolve, reject) => {
-      db.query('SELECT * FROM users WHERE UserID = ?', [UserID], (err, result) => {
-        if (err) {
-          reject(err);
-        } else {
-          resolve(result.length > 0); // ถ้ามีแถวที่พบ UserID ซ้ำ
-        }
-      });
-    });
-  
-    if (userIdExists) {
-      return res.status(400).json({ error: 'UserID already exists' });
-    }
-  
-    // ตรวจสอบว่า email ซ้ำหรือไม่
-    const emailExists = await new Promise((resolve, reject) => {
-      db.query('SELECT * FROM users WHERE email = ?', [email], (err, result) => {
-        if (err) {
-          reject(err);
-        } else {
-          resolve(result.length > 0); // ถ้ามีแถวที่พบ email ซ้ำ
-        }
-      });
-    });
-  
-    if (emailExists) {
-      return res.status(400).json({ error: 'Email already exists' });
-    }
-  
-    // เข้ารหัสรหัสผ่าน
-    const hashedPassword = await bcrypt.hash(password, 10);
-  
-    // เพิ่มข้อมูลผู้ใช้ใหม่
-    const query = 'INSERT INTO users (UserID, firstname, lastname, grade, branch, email, password, phone_number) VALUES (?, ?, ?, ?, ?, ?, ?, ?)';
-    const values = [UserID, firstname, lastname, grade, branch, email, hashedPassword, phone_number];
-  
-    db.query(query, values, (err, result) => {
+  const { UserID, firstname, lastname, grade, branch, email, password, phone_number, role } = req.body;
+  // ตรวจสอบว่า UserID ซ้ำหรือไม่
+  const userIdExists = await new Promise((resolve, reject) => {
+    db.query('SELECT * FROM users WHERE UserID = ?', [UserID], (err, result) => {
       if (err) {
-        return res.status(500).json({ error: 'Error saving user' });
+        reject(err);
+      } else {
+        resolve(result.length > 0); // ถ้ามีแถวที่พบ UserID ซ้ำ
       }
-      res.status(200).json({ message: 'User registered successfully' });
     });
   });
-  
-  app.get('/admin', (req, res) => {
-    db.query("SELECT * FROM equipment", (err, result) => {
-        if (err) {
-            console.log(err);
-        }
-        else {
-            res.send(result);
-        }
-    })
+
+  if (userIdExists) {
+    return res.status(400).json({ error: 'UserID already exists' });
+  }
+
+  // ตรวจสอบว่า email ซ้ำหรือไม่
+  const emailExists = await new Promise((resolve, reject) => {
+    db.query('SELECT * FROM users WHERE email = ?', [email], (err, result) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve(result.length > 0); // ถ้ามีแถวที่พบ email ซ้ำ
+      }
+    });
+  });
+
+  if (emailExists) {
+    return res.status(400).json({ error: 'Email already exists' });
+  }
+
+  // เข้ารหัสรหัสผ่าน
+  const hashedPassword = await bcrypt.hash(password, 10);
+
+  // เพิ่มข้อมูลผู้ใช้ใหม่พร้อมกับ role (โดย role จะเป็น 'user' สำหรับผู้ใช้ทั่วไป)
+  const query = 'INSERT INTO users (UserID, firstname, lastname, grade, branch, email, password, phone_number, role) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)';
+  const values = [UserID, firstname, lastname, grade, branch, email, hashedPassword, phone_number, role];
+
+  db.query(query, values, (err, result) => {
+    if (err) {
+      return res.status(500).json({ error: 'Error saving user' });
+    }
+    res.status(200).json({ message: 'User registered successfully' });
+  });
 });
+
+
+
+app.get('/admin', (req, res) => {
+  const token = req.headers['authorization'];  // ดึง token จาก header
+
+  if (!token) {
+    return res.status(401).json({ message: 'ไม่พบ token กรุณาล็อกอิน' });
+  }
+
+  // เช็คว่า token มีรูปแบบ "Bearer <token>" หรือไม่
+  if (!token.startsWith('Bearer ')) {
+    return res.status(400).json({ message: 'Token format is incorrect' });
+  }
+
+  const actualToken = token.slice(7); // เอา "Bearer " ออกไป
+
+  try {
+    const decodedToken = jwt.verify(actualToken, 'yourSecretKey');  // ถอดรหัส token
+    const role = decodedToken.role;
+
+    if (role !== 'admin') {
+      return res.status(403).json({ message: 'คุณไม่ใช่ admin' }); // ถ้าไม่ใช่ admin
+    }
+
+    // ถ้าเป็น admin ให้ส่งข้อมูลของหน้า admin
+    res.send('Welcome to Admin page');
+  } catch (error) {
+    res.status(401).json({ message: 'Token ไม่ถูกต้องหรือหมดอายุ' });
+  }
+});
+
+
+app.get('/checkRole', (req, res) => {
+  const { userID, email } = req.query;
+
+  // ตรวจสอบว่ามีการส่ง userID และ email หรือไม่
+  if (!userID || !email) {
+    return res.status(400).json({ error: 'Missing userID or email' });
+  }
+  // คำสั่ง SQL เพื่อดึงข้อมูล role ของ user
+  const query = 'SELECT role FROM users WHERE userID = ? AND email = ?';
+  db.query(query, [userID, email], (err, results) => {
+    if (err) {
+      return res.status(500).json({ error: 'Database error' });
+    }
+    
+    if (results.length > 0) {
+      const role = results[0].role;  // สมมติว่า role อยู่ในคอลัมน์ role
+      res.json({ role });
+    } else {
+      res.status(404).json({ error: 'User not found' });
+    }
+  });
+});
+
 
 
 // ตั้งค่าการเก็บไฟล์

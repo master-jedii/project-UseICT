@@ -11,6 +11,7 @@ import otherIcon from '../assets/Camera Addon Identification.png';
 import All from '../assets/Vector.png';
 import '../View/DisplayEquipment.css';
 import ShowBorrow from '../interface/showborrow';
+import { jwtDecode } from 'jwt-decode'; // ใช้ jwtDecode แทน jwt_decode
 
 const DisplayEquipment = () => {
   const [equipment, setEquipment] = useState([]);
@@ -78,6 +79,39 @@ const DisplayEquipment = () => {
     navigate(`/equipment/${typeId}`);
   };
 
+  // ฟังก์ชันสำหรับปุ่มไปหน้า Admin
+  const handleAdminClick = () => {
+    const token = localStorage.getItem('token'); // ดึง token จาก sessionStorage
+    if (!token) {
+      alert('กรุณาล็อกอินก่อน');
+      return;
+    }
+    try {
+      // ถอดรหัส token
+      const decodedToken = jwtDecode(token); // ใช้ jwtDecode
+      console.log('Decoded Token:', decodedToken);
+  
+      // ตรวจสอบ role จาก token
+      const role = decodedToken.role || null;
+  
+      if (!role) {
+        alert('ไม่พบข้อมูล role ใน token');
+        return;
+      }
+  
+      if (role === 'admin') {
+        navigate('/admin'); // พาไปยังหน้า Admin
+      } else {
+        alert('คุณไม่มีสิทธิ์เข้าถึงหน้านี้');
+      }
+    } catch (error) {
+      console.error('Token Decode Error:', error);
+      alert('เกิดข้อผิดพลาดในการถอดรหัส token');
+    }
+  };
+  
+
+
   return (
     <div className="equipment-list">
       <div className="header-category">
@@ -91,6 +125,13 @@ const DisplayEquipment = () => {
               onChange={(e) => setSearchTerm(e.target.value)}
             />
           </div>
+        </div>
+
+        {/* ปุ่มสำหรับไปหน้า Admin */}
+        <div style={{ textAlign: 'center', margin: '20px 0' }}>
+          <button onClick={handleAdminClick} className="btn btn-primary">
+            ไปที่หน้า Admin
+          </button>
         </div>
 
         <div className="category-icons">
@@ -160,8 +201,7 @@ const DisplayEquipment = () => {
                     <div className="card-body">
                       <h4 className="card-title">{item.name}</h4>
                       <p className="card-text">{item.description}</p>
-                      {/* <ShowBorrow></ShowBorrow> */}
-                      <button onClick={()=>handleViewAllClick(item.type_id)}>ยืมอุปกรณ์</button>
+                      <button onClick={() => handleViewAllClick(item.type_id)}>ยืมอุปกรณ์</button>
                     </div>
                   </div>
                 ))
@@ -217,5 +257,6 @@ const DisplayEquipment = () => {
     </div>
   );
 };
+
 
 export default DisplayEquipment;

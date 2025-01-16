@@ -1,20 +1,12 @@
 import React from 'react';
-import FormAddEquiment from './Layout/FormAddEquiment';
-import MainAdmin from './Layout/MainAdmin';
-import ShowEquipment from './Layout/ShowEquipment';
-import Dashboard from './Layout/Dashboard';
-
-
-
+import Dashboard from './Layout/Dashboard';  // สมมติว่า Dashboard เป็นส่วนหนึ่งของหน้า Admin
 
 const Admin = () => {
   return (
-    <>
-      <Dashboard></Dashboard>
-      
-
-    </>
-    
+    <div>
+      <Dashboard /> {/* ส่วนที่แสดงในหน้า Admin */}
+    </div>
   );
 };
+
 export default Admin;
