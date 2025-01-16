@@ -62,7 +62,7 @@ const App = () => {
         <Route path="/showborrow" element={<Showborrow />} />
         
         {/* หน้า Dashboard ที่ต้องการการเข้าถึงจาก admin เท่านั้น */}
-        {/* <Route path="/dashboard" element={<PrivateRoute element={<Dashboard />} />} /> */}
+        <Route path="/dashboard" element={<PrivateRoute element={<Dashboard />} />} />
         <Route path="/mainadmin" element={<MainAdmin />} />
         <Route path="/allEquipment" element={<AllEquipment />} />
       </Routes>
