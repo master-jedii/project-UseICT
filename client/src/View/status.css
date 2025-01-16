@@ -1,0 +1,78 @@
+/* Layout ส่วนหลัก */
+.status-container-1 {
+    margin: 20px auto; /* ตั้ง margin auto เพื่อให้อยู่ตรงกลางแนวนอน */
+    font-family: 'Arial', sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* จัดให้อยู่ตรงกลางแนวนอน */
+    justify-content: center; /* จัดให้อยู่ตรงกลางแนวตั้ง */
+}
+  
+.status-title-1 {
+    font-size: 24px;
+    font-weight: bold;
+    margin-left: -60%;
+}
+  
+.status-table-1 {
+    width: 100%;
+    max-width: 1300px; /* จำกัดความกว้างสูงสุดของตาราง */
+    border-collapse: collapse;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+  
+.status-table-1 thead {
+    background-color: #f8f9fa;
+}
+  
+.status-table-1 th {
+    padding: 12px;
+    text-align: center; /* จัดข้อความให้อยู่ตรงกลางแนวนอน */
+    vertical-align: middle; /* จัดข้อความให้อยู่ตรงกลางแนวตั้ง */
+    font-weight: bold;
+    font-size: 14px;
+    color: #333;
+    border-bottom: 2px solid #ddd;
+}
+  
+.status-table-1 td {
+    padding: 12px;
+    text-align: center; /* จัดข้อความให้อยู่ตรงกลางแนวนอน */
+    vertical-align: middle; /* จัดข้อความให้อยู่ตรงกลางแนวตั้ง */
+    border-bottom: 1px solid #ddd;
+    font-size: 14px;
+    color: #555;
+}
+  
+/* สีสถานะ */
+.status-สำเร็จ {
+    color: #28a745; /* สีเขียว */
+    font-weight: bold;
+}
+  
+.status-ล้มเหลว {
+    color: #dc3545; /* สีแดง */
+    font-weight: bold;
+}
+  
+/* ปุ่มดาวน์โหลด */
+.receipt-button-1 {
+    padding: 8px 12px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+}
+  
+.receipt-button-1:hover {
+    background-color: #0056b3;
+}
+  
+/* การจัดตำแหน่งปุ่ม */
+.button-container-1 {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}

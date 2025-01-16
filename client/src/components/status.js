@@ -2,28 +2,15 @@ import NavbarMain from './NavbarMain';
 import React, { useState, useEffect } from "react";
 import Axios from "axios";
 import { useLocation, useNavigate } from "react-router-dom";
-
+import '../View/status.css';
 
 const Status = () => {
-  const [equipment, setEquipment] = useState([]);
-  const [user, setUser] = useState(null); // เก็บข้อมูลผู้ใช้
+  const [transactions, setTransactions] = useState([]); // เก็บข้อมูลรายการในตาราง
+  const [user, setUser] = useState(null);
   const location = useLocation();
   const navigate = useNavigate();
 
-  // ดึงค่าหมวดหมู่จาก query string
-  const queryParams = new URLSearchParams(location.search);
-  const category = queryParams.get("category") || "ทั้งหมด"; // ค่าเริ่มต้นคือ "ทั้งหมด"
-
-  // ฟังก์ชันดึงข้อมูลอุปกรณ์ตามหมวดหมู่
-  const fetchEquipment = () => {
-    Axios.get(`http://localhost:3333/showequipment?category=${category}`)
-      .then((response) => {
-        setEquipment(response.data);
-      })
-      .catch((err) => console.error("Error fetching equipment:", err));
-  };
-
-  // ฟังก์ชันดึงข้อมูลผู้ใช้
+  // ดึงข้อมูลผู้ใช้
   const fetchUser = () => {
     const token = localStorage.getItem("token");
     if (token) {
@@ -31,18 +18,28 @@ const Status = () => {
         headers: { Authorization: `Bearer ${token}` },
       })
         .then((response) => {
-          setUser(response.data.user); // เก็บข้อมูลผู้ใช้ใน state
+          setUser(response.data.user);
         })
         .catch((err) => {
           console.error("Error fetching user:", err);
-          navigate("/login"); // หากไม่มี token หรือ token ไม่ถูกต้อง ให้กลับไปหน้า Login
+          navigate("/login");
         });
     }
   };
 
+  // ดึงข้อมูลรายการจาก API
+  const fetchTransactions = () => {
+    Axios.get("http://localhost:3333/transactions")
+      .then((response) => {
+        setTransactions(response.data);
+      })
+      .catch((err) => console.error("Error fetching transactions:", err));
+  };
+
   useEffect(() => {
-    fetchUser(); // ดึงข้อมูลผู้ใช้
-  }); // โหลดข้อมูลใหม่เมื่อเปลี่ยน category
+    fetchUser();
+    fetchTransactions();
+  }, []); // โหลดครั้งเดียวเมื่อ Component เริ่มทำงาน
 
   // ฟังก์ชัน Logout
   const handleLogout = () => {
@@ -52,12 +49,36 @@ const Status = () => {
   };
 
   return (
-    <div className="">
+    <div>
       <NavbarMain userData={user} onLogout={handleLogout} />
-      
-      
+      <div className="status-container-1">
+        <h2 className="status-title-1">สถานะการยืม</h2>
+        <table className="status-table-1">
+          <thead>
+            <tr>
+              <th>ลำดับ</th>
+              <th>อุปกรณ์</th>
+              <th>วันที่ยืม</th>
+              <th>สถานะ</th>
+            </tr>
+          </thead>
+          <tbody>
+            {transactions.map((transaction, index) => (
+              <tr key={index}>
+                <td className={`status-${transaction.status.toLowerCase()}`}>
+                  {transaction.status}
+                </td>
+                <td>{transaction.no}</td>
+                <td>{transaction.eq}</td>
+                <td>{transaction.dbr}</td>
+                <td>{transaction.status}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 };
 
-export default Status
+export default Status;

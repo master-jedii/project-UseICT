@@ -193,7 +193,7 @@ const DisplayEquipment = () => {
               {selectedCategoryItems.length > 0 ? (
                 selectedCategoryItems.slice(0, 8).map((item, idx) => (
                   <div className="card" style={{ width: "18rem", margin: "10px" }} key={idx}>
-                    <img 
+                    <img
                       src={`http://localhost:3333/uploads/${item.image}`}
                       className="card-img-top"
                       alt={item.name}
@@ -201,7 +201,6 @@ const DisplayEquipment = () => {
                     <div className="card-body">
                       <h4 className="card-title">{item.name}</h4>
                       <p className="card-text">{item.description}</p>
-                      <button onClick={() => handleViewAllClick(item.type_id)}>ยืมอุปกรณ์</button>
                     </div>
                   </div>
                 ))

@@ -104,7 +104,7 @@ const AllEquipment = () => {
                   <p>{item.description}</p>
                   <span>จำนวน: {item.quantity}</span>
                   <div className='showborrow-1'>
-                    <Showborrow></Showborrow>
+                    <Showborrow equipmentId={item.equipment_id} equipmentName={item.name} />
                   </div>
                 </div>
               </div>

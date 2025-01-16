@@ -13,7 +13,7 @@ const EquipmentListByType = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState(''); // เพิ่ม state สำหรับคำค้นหา
-  
+
   // ดึงค่าหมวดหมู่จาก query string
   const queryParams = new URLSearchParams(location.search);
   const category = queryParams.get("category") || "ทั้งหมด"; // ค่าเริ่มต้นคือ "ทั้งหมด"
@@ -80,6 +80,8 @@ const EquipmentListByType = () => {
     }
   }, [searchTerm]); // อัปเดตข้อมูลเมื่อคำค้นหาเปลี่ยนแปลง
 
+  
+
   // ฟังก์ชัน Logout
   const handleLogout = () => {
     localStorage.removeItem('token');
@@ -104,22 +106,18 @@ const EquipmentListByType = () => {
             />
           </div>
         </div>
-        <div className="equipment-list-2">
-          {equipment.length > 0 ? (
-            equipment.map((item, idx) => (
-              <div className="equipment-item-2" key={idx}>
-                <div className="equipment-image-2">
-                  <img
-                    src={`http://localhost:3333/uploads/${item.image}`}
-                    alt={item.name}
-                  />
-                </div>
-                <div className="equipment-details-2">
-                  <h4>{item.name}</h4>
-                  <p>{item.description}</p>
-                  <div className='showborrow-2'>
-                    <Showborrow></Showborrow>
-                  </div>
+        <div className="equipment-cards">
+          {equipment.length === 0 ? (
+            <p>กำลังโหลด...</p>
+          ) : equipment.length > 0 ? (
+            equipment.map((item) => (
+              <div key={item.id} className="card">
+                <div className="card-body">
+                  {item.image && <img src={`http://localhost:3333/uploads/${item.image}`} alt={item.name} className="card-img-top" />}
+                  <h5 className="card-title">{item.name}</h5>
+                  <p className="card-text">{item.description}</p>
+                  {/* ส่ง equipmentId ไปยัง Showborrow */}
+                  <Showborrow equipmentId={item.equipment_id} equipmentName={item.name} />
                 </div>
               </div>
             ))
@@ -127,6 +125,7 @@ const EquipmentListByType = () => {
             <p style={{ textAlign: "center" }}>ไม่มีข้อมูลในหมวดหมู่ "{category}"</p>
           )}
         </div>
+
       </div>
     </div>
   );
