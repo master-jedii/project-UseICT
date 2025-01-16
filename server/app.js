@@ -329,48 +329,30 @@ app.get('/api/equipment', (req, res) => {
 
 
 
+app.post('/api/borrow', (req, res) => {
+  const { UserID, equipmentId, subject, name, place, objective, borrow_d, return_d } = req.body;
 
-app.post('/api/borrow', async (req, res) => {
-  try {
-    const { UserID, subject, objective, place, borrow_d, return_d, equipment_id } = req.body;
+  if (!UserID || !equipmentId || !subject || !name || !place || !objective || !borrow_d || !return_d) {
+    return res.status(400).json({ message: 'กรุณากรอกข้อมูลให้ครบถ้วน' });
+  }
 
-    // ตรวจสอบข้อมูลที่ส่งมา
-    if (!UserID || !subject || !objective || !place || !borrow_d || !return_d || !equipment_id) {
-      return res.status(400).json({ message: 'กรุณากรอกข้อมูลให้ครบถ้วน' });
+  // คำสั่ง SQL ที่จะตั้งค่า status เป็น 'รอดำเนินการ'
+  const query = `
+    INSERT INTO borrow (UserID, subject, objective, place, borrow_date, return_date, equipment_id, status)
+    VALUES (?, ?, ?, ?, ?, ?, ?, 'รอดำเนินการ')
+  `;
+
+  db.execute(query, [UserID, subject, objective, place, borrow_d, return_d, equipmentId], (err, result) => {
+    if (err) {
+      console.error('Error executing SQL query:', err);  // แสดงข้อผิดพลาด SQL
+      return res.status(500).json({ message: 'เกิดข้อผิดพลาดในการบันทึกข้อมูล' });
     }
 
-    // ตรวจสอบว่าอุปกรณ์ที่ยืมอยู่ในสถานะที่สามารถยืมได้
-    const equipmentQuery = "SELECT * FROM equipment WHERE equipment_id = ?";
-    db.query(equipmentQuery, [equipment_id], (err, result) => {
-      if (err) {
-        console.log('Error checking equipment:', err);
-        return res.status(500).json({ message: 'Error checking equipment' });
-      }
-
-      if (result.length === 0) {
-        return res.status(404).json({ message: 'อุปกรณ์ไม่พบในฐานข้อมูล' });
-      }
-
-      // อัปเดตสถานะการยืม (เช่น การลดจำนวนอุปกรณ์หรือสถานะการยืม)
-      const borrowQuery = `INSERT INTO borrow (UserID, subject, objective, place, borrow_d, return_d, equipment_id)
-                           VALUES (?, ?, ?, ?, ?, ?, ?)`;
-      const values = [UserID, subject, objective, place, borrow_d, return_d, equipment_id];
-
-      db.query(borrowQuery, values, (err) => {
-        if (err) {
-          console.error('Error saving borrow data:', err);
-          return res.status(500).json({ message: 'Error saving borrow data' });
-        }
-
-        // ส่งการตอบกลับหลังจากบันทึกสำเร็จ
-        res.status(200).json({ message: 'บันทึกข้อมูลการยืมสำเร็จ' });
-      });
-    });
-  } catch (error) {
-    console.error('Server error:', error);
-    res.status(500).json({ message: 'เกิดข้อผิดพลาดภายในเซิร์ฟเวอร์' });
-  }
+    res.status(200).json({ message: 'บันทึกข้อมูลสำเร็จ' });
+  });
 });
+
+
 
 
 
@@ -467,6 +449,7 @@ app.get("/api/serialtypes", (req, res) => {
     res.status(200).json(result); // ส่งข้อมูลที่ได้รับจากฐานข้อมูล
   });
 });
+
 
 
 

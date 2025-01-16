@@ -4,11 +4,12 @@ import "../interface/CSS/showborrow.css";
 import "../interface/CSS/Modal.css";
 import api from "../service/axios";
 
-const Showborrow = () => {
+const Showborrow = ({ equipmentId, equipmentName }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [borrowDate, setBorrowDate] = useState(getToday());
   const [returnDate, setReturnDate] = useState(getDefaultReturnDate(getToday()));
-  const [UserID, setUserId] = useState(""); // เก็บ UserID
+  const [UserID, setUserId] = useState("");
+
   const openModal = () => setIsModalOpen(true);
   const closeModal = () => setIsModalOpen(false);
 
@@ -23,7 +24,7 @@ const Showborrow = () => {
         const response = await api.get("/main", {
           headers: { Authorization: `Bearer ${token}` },
         });
-        setUserId(response.data.user.id); // อัปเดต UserID
+        setUserId(response.data.user.id);
       } catch (error) {
         console.error("Error fetching user ID:", error.response || error.message);
       }
@@ -50,7 +51,6 @@ const Showborrow = () => {
     setReturnDate(newReturnDate);
   };
 
-
   return (
     <div className="showborrow-container">
       <button className="open-modal-btn" onClick={openModal}>
@@ -63,7 +63,9 @@ const Showborrow = () => {
         returnDate={returnDate}
         onBorrowDateChange={handleBorrowDateChange}
         minDate={getToday()}
-        UserID={UserID} // ส่ง UserID ไปยัง Modal
+        UserID={UserID}
+        equipmentId={equipmentId}
+        equipmentName={equipmentName}
       />
     </div>
   );
@@ -77,43 +79,19 @@ const Modal = ({
   onBorrowDateChange,
   minDate,
   UserID,
+  equipmentId,
+  equipmentName,
 }) => {
   const [formData, setFormData] = useState({
     UserID: UserID,
     subject: "",
     location: "",
+    objective: "", // กำหนดฟิลด์นี้
     borrowDate,
     returnDate,
-    name: "", // เพิ่ม field name สำหรับชื่ออุปกรณ์
+    name: equipmentName,
   });
-
-  useEffect(() => {
-    // Fetch UserID & Equipment data when Modal opens
-    const fetchEquipmentData = async () => {
-      try {
-        const response = await axios.get("http://localhost:3333/api/equipment");
-        const equipmentList = response.data; // ข้อมูลทั้งหมดจาก API
-    
-        console.log("Equipment List:", equipmentList);
-        
-        // ตัวอย่าง: อัปเดตข้อมูลใน state
-        if (equipmentList.length > 0) {
-          const { equipment_id, name } = equipmentList[0]; // เลือกตัวแรกในรายการ
-          setFormData((prev) => ({
-            ...prev,
-            equipment_id,
-            name,
-          }));
-        }
-      } catch (error) {
-        console.error("Error fetching equipment data:", error.response || error.message);
-      }
-    };
-    
-    if (isOpen) {
-      fetchEquipmentData();
-    }
-  }, [isOpen]);
+  
 
   useEffect(() => {
     if (UserID) {
@@ -129,6 +107,7 @@ const Modal = ({
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    // ตรวจสอบว่า UserID และข้อมูลที่จำเป็นครบถ้วนหรือไม่
     if (!UserID) {
       alert("ไม่พบข้อมูลผู้ใช้งาน");
       return;
@@ -141,12 +120,16 @@ const Modal = ({
 
     const dataToSend = {
       UserID: UserID,
+      equipmentId,
       subject: formData.subject,
-      name: formData.name, // ส่งชื่ออุปกรณ์
+      name: formData.name, // ตรวจสอบว่าไม่เป็นค่าว่าง
       place: formData.location,
+      objective: formData.objective, // เพิ่มฟิลด์นี้
       borrow_d: borrowDate,
       return_d: returnDate,
+      
     };
+    
 
     try {
       const response = await axios.post("http://localhost:3333/api/borrow", dataToSend);
@@ -154,13 +137,18 @@ const Modal = ({
       onClose();
     } catch (error) {
       if (error.response) {
+        // แสดงข้อผิดพลาดจากการตอบกลับของเซิร์ฟเวอร์
+        console.error("Response error:", error.response);
         alert(error.response.data.message || "เกิดข้อผิดพลาดในการบันทึกข้อมูล");
       } else {
+        // แสดงข้อผิดพลาดจากการเชื่อมต่อหรือข้อผิดพลาดอื่นๆ
+        console.error("Network or other error:", error);
         alert("เกิดข้อผิดพลาดในการเชื่อมต่อกับเซิร์ฟเวอร์");
       }
-      console.error("Error:", error);
     }
+    
   };
+
 
   if (!isOpen) return null;
 
@@ -182,6 +170,7 @@ const Modal = ({
                   readOnly
                 />
               </div>
+
               <div>
                 <label htmlFor="subject">รายวิชา / โครงการ</label>
                 <select
@@ -199,11 +188,20 @@ const Modal = ({
 
             <div className="new-form-grid">
               <div>
+                <label htmlFor="name">รหัสอุปกรณ์</label>
+                <input
+                  type="text"
+                  id="name"
+                  value={equipmentId || "กำลังโหลด..."}
+                  readOnly
+                />
+              </div>
+              <div>
                 <label htmlFor="name">ชื่ออุปกรณ์</label>
                 <input
                   type="text"
                   id="name"
-                  value={formData.name || "กำลังโหลด..."}
+                  value={equipmentName || "กำลังโหลด..."}
                   readOnly
                 />
               </div>
@@ -217,6 +215,18 @@ const Modal = ({
                   required
                 />
               </div>
+
+              <div>
+                <label htmlFor="objective">วัตถุประสงค์การยืม</label>
+                <input
+                  type="text"
+                  id="objective"
+                  value={formData.objective}
+                  onChange={handleChange}
+                  required
+                />
+              </div>
+
             </div>
 
             <div className="new-form-grid">
@@ -262,7 +272,5 @@ const Modal = ({
     </div>
   );
 };
-
-
 
 export default Showborrow;
