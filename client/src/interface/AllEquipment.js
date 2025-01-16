@@ -20,7 +20,9 @@ const AllEquipment = () => {
   const fetchEquipment = () => {
     Axios.get(`http://localhost:3333/showequipment?category=${category}`)
       .then((response) => {
-        setEquipment(response.data);
+        // กรองเฉพาะอุปกรณ์ที่มี status เป็น "พร้อมใช้งาน"
+        const availableEquipment = response.data.filter(item => item.status === "พร้อมใช้งาน");
+        setEquipment(availableEquipment);
       })
       .catch((err) => console.error("Error fetching equipment:", err));
   };
@@ -79,11 +81,11 @@ const AllEquipment = () => {
         <div className="input-container1">
           <i className="fa fa-search search-icon" aria-hidden="true"></i>
           <input
-            placeholder={ "ค้นหา...."}
+            placeholder={"ค้นหา...."}
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
-         </div>
+        </div>
       </div>
       <div className="equipment-list">
         {equipment.length > 0 ? (
@@ -108,7 +110,7 @@ const AllEquipment = () => {
         )}
       </div>
     </div>
-  );  
+  );
 };
 
 export default AllEquipment;

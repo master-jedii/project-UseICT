@@ -39,7 +39,6 @@ const Main = () => {
         setLoading(false);
       }
     };
-
     fetchData();
   }, [navigate]);
 
@@ -68,7 +67,7 @@ const Main = () => {
         <div>No user data available</div> // ถ้าไม่มีข้อมูลผู้ใช้แสดงข้อความนี้
       )}
 
-
+  
       <DisplayEquipment />
       
       

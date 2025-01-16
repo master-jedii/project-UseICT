@@ -13,7 +13,6 @@ const EquipmentListByType = () => {
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState(''); // เพิ่ม state สำหรับคำค้นหา
   
-
   // ดึงค่าหมวดหมู่จาก query string
   const queryParams = new URLSearchParams(location.search);
   const category = queryParams.get("category") || "ทั้งหมด"; // ค่าเริ่มต้นคือ "ทั้งหมด"
@@ -22,7 +21,8 @@ const EquipmentListByType = () => {
   const fetchEquipment = () => {
     Axios.get(`http://localhost:3333/showequipment?category=${category}`)
       .then((response) => {
-        setEquipment(response.data);
+        const availableEquipment = response.data.filter(item => item.status === "พร้อมใช้งาน");
+        setEquipment(availableEquipment); // กรองเฉพาะอุปกรณ์ที่พร้อมใช้งาน
       })
       .catch((err) => console.error("Error fetching equipment:", err));
   };
@@ -55,7 +55,8 @@ const EquipmentListByType = () => {
   const fetchEquipmentByType = () => {
     Axios.get(`http://localhost:3333/showequipment/type/${typeId}`)
       .then((response) => {
-        setEquipment(response.data);
+        const availableEquipment = response.data.filter(item => item.status === "พร้อมใช้งาน");
+        setEquipment(availableEquipment); // กรองเฉพาะอุปกรณ์ที่พร้อมใช้งาน
       })
       .catch((err) => console.error("Error fetching equipment by type:", err));
   };
@@ -106,6 +107,7 @@ const EquipmentListByType = () => {
                 <div className="card-body">
                   <h5 className="card-title">{item.name}</h5>
                   <p className="card-text">{item.description}</p>
+                  {/* ส่ง userId ไปยัง Showborrow */}
                   <Showborrow />
                 </div>
               </div>

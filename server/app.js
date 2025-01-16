@@ -5,7 +5,7 @@ const mysql = require("mysql2"); // ใช้ MySQL (หรือเปลี่
 const jwt = require("jsonwebtoken"); // ใช้ JWT สำหรับการสร้าง Token
 const app = express();
 const multer = require('multer');
-
+const router = express.Router();
 const path = require("path");
 
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
@@ -37,29 +37,33 @@ db.connect((err) => {
   console.log("Connected to database!");
 });
 
+
 app.get('/main', (req, res) => {
-    const token = req.headers.authorization?.split(' ')[1]; // ดึง token จาก header
-  
-    if (!token) {
-      return res.status(401).json({ message: 'Unauthorized: No token provided' }); // ถ้าไม่มี token
+  const token = req.headers.authorization?.split(' ')[1];
+
+  if (!token) {
+    return res.status(401).json({ message: 'Unauthorized: No token provided' });
+  }
+  jwt.verify(token, 'your_jwt_secret_key', (err, decoded) => {
+    if (err) {
+      return res.status(401).json({ message: 'Unauthorized: Invalid token', error: err.message });
     }
-  
-    jwt.verify(token, 'your_jwt_secret_key', (err, decoded) => { // ตรวจสอบ token
-      if (err) {
-        return res.status(401).json({ message: 'Unauthorized: Invalid token' }); // ถ้า token ไม่ถูกต้อง
-      }
-  
-      const userId = decoded.id;
-      const userFirstname = decoded.firstname;
-      res.status(200).json({ user: { id: userId, firstname: userFirstname } }); // ส่งข้อมูลกลับ
-    });
+
+    console.log("Decoded JWT payload:", decoded);  // ✅ เช็ค decoded payload
+
+    const userId = decoded.UserID;  // ตรวจสอบว่า UserID อยู่ใน decoded หรือไม่
+    const userFirstname = decoded.firstname;
+
+    // ส่งข้อมูล userId และ firstname
+    res.status(200).json({ user: { id: userId, firstname: userFirstname } });
   });
+});
+
   
 
 // Login endpoint
 app.post('/login', async (req, res) => {
   const { email, password } = req.body;
-
   try {
     // ตรวจสอบผู้ใช้ในฐานข้อมูล
     const query = "SELECT * FROM users WHERE email = ?";
@@ -79,27 +83,31 @@ app.post('/login', async (req, res) => {
         return res.status(400).json({ error: 'Invalid email or password' });
       }
 
-      // สร้าง JWT Token
+      // สร้าง JWT Token โดยใช้ UserID
       const token = jwt.sign(
-        { id: user.id, email: user.email, firstname: user.firstname },
+        { UserID: user.UserID, email: user.email, firstname: user.firstname },  // ส่ง UserID แทน id
         'your_jwt_secret_key', // ใส่ secret key ที่ปลอดภัย
         { expiresIn: '1h' } // กำหนดระยะเวลาหมดอายุของ token
       );
-
+    
       // ส่ง Token และข้อมูลของผู้ใช้กลับไป
       res.status(200).json({
         message: 'Login successful!',
         token,
         user: {
-          firstname: user.firstname, // ส่งข้อมูล firstname กลับไป
+          UserID: user.UserID,  // ส่งข้อมูล UserID กลับไปด้วย
+          firstname: user.firstname,
         }
       });
+      
     });
   } catch (error) {
     console.error("Login error:", error);
     res.status(500).json({ error: 'Internal server error' });
   }
 });
+
+
 
 
 
@@ -178,23 +186,32 @@ const upload = multer({ storage: storage });
 
 // กรณีอัปโหลดหลายฟิลด์
 app.post("/create", upload.fields([{ name: "image", maxCount: 1 }]), (req, res) => {
-  const name = req.body.name;
-  const description = req.body.description;
-  const category = req.body.category;
+  // รับค่าจาก frontend
+  const { name, description, category, type_id, status } = req.body;  // เพิ่ม type_id และ status
   const image = req.files?.image ? req.files.image[0].filename : null;
 
+  // แสดงค่าที่ได้รับมาจาก frontend
+  console.log("Received data:", { name, description, category, type_id, status, image });
+
+  // คำสั่ง SQL สำหรับการเพิ่มข้อมูล
   db.query(
-    "INSERT INTO equipment (name, description, category, image) VALUES (?, ?, ?, ?)",
-    [name, description, category, image],
+    "INSERT INTO equipment (name, description, category, image, status, type_id) VALUES (?, ?, ?, ?, ?, ?)",  // เพิ่ม type_id
+    [name, description, category, image, status, type_id],  // ส่ง type_id เข้าไปด้วย
     (err, result) => {
       if (err) {
-        console.log(err);
+        console.log("Error inserting equipment:", err);
+        // ลบไฟล์หากเกิดข้อผิดพลาด
+        if (image) {
+          fs.unlinkSync(path.join(__dirname, 'uploads', image));
+        }
         return res.status(500).json({ message: "Error saving equipment" });
       }
-      res.status(200).json({ message: "Equipment added successfully" });
+
+      res.status(200).json({ message: "Equipment added successfully", equipmentId: result.insertId });
     }
   );
 });
+
 
 // แสดงรายการอุปกรณ์พร้อมกรองหมวดหมู่
 app.get("/showequipment", (req, res) => {
@@ -292,18 +309,74 @@ app.put('/api/equipments/:id', upload.single('image'), (req, res) => {
 });
 
 
+
+app.get('/api/equipment', (req, res) => {
+  // เลือกเฉพาะ column equipment_id และ name
+  const query = "SELECT equipment_id, name FROM equipment";
+
+  db.query(query, (err, result) => {
+    if (err) {
+      console.error("Error fetching equipment data:", err);
+      return res.status(500).json({ message: "Error fetching equipment data" });
+    }
+
+    // ส่งเฉพาะข้อมูลที่เลือกกลับไปในรูปแบบ JSON
+    res.status(200).json(result);
+  });
+});
+
+
+
+
+
+
 app.post('/api/borrow', async (req, res) => {
   try {
-    const { subject, objective, place, borrow_d, return_d } = req.body;
+    const { UserID, subject, objective, place, borrow_d, return_d, equipment_id } = req.body;
 
-    // ตรวจสอบว่า request body มีข้อมูลครบถ้วน
-    if (!subject || !objective || !place || !borrow_d || !return_d) {
+    // ตรวจสอบข้อมูลที่ส่งมา
+    if (!UserID || !subject || !objective || !place || !borrow_d || !return_d || !equipment_id) {
       return res.status(400).json({ message: 'กรุณากรอกข้อมูลให้ครบถ้วน' });
     }
-    } catch (error) {
-      console.error('Error processing request:', error);
-    }
+
+    // ตรวจสอบว่าอุปกรณ์ที่ยืมอยู่ในสถานะที่สามารถยืมได้
+    const equipmentQuery = "SELECT * FROM equipment WHERE equipment_id = ?";
+    db.query(equipmentQuery, [equipment_id], (err, result) => {
+      if (err) {
+        console.log('Error checking equipment:', err);
+        return res.status(500).json({ message: 'Error checking equipment' });
+      }
+
+      if (result.length === 0) {
+        return res.status(404).json({ message: 'อุปกรณ์ไม่พบในฐานข้อมูล' });
+      }
+
+      // อัปเดตสถานะการยืม (เช่น การลดจำนวนอุปกรณ์หรือสถานะการยืม)
+      const borrowQuery = `INSERT INTO borrow (UserID, subject, objective, place, borrow_d, return_d, equipment_id)
+                           VALUES (?, ?, ?, ?, ?, ?, ?)`;
+      const values = [UserID, subject, objective, place, borrow_d, return_d, equipment_id];
+
+      db.query(borrowQuery, values, (err) => {
+        if (err) {
+          console.error('Error saving borrow data:', err);
+          return res.status(500).json({ message: 'Error saving borrow data' });
+        }
+
+        // ส่งการตอบกลับหลังจากบันทึกสำเร็จ
+        res.status(200).json({ message: 'บันทึกข้อมูลการยืมสำเร็จ' });
+      });
+    });
+  } catch (error) {
+    console.error('Server error:', error);
+    res.status(500).json({ message: 'เกิดข้อผิดพลาดภายในเซิร์ฟเวอร์' });
+  }
 });
+
+
+
+
+
+
 
 //dashboard
 app.get('/equipment-stats', (req, res) => {
@@ -368,7 +441,20 @@ app.get("/showequipment/type/:typeId", (req, res) => {
 });
 
 
+app.get("/showpond", (req, res) => {
+  const { typeId } = req.params;  // รับค่า typeId จาก URL path
 
+  const query = "SELECT * FROM equipment ";
+  
+  db.query(query, [typeId], (err, result) => {
+    if (err) {
+      console.log("เกิดข้อผิดพลาดอะไรบางอย่าง", err);
+      return res.status(500).json({ message: "Error fetching equipment" });
+    } else {
+      res.send(result); // ส่งข้อมูลที่กรองตาม type_id
+    }
+  });
+});
 
 
 
