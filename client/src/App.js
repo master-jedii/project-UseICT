@@ -63,7 +63,7 @@ const App = () => {
         
         {/* หน้า Dashboard ที่ต้องการการเข้าถึงจาก admin เท่านั้น */}
         <Route path="/dashboard" element={<PrivateRoute element={<Dashboard />} />} />
-        <Route path="/mainadmin" element={<MainAdmin />} />
+        <Route path="/mainadmin" element={<PrivateRoute element={<MainAdmin />}/>} />
         <Route path="/allEquipment" element={<AllEquipment />} />
       </Routes>
     </Router>
