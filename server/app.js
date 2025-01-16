@@ -441,24 +441,6 @@ app.get("/showequipment/type/:typeId", (req, res) => {
 });
 
 
-app.get("/showpond", (req, res) => {
-  const { typeId } = req.params;  // รับค่า typeId จาก URL path
-
-  const query = "SELECT * FROM equipment ";
-  
-  db.query(query, [typeId], (err, result) => {
-    if (err) {
-      console.log("เกิดข้อผิดพลาดอะไรบางอย่าง", err);
-      return res.status(500).json({ message: "Error fetching equipment" });
-    } else {
-      res.send(result); // ส่งข้อมูลที่กรองตาม type_id
-    }
-  });
-});
-
-
-
-
 
 //ดึงข้อมูลผู้ใช้งาน dashboard
 app.get('/users', (req, res) => {
