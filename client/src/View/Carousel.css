@@ -10,6 +10,8 @@
     justify-content: center; /* จัดแนวตั้งให้ตรงกลาง */
     align-items: center; /* จัดแนวนอนให้ตรงกลาง */
     text-align: center; /* ทำให้ข้อความอยู่กลาง */
+    margin: 0 auto;
+    
 }
 p{
     color: #FFFFFF;
