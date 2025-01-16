@@ -468,6 +468,21 @@ app.get("/api/serialtypes", (req, res) => {
   });
 });
 
+app.post('/api/addserial', (req, res) => {
+  const { type_serial, type_id } = req.body;
+  const query = 'INSERT INTO serialnumber (type_serial, type_id) VALUES (?, ?)';
+  
+  db.query(query, [type_serial, type_id], (err, result) => {
+    if (err) {
+      console.error('Error inserting serial number:', err);
+      return res.status(500).json({ message: 'Error inserting serial number' });
+    }
+    res.status(200).json({ message: 'เพิ่มรหัสอุปกรณ์สำเร็จ' });
+  });
+});
+
+
+
 
 
 
