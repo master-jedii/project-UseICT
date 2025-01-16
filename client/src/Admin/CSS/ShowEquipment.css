@@ -8,32 +8,42 @@
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
-.equipment-container h1 {
+.equipment-containerAdmin h1 {
   text-align: center;
-  font-size: 2rem;
-  margin-bottom: 20px;
+  font-size: 2.5rem; /* เพิ่มขนาดตัวอักษร */
+  margin-bottom: 30px; /* เพิ่มระยะห่างด้านล่าง */
+  color: #009688; /* ใช้สีเขียวสดใส */
+  font-weight: bold; /* เพิ่มความหนา */
+  text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2); /* เพิ่มเงาให้ตัวอักษร */
 }
 
 .category-buttons {
-  text-align: left;
+  display: flex;
+  justify-content: center; /* จัดปุ่มให้อยู่ตรงกลาง */
+  flex-wrap: wrap; /* ให้ปุ่มสามารถเรียงหลายบรรทัดได้ถ้าพื้นที่ไม่พอ */
+  gap: 15px; /* เพิ่มระยะห่างระหว่างปุ่ม */
   margin-top: 20px;
   margin-bottom: 20px;
 }
 
 .category-btn {
-  padding: 10px 20px;
-  margin: 0 10px;
-  font-size: 1rem;
-  background-color: #2196F3;
-  color: white;
+  padding: 10px 25px; /* เพิ่มขนาดปุ่ม */
+  font-size: 1.1rem; /* เพิ่มขนาดข้อความ */
+  background-color: #009688; /* ใช้สีเขียวเป็นพื้นหลัง */
+  color: white; /* ข้อความสีขาว */
   border: none;
-  border-radius: 5px;
+  border-radius: 25px; /* เพิ่มขอบมน */
   cursor: pointer;
+  transition: transform 0.2s, background-color 0.2s; /* เพิ่มเอฟเฟกต์เวลาโฮเวอร์ */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* เพิ่มเงา */
 }
 
 .category-btn:hover {
-  background-color: #1976D2;
+  background-color: #009688; /* เปลี่ยนสีเมื่อโฮเวอร์ */
+  transform: scale(1.1); /* ขยายปุ่มเล็กน้อยเมื่อโฮเวอร์ */
+  box-shadow: 0 6px 8px rgba(0, 0, 0, 0.2); /* เพิ่มเงาเมื่อโฮเวอร์ */
 }
+
 
 .equipment-listAdmin {
   list-style-type: none;
@@ -42,39 +52,84 @@
 
 .equipment-item {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 15px;
-  margin-bottom: 10px;
+  justify-content: flex-start;
+  align-items: flex-start;
+  gap: 20px;
+  padding: 20px; /* เพิ่ม Padding ให้กล่องดูกว้างขึ้น */
+  margin-bottom: 20px; /* เพิ่มระยะห่างระหว่างกล่อง */
   background-color: #ffffff;
-  border-radius: 6px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  border-radius: 10px; /* เพิ่มความโค้งมน */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* เพิ่มเงาให้ดูมีมิติ */
 }
 
-.equipment-item h2 {
-  margin: 0;
-  font-size: 1.5rem;
-  color: #333;
+.equipment-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 10px;
 }
 
-.equipment-item p {
-  margin: 5px 0;
-  color: #777;
-  font-size: 1rem;
+.equipment-info img {
+  width: 180px; /* ขยายขนาดรูปภาพ */
+  height: 180px; /* ให้สมดุลกับความกว้าง */
+  object-fit: cover; /* ทำให้รูปภาพเต็มกรอบ */
+  border-radius: 10px; /* เพิ่มความโค้งมน */
+  margin-right: 20px; /* เพิ่มระยะห่างระหว่างรูปกับข้อความ */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* เพิ่มเงาให้ดูมีมิติ */
+}
+
+
+.equipment-info h2 {
+  font-size: 1.6rem; /* ปรับให้ขนาดสมดุล */
+  font-weight: 600; /* เพิ่มความหนา */
+  color: #333; /* ใช้สีที่สบายตา */
+  margin-bottom: 10px; /* เพิ่มระยะห่างด้านล่าง */
+}
+
+.equipment-info p {
+  font-size: 1.2rem; /* ปรับขนาดตัวอักษรให้ใหญ่ขึ้น */
+  color: #555; /* ใช้สีที่ไม่เข้มเกินไป */
+  margin: 5px 0; /* เพิ่มระยะห่างระหว่างบรรทัด */
+  line-height: 1.5; /* เพิ่มความโปร่งระหว่างบรรทัด */
+}
+
+.equipment-info p span {
+  font-weight: bold; /* เน้นข้อความสำคัญ */
+  color: #000; /* ใช้สีดำเพื่อความโดดเด่น */
 }
 
 .equipment-actions {
   display: flex;
+  flex-direction: column;
   gap: 10px;
+}
+.equipment-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 15px; /* เพิ่มระยะห่างระหว่างปุ่ม */
+  justify-content: center; /* จัดให้อยู่กลางในแนวตั้ง */
+  align-items: flex-end; /* จัดให้อยู่ฝั่งขวาของกล่อง */
+  margin-right: 20px; /* เพิ่มระยะจากขอบกล่อง */
 }
 
 .update-btn,
 .delete-btn {
-  padding: 8px 16px;
-  font-size: 1rem;
+  padding: 12px 20px; /* ขยายขนาดปุ่ม */
+  font-size: 1rem; /* เพิ่มขนาดตัวอักษร */
   border: none;
-  border-radius: 4px;
+  border-radius: 8px; /* เพิ่มความโค้งมน */
   cursor: pointer;
+  width: 120px; /* กำหนดความกว้างให้เท่ากัน */
+  text-align: center; /* จัดข้อความให้อยู่ตรงกลาง */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* เพิ่มเงา */
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.update-btn:hover,
+.delete-btn:hover {
+  transform: scale(1.05); /* เพิ่มเอฟเฟกต์ขยายเมื่อ hover */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2); /* เพิ่มเงาเมื่อ hover */
 }
 
 .update-btn {
@@ -82,14 +137,11 @@
   color: white;
 }
 
-.update-btn:hover {
-  background-color: #45a049;
-}
-
 .delete-btn {
   background-color: #f44336;
   color: white;
 }
+
 
 .delete-btn:hover {
   background-color: #e53935;
@@ -100,6 +152,7 @@
   text-align: center;
   background-color: #e4e4e4;
   border-radius: 5px;
+  padding: 10px;
 }
 
 .modal {
@@ -109,7 +162,6 @@
   width: 100%;
   height: 100%;
   background-color: rgba(0, 0, 0, 0.5);
-  /* Semi-transparent black background */
   display: flex;
   justify-content: center;
   align-items: center;
@@ -121,8 +173,8 @@
   padding: 20px;
   border-radius: 8px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-  width: 1300px;
-  max-width: 100%;
+  width: 600px;
+  max-width: 90%;
 }
 
 .showModal {
@@ -146,7 +198,6 @@ textarea,
 select,
 input[type="file"] {
   width: 100%;
-  padding: 10px;
   border: 1px solid #ccc;
   border-radius: 4px;
   font-size: 16px;
@@ -158,16 +209,56 @@ textarea {
 
 .button-group {
   display: flex;
+  justify-content: space-between;
   margin-top: 20px;
-  
 }
 
-.cancel-btn{
-  margin-left: 20px;
-  margin-right: 20px;
+.cancel-btn {
   background-color: #e53935;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
 }
 
-.category-btn{
-  background-color: #009498;
+.cancel-btn:hover {
+  background-color: #d32f2f;
+}
+
+.search-bar-custom {
+  margin-bottom: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.search-input-container-custom {
+  position: relative;
+  width: 100%;
+  max-width: 400px;
+}
+
+.search-icon-custom {
+  position: absolute;
+  left: 15px; /* ปรับระยะห่างเพื่อให้ข้อความไม่ติดไอคอน */
+  top: 50%;
+  transform: translateY(-50%);
+  color: #009498;
+  font-size: 1.2rem;
+  pointer-events: none; /* ป้องกันการคลิกที่ไอคอน */
+}
+
+.search-input-custom {
+  width: 500px;
+  padding: 10px 20px;
+  padding-left: 40px; /* เพิ่ม padding ให้มีพื้นที่สำหรับไอคอน */
+  border-radius: 10px;
+  border: 1px solid #ccc;
+  font-size: 16px;
+}
+
+.search-input-custom:focus {
+  border-color: #009498;
+  box-shadow: 0 2px 5px rgba(0, 148, 152, 0.2);
 }

@@ -213,26 +213,26 @@ app.post("/create", upload.fields([{ name: "image", maxCount: 1 }]), (req, res) 
 });
 
 
-// แสดงรายการอุปกรณ์พร้อมกรองหมวดหมู่
+// อันใหม่แสดงรายการอุปกรณ์ทั้งหมดหรือกรองตามหมวดหมู่
 app.get("/showequipment", (req, res) => {
-  const { category } = req.query;  // รับค่าหมวดหมู่จาก query string
+  const { category } = req.query;
 
-  // ถ้ามีหมวดหมู่ให้กรองตามหมวดหมู่
   let query = "SELECT * FROM equipment";
-  if (category && category !== 'ทั้งหมด') {
+  const params = [];
+
+  if (category && category !== "ทั้งหมด") {
     query += " WHERE category = ?";
+    params.push(category);
   }
 
-  db.query(query, [category], (err, result) => {
+  db.query(query, params, (err, results) => {
     if (err) {
-      console.log("เกิดข้อผิดพลาดอะไรบางอย่าง", err);
-      return res.status(500).json({ message: "Error fetching equipment" });
-    } else {
-      res.send(result); // ส่งข้อมูลที่กรองแล้ว
+      console.error('Error fetching equipment:', err);
+      return res.status(500).json({ message: 'Error fetching equipment' });
     }
+    res.json(results);
   });
 });
-
 
 
 // fetch ในหน้าแต่ละอุปกรณ์
@@ -261,11 +261,10 @@ app.get("/showcategory", (req, res) => {
   });
 });
 
-
+//ใหม่ลบ
 app.delete('/api/equipments/:id', (req, res) => {
   const equipmentId = req.params.id;
 
-  // สร้าง query SQL สำหรับลบอุปกรณ์ที่มี equipment_id
   const query = 'DELETE FROM equipment WHERE equipment_id = ?';
 
   db.query(query, [equipmentId], (err, result) => {
@@ -282,29 +281,36 @@ app.delete('/api/equipments/:id', (req, res) => {
   });
 });
 
+//อันใหม่ update
 app.put('/api/equipments/:id', upload.single('image'), (req, res) => {
   const id = parseInt(req.params.id, 10);
-  const { name, description, category } = req.body;
+  const { name, description, category, status, type_id } = req.body;
   const image = req.file ? req.file.filename : null;
 
-  // คำสั่ง SQL สำหรับอัปเดตข้อมูล
   const query = `
-      UPDATE equipment 
-      SET 
-          name = ?, 
-          description = ?, 
-          category = ?, 
-          image = COALESCE(?, image) 
-      WHERE 
-          equipment_id = ?`;
+    UPDATE equipment 
+    SET 
+      name = ?, 
+      description = ?, 
+      category = ?, 
+      status = ?, 
+      type_id = ?, 
+      image = COALESCE(?, image) 
+    WHERE 
+      equipment_id = ?
+  `;
 
-  db.query(query, [name, description, category, image, id], (err, result) => {
-      if (err) {
-          console.error('Failed to update equipment:', err);
-          return res.status(500).json({ message: 'Database update failed' });
-      }
+  db.query(query, [name, description, category, status, type_id, image, id], (err, result) => {
+    if (err) {
+      console.error('Failed to update equipment:', err);
+      return res.status(500).json({ message: 'Database update failed' });
+    }
 
-      res.json({ message: 'Equipment updated successfully!', updatedId: id });
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ message: 'Equipment not found' });
+    }
+
+    res.json({ message: 'Equipment updated successfully!', updatedId: id });
   });
 });
 
@@ -485,7 +491,6 @@ app.get("/api/serialtypes", (req, res) => {
     res.status(200).json(result); // ส่งข้อมูลที่ได้รับจากฐานข้อมูล
   });
 });
-
 
 
 
