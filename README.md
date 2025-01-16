@@ -9,5 +9,7 @@ Install
 -npm install @fortawesome/react-fontawesome @fortawesome/free-solid-svg-icons
 -npm install bcryptjs
 -npm install jsonwebtoken
+npm install jwt-decode
+
 
 
