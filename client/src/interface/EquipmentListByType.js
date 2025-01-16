@@ -4,6 +4,7 @@ import { useParams } from 'react-router-dom';
 import Showborrow from './showborrow';
 import NavbarMain from '../components/NavbarMain';
 import { useLocation, useNavigate } from "react-router-dom";
+import '../interface/CSS/EqListbyT.css';
 
 const EquipmentListByType = () => {
   const { typeId } = useParams(); // ดึง type_id จาก URL
@@ -89,31 +90,41 @@ const EquipmentListByType = () => {
   return (
     <div>
       <NavbarMain userData={user} onLogout={handleLogout} />
-      <div className="equipment-list">
-        <div className='search-cata-bar1'>
-          <div className="input-container1">
+      <div className='header-equipment-list-2'>
+        <h1 style={{ textAlign: "center", margin: "20px 0" }}>{category}</h1>
+      </div>
+      <div className="equipment-list-2">
+        <div className='search-cata-bar2'>
+          <div className="input-container2">
             <i className="fa fa-search search-icon" aria-hidden="true"></i>
             <input
-              placeholder={"ค้นหา...."}
+              placeholder={ "ค้นหา...."}
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
           </div>
         </div>
-        <div className="equipment-cards">
+        <div className="equipment-list-2">
           {equipment.length > 0 ? (
-            equipment.map((item) => (
-              <div key={item.id} className="card">
-                <div className="card-body">
-                  <h5 className="card-title">{item.name}</h5>
-                  <p className="card-text">{item.description}</p>
-                  {/* ส่ง userId ไปยัง Showborrow */}
-                  <Showborrow />
+            equipment.map((item, idx) => (
+              <div className="equipment-item-2" key={idx}>
+                <div className="equipment-image-2">
+                  <img
+                    src={`http://localhost:3333/uploads/${item.image}`}
+                    alt={item.name}
+                  />
+                </div>
+                <div className="equipment-details-2">
+                  <h4>{item.name}</h4>
+                  <p>{item.description}</p>
+                  <div className='showborrow-2'>
+                    <Showborrow></Showborrow>
+                  </div>
                 </div>
               </div>
             ))
           ) : (
-            <p>ไม่มีข้อมูลอุปกรณ์ในหมวดหมู่นี้</p>
+            <p style={{ textAlign: "center" }}>ไม่มีข้อมูลในหมวดหมู่ "{category}"</p>
           )}
         </div>
       </div>

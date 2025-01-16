@@ -1,0 +1,95 @@
+.equipment-list-2 {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.header-equipment-list-2{
+  width: 1600px;
+  height: 61px;
+  background-color: #333;
+  color: #fff;
+  align-items: center;
+  display: flex;
+  justify-content: center;
+  margin: 40px 0px 40px 150px ;
+
+}
+
+.header-equipment-list-2 h1{
+  font-size: 32px;
+}
+
+.equipment-item-2 {
+  display: flex;
+  align-items: flex-start;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  overflow: hidden;
+  background-color: #fff;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  margin: 20px auto; /* จัดให้อยู่ตรงกลาง */
+  width: 1600px; /* กำหนดความกว้าง */
+  height: 300px; /* กำหนดความสูง */
+}
+
+.equipment-image-2 img {
+  width: 316px; /* ความกว้างรูปภาพเท่ากับความสูงของกล่อง */
+  height: 316px; /* ความสูงตามขนาดกล่อง */
+  object-fit: cover;
+  border-right: 1px solid #ddd;
+}
+
+.equipment-details-2 {
+  flex: 1;
+  padding: 35px; /* พื้นที่สำหรับเนื้อหา */
+}
+
+.equipment-details-2 h4 {
+  margin: 0 0 10px;
+  font-size: 32px; /* ปรับขนาดฟอนต์ */
+  color: #333;
+}
+
+.equipment-details-2 p {
+  margin: 0 0 10px;
+  font-size: 1.2rem;
+  color: #555;
+  max-height: 100px; /* จำกัดความสูง */
+  overflow-y: auto; /* เพิ่ม scroll หากข้อมูลเกิน */
+  padding-right: 10px; /* เพิ่มพื้นที่สำหรับ scroll bar */
+}
+
+.showborrow-2 {
+  margin-top: 20px;
+}
+
+.search-cata-bar2 {
+  display: flex;
+  justify-content: left;
+  align-items: center;
+  margin-left: 150px;
+}
+
+.input-container2 {
+  position: relative;
+}
+
+.input-container2 input {
+  width: 800px;
+  padding: 10px 20px;
+  padding-left: 40px; /* เพิ่ม padding ให้มีพื้นที่สำหรับไอคอน */
+  border-radius: 10px;
+  border: 1px solid #ccc;
+  font-size: 16px;
+
+}
+
+.search-icon {
+  position: absolute;
+  left: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 20px; /* ปรับขนาดไอคอน */
+  color: #009498;
+}
