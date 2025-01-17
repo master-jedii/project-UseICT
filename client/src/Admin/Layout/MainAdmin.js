@@ -221,12 +221,12 @@ const MainAdmin = () => {
             <div className="modal">
               <div className="modal-content">
                 <span className="close" onClick={toggleSerialModal}>&times;</span>
-                <h2>เพิ่มรหัสอุปกรณ์</h2>
-                <label>Type Serial:</label>
-                <input type="text" value={newSerial.type_serial} onChange={(e) => setNewSerial({ ...newSerial, type_serial: e.target.value })} />
-                <label>Type ID:</label>
-                <input type="text" value={newSerial.type_id} onChange={(e) => setNewSerial({ ...newSerial, type_id: e.target.value })} />
-                <button onClick={submitSerial}>บันทึกรหัสอุปกรณ์</button>
+                <h2>เพิ่มรหัสอุปกรณ์ </h2>
+                <label style={{margin:"5px"}}>ชื่อรหัสอุปกรณ์ :</label >
+                <input type="text" value={newSerial.type_serial} onChange={(e) => setNewSerial({ ...newSerial, type_serial: e.target.value })}  style={{margin:"5px"}}/>
+                <label style={{margin:"5px"}}>รหัสอุปกรณ์ :</label>
+                <input type="text" value={newSerial.type_id} onChange={(e) => setNewSerial({ ...newSerial, type_id: e.target.value })} style={{margin:"5px"}} />
+                <button onClick={submitSerial} style={{width :"200px"}}>บันทึกรหัสอุปกรณ์</button >
               </div>
             </div>
           )}

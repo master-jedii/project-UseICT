@@ -178,7 +178,7 @@ const ShowEquipment = () => {
       {isModalOpen && (
         <div className="modal">
           <div className="modal-content">
-            <h2>Update Equipment</h2>
+            <h2>ปรับปรุงข้อมูลอุปกรณ์</h2>
             <form onSubmit={handleFormSubmit}>
               <label>ชื่ออุปกรณ์:</label>
               <input type="text" name="name" value={formData.name} onChange={handleFormChange} required />
