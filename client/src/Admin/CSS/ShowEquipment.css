@@ -70,11 +70,9 @@
 
 .equipment-info-img-1 {
   width: 390px; /* ขยายขนาดรูปภาพ */
-  height: 106%; /* ให้สมดุลกับความกว้าง */
+  height: 100%; /* ให้สมดุลกับความกว้าง */
   object-fit: cover;
   position: relative;
-  right: 9px;
-  bottom: 8px;
   border-radius: 5px 0px 0px 5px;
   box-sizing: border-box;
 }

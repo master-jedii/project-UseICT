@@ -7,12 +7,10 @@ import NavbarAdmin from './NavbarAdmin';
 
 const MainAdmin = () => {
     const [showModal, setShowModal] = useState(false);
-    const [showSerialModal, setShowSerialModal] = useState(false); // Modal สำหรับเพิ่มรหัสอุปกรณ์
     const [equipments, setEquipments] = useState([
         { name: '', description: '', category: '', image: null, imagePreview: null, status: '', type_id: '' },
     ]);
     const [serialTypes, setSerialTypes] = useState([]);
-    const [newSerial, setNewSerial] = useState({ type_serial: '', type_id: '' }); // State สำหรับข้อมูลรหัสอุปกรณ์ใหม่
 
     useEffect(() => {
         fetchSerialTypes();
@@ -33,10 +31,7 @@ const MainAdmin = () => {
         setEquipments([{ name: '', description: '', category: '', image: null, imagePreview: null, status: '', type_id: '' }]);
     };
 
-    const toggleSerialModal = () => {
-        setShowSerialModal(!showSerialModal);
-        setNewSerial({ type_serial: '', type_id: '' }); // Clear input fields when modal is closed
-    };
+    
 
     const addEquipmentField = () => {
         setEquipments([...equipments, { name: '', description: '', category: '', image: null, imagePreview: null, status: '', type_id: '' }]);
@@ -84,18 +79,7 @@ const MainAdmin = () => {
             });
     };
 
-    const submitSerial = () => {
-        Axios.post('http://localhost:3333/api/addserial', newSerial)
-            .then(() => {
-                alert('เพิ่มรหัสอุปกรณ์เรียบร้อย!');
-                toggleSerialModal();
-                fetchSerialTypes(); // Refresh serial types after adding a new one
-            })
-            .catch((err) => {
-                console.error(err);
-                alert('เกิดข้อผิดพลาดในการเพิ่มรหัสอุปกรณ์');
-            });
-    };
+    
 
     return (
         <div className="admin-dashboard">
@@ -111,9 +95,7 @@ const MainAdmin = () => {
                         <i className="fas fa-tools" style={{ marginRight: '10px' }}></i>
                         เพิ่มอุปกรณ์
                     </button>
-                    <button className="btn btn-secondary" onClick={toggleSerialModal}> {/* ปุ่มเพิ่มรหัสอุปกรณ์ */}
-                        เพิ่มรหัสอุปกรณ์
-                    </button>
+                    
                 </div>
                 <ShowEquipment />
 
@@ -173,14 +155,14 @@ const MainAdmin = () => {
                         <option value="อยู่ในระหว่างการใช้งาน">อยู่ในระหว่างการใช้งาน</option>
                         <option value="ซ่อมบำรุง">ซ่อมบำรุง</option>
                       </select>
-                      <label>รหัสอุปกรณ์ :</label>
+                      <label>รหัสประจำอุปกรณ์</label>
                       <select
                         value={equipment.type_id || ''}
                         onChange={(e) => handleFieldChange(index, 'type_id', e.target.value)}
                         required
                       >
                         <option value="" disabled>
-                          เลือกประเภทอุปกรณ์
+                          เลือกรหัสประจำอุปกรณ์
                         </option>
                         {serialTypes.map((serialType) => (
                           <option key={serialType.type_id} value={serialType.type_id}>
@@ -216,20 +198,8 @@ const MainAdmin = () => {
           )}
 
 
-          {/* Modal เพิ่มรหัสอุปกรณ์ */}
-          {showSerialModal && (
-            <div className="modal">
-              <div className="modal-content">
-                <span className="close" onClick={toggleSerialModal}>&times;</span>
-                <h2>เพิ่มรหัสอุปกรณ์ </h2>
-                <label style={{margin:"5px"}}>ชื่อรหัสอุปกรณ์ :</label >
-                <input type="text" value={newSerial.type_serial} onChange={(e) => setNewSerial({ ...newSerial, type_serial: e.target.value })}  style={{margin:"5px"}}/>
-                <label style={{margin:"5px"}}>รหัสอุปกรณ์ :</label>
-                <input type="text" value={newSerial.type_id} onChange={(e) => setNewSerial({ ...newSerial, type_id: e.target.value })} style={{margin:"5px"}} />
-                <button onClick={submitSerial} style={{width :"200px"}}>บันทึกรหัสอุปกรณ์</button >
-              </div>
-            </div>
-          )}
+          
+          
             </div>
         </div>
     );

@@ -629,6 +629,8 @@ app.get('/admin/showtypeid', (req, res) => {
   });
 });
 
+//UPDATE Type_id
+
 app.put('/admin/updatetypeid', (req, res) => {
   const { oldTypeId, newTypeId } = req.body; // รับข้อมูลจาก client
 
@@ -670,6 +672,32 @@ app.put('/admin/updatetypeid', (req, res) => {
     });
   });
 });
+
+//Delete Type_id
+
+app.delete('/admin/deletetypeid/:typeId', (req, res) => {
+  const { typeId } = req.params;  // Extract typeId from request parameters
+
+  // SQL query to delete the type_id from serialnumber table
+  const query = 'DELETE FROM serialnumber WHERE type_id = ?';
+
+  // Execute the query
+  db.query(query, [typeId], (err, result) => {
+    if (err) {
+      console.error('Error deleting type ID:', err);
+      return res.status(500).json({ message: 'Error deleting type ID' });
+    }
+
+    // If no rows were affected, the type_id was not found
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ message: 'Type ID not found' });
+    }
+
+    // If deletion was successful
+    res.status(200).json({ message: 'Type ID deleted successfully' });
+  });
+});
+
 
 
 
