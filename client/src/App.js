@@ -17,7 +17,8 @@ import AllEquipment from './interface/AllEquipment.js';
 import Status from './components/status.js';
 import EquipmentListByType from './interface/EquipmentListByType';
 import PrivateRoute from './Admin/Layout/Private.js';  // การนำเข้า PrivateRoute ที่สร้างขึ้น
-import OfferBorrow from './Admin/Layout/offerBorrow';
+import OfferBorrow from './Admin/Layout/offerBorrow.js';
+import UpdateTypeId from './Admin/Layout/UpdataTypeid.js';
 
 const MainLayout = ({ children }) => (
   <>
@@ -66,6 +67,7 @@ const App = () => {
         <Route path="/dashboard" element={<PrivateRoute element={<Dashboard />} />} />
         <Route path="/mainadmin" element={<PrivateRoute element={<MainAdmin />}/>} />
         <Route path="/offerborrow" element={<PrivateRoute element={<OfferBorrow />}/>} />
+        <Route path="/admin/equipment/code" element={<PrivateRoute element={<UpdateTypeId />}/>} />
         <Route path="/allEquipment" element={<AllEquipment />} />
       </Routes>
     </Router>
