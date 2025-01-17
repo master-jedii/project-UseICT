@@ -266,6 +266,41 @@ app.get("/showequipment/type/:typeId", (req, res) => {
 });
 
 
+app.get('/api/borrow-status', (req, res) => {
+  const token = req.headers.authorization?.split(' ')[1];
+
+  if (!token) {
+    return res.status(401).json({ message: 'Unauthorized: No token provided' });
+  }
+
+  jwt.verify(token, 'your_jwt_secret_key', (err, decoded) => {
+    if (err) {
+      return res.status(401).json({ message: 'Unauthorized: Invalid token' });
+    }
+
+    const userId = decoded.UserID;
+
+    // Query ดึงข้อมูลจากตาราง borrow ตาม UserID
+    const query = `
+      SELECT b.borrow_id, e.name AS equipment_name, b.borrow_date, b.status
+      FROM borrow b
+      JOIN equipment e ON b.equipment_id = e.equipment_id
+      WHERE b.UserID = ?
+    `;
+
+    db.query(query, [userId], (error, results) => {
+      if (error) {
+        console.error('Error fetching borrow status:', error);
+        return res.status(500).json({ message: 'Error fetching borrow status' });
+      }
+
+      res.json(results);
+    });
+  });
+});
+
+
+
 // #################################################################################################################################################################### //
 
 
