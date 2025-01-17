@@ -165,7 +165,7 @@ const ShowEquipment = () => {
               <h2>{item.name}</h2>
               <p><span>รายละเอียด:</span> {item.description}</p>
               <p><span>สถานะ:</span> {item.status}</p>
-              <p><span>ประเภท:</span> {getSerialTypeName(item.type_id)}</p>
+              <p><span>รหัสประจำอุปกรณ์:</span> {getSerialTypeName(item.type_id)}</p>
             </div>
             <div className="equipment-actions">
               <button onClick={() => handleUpdateClick(item)} className="update-btn">Update</button>
@@ -207,7 +207,7 @@ const ShowEquipment = () => {
 
               <label>Type:</label>
               <select name="type_id" value={formData.type_id} onChange={handleFormChange} required>
-                <option value="">เลือกประเภท</option>
+                <option value="">เลือกรหัสประจำอุปกรณ์</option>
                 {serialTypes.map((serialType) => (
                   <option key={serialType.type_id} value={serialType.type_id}>
                     {serialType.type_serial}

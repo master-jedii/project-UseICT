@@ -16,7 +16,7 @@ const NavbarAdmin = () => {
 
   return (
     <div className="admin-dashboard">
-      <div className="sidebar">
+      <div className="sidebar" >
         <div className="logo-container">
           <Link to="/main">
             <img src={myLogo} alt="SU Kits Logo" className="logo" />
@@ -58,7 +58,7 @@ const NavbarAdmin = () => {
               to="/offerBorrow"
               className={({ isActive }) => (isActive ? 'menu-item active' : 'menu-item')}
             >
-              สถานะการยืม
+              ข้อเสนอการยืม-คืน
             </NavLink>
           </li>
           <li className="menu-item">

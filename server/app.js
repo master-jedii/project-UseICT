@@ -210,10 +210,10 @@ app.post('/api/borrow', (req, res) => {
     return res.status(400).json({ message: 'กรุณากรอกข้อมูลให้ครบถ้วน' });
   }
 
-  // คำสั่ง SQL ที่จะตั้งค่า status เป็น 'รอดำเนินการ'
+  // คำสั่ง SQL ที่จะตั้งค่า status เป็น 'รอดำเนินการ' และบันทึก timestamp
   const query = `
-    INSERT INTO borrow (UserID, subject, objective, place, borrow_date, return_date, equipment_id, status)
-    VALUES (?, ?, ?, ?, ?, ?, ?, 'รอดำเนินการ')
+    INSERT INTO borrow (UserID, subject, objective, place, borrow_date, return_date, equipment_id, status, created_at)
+    VALUES (?, ?, ?, ?, ?, ?, ?, 'รอดำเนินการ', CURRENT_TIMESTAMP)  -- ตั้งค่า created_at เป็นเวลาปัจจุบัน
   `;
 
   db.execute(query, [UserID, subject, objective, place, borrow_d, return_d, equipmentId], (err, result) => {
@@ -225,6 +225,7 @@ app.post('/api/borrow', (req, res) => {
     res.status(200).json({ message: 'บันทึกข้อมูลสำเร็จ' });
   });
 });
+
 
 // API แสดงรายการอุปกรณ์ทั้งหมดหรือกรองตามหมวดหมู่
 app.get('/showequipment', (req, res) => {
@@ -282,7 +283,7 @@ app.get('/api/borrow-status', (req, res) => {
 
     // Query ดึงข้อมูลจากตาราง borrow ตาม UserID
     const query = `
-      SELECT b.borrow_id, e.name AS equipment_name, b.borrow_date, b.status
+      SELECT b.borrow_id, e.name AS equipment_name, b.equipment_id, b.borrow_date, b.return_date,b.created_at, b.status
       FROM borrow b
       JOIN equipment e ON b.equipment_id = e.equipment_id
       WHERE b.UserID = ?
@@ -298,6 +299,7 @@ app.get('/api/borrow-status', (req, res) => {
     });
   });
 });
+
 
 
 
@@ -525,11 +527,11 @@ app.post('/api/addserial', (req, res) => {
 
 
 app.get('/api/borrow/all', (req, res) => {
-  // สร้าง query สำหรับดึงข้อมูลทั้งหมดจากตาราง borrow
   const query = `
-    SELECT b.borrow_id, b.UserID, b.subject, b.objective, b.place, b.borrow_date, b.return_date, b.status, e.name AS equipment_name
+    SELECT b.borrow_id, b.UserID, b.subject, b.objective, b.place, b.borrow_date, b.return_date, b.status, e.name AS equipment_name, b.equipment_id, b.created_at
     FROM borrow b
-    JOIN equipment e ON b.equipment_id = e.equipment_id;
+    JOIN equipment e ON b.equipment_id = e.equipment_id
+    ORDER BY b.created_at DESC;
   `;
 
   db.query(query, (err, result) => {
@@ -538,7 +540,7 @@ app.get('/api/borrow/all', (req, res) => {
       return res.status(500).json({ message: 'Error fetching borrow data' });
     }
 
-    // ส่งข้อมูลผลลัพธ์กลับในรูปแบบ JSON
+    // ส่งข้อมูลกลับในรูปแบบ JSON
     res.status(200).json(result);
   });
 });
@@ -633,6 +635,160 @@ app.get('/api/top-borrowed-equipment', (req, res) => {
     res.status(200).json(result);
   });
 });
+
+
+
+app.put('/api/borrow/approve/:borrowId', (req, res) => {
+  const { borrowId } = req.params; // ดึง borrowId จาก URL
+  
+  // เริ่มต้นคำสั่ง SQL ที่จะอัปเดตทั้งสองตาราง
+  const query = `
+    UPDATE borrow b
+    JOIN equipment e ON b.equipment_id = e.equipment_id
+    SET b.status = 'อนุมัติ', e.status = 'อยู่ในระหว่างการใช้งาน'
+    WHERE b.borrow_id = ?;
+  `;
+  
+  // เรียกใช้คำสั่ง SQL
+  db.query(query, [borrowId], (err, result) => {
+    if (err) {
+      console.error("Error updating borrow status and equipment status:", err);
+      return res.status(500).json({ message: 'Error updating borrow status and equipment status' });
+    }
+
+    // ตรวจสอบว่ามีการอัปเดตแถวในฐานข้อมูลหรือไม่
+    if (result.affectedRows > 0) {
+      res.status(200).json({ message: 'Borrow request approved and equipment status updated successfully' });
+    } else {
+      res.status(404).json({ message: 'Borrow request not found' });
+    }
+  });
+});
+
+
+// ฟังก์ชันสำหรับการปฏิเสธคำขอ (Reject)
+app.put('/api/borrow/reject/:borrowId', (req, res) => {
+  const borrowId = req.params.borrowId;
+
+  const query = `
+    UPDATE borrow b
+    JOIN equipment e ON b.equipment_id = e.equipment_id
+    SET b.status = 'ปฏิเสธ', e.status = 'พร้อมใช้งาน'
+    WHERE b.borrow_id = ?;
+  `;
+
+  db.execute(query, [borrowId], (err, result) => {
+    if (err) {
+      console.error('Error rejecting borrow request:', err);
+      return res.status(500).json({ message: 'เกิดข้อผิดพลาดในการปฏิเสธคำขอ' });
+    }
+
+    res.status(200).json({ message: 'คำขอถูกปฏิเสธและสถานะอุปกรณ์ถูกตั้งเป็น "พร้อมใช้งาน"' });
+  });
+});
+
+// ฟังก์ชันสำหรับการลบคำขอ (Delete)
+app.put('/api/borrow/delete/:borrowId', (req, res) => {
+  const borrowId = req.params.borrowId;
+
+  const query = `
+    UPDATE borrow b
+    JOIN equipment e ON b.equipment_id = e.equipment_id
+    SET b.status = 'ข้อเสนอถูกลบ', e.status = 'พร้อมใช้งาน'
+    WHERE b.borrow_id = ?;
+  `;
+
+  db.execute(query, [borrowId], (err, result) => {
+    if (err) {
+      console.error('Error deleting borrow request:', err);
+      return res.status(500).json({ message: 'เกิดข้อผิดพลาดในการลบคำขอ' });
+    }
+
+    res.status(200).json({ message: 'คำขอถูกลบและสถานะอุปกรณ์ถูกตั้งเป็น "พร้อมใช้งาน"' });
+  });
+});
+
+app.get('/admin/showtypeid', (req, res) => {
+  const sqlQuery = 'SELECT * FROM serialnumber'; // ดึงข้อมูลทั้งหมดจาก serialnumber
+  db.query(sqlQuery, (err, results) => {
+    if (err) {
+      console.error('เกิดข้อผิดพลาดในการดึงข้อมูล:', err);
+      return res.status(500).json({ message: 'ไม่สามารถดึงข้อมูลได้' });
+    }
+    res.status(200).json(results);
+  });
+});
+
+//UPDATE Type_id
+
+app.put('/admin/updatetypeid', (req, res) => {
+  const { oldTypeId, newTypeId } = req.body; // รับข้อมูลจาก client
+
+  // สร้างคำสั่ง SQL เพื่ออัปเดตทั้งในตาราง serialnumber และ equipment
+  const sqlUpdateSerialnumber = 'UPDATE serialnumber SET type_id = ? WHERE type_id = ?';
+  const sqlUpdateEquipment = 'UPDATE equipment SET type_id = ? WHERE type_id = ?';
+
+  db.beginTransaction((err) => {
+    if (err) {
+      return res.status(500).json({ message: 'เกิดข้อผิดพลาดในการเริ่มต้นการทำธุรกรรม' });
+    }
+
+    // อัปเดตตาราง serialnumber
+    db.query(sqlUpdateSerialnumber, [newTypeId, oldTypeId], (err, result) => {
+      if (err) {
+        return db.rollback(() => {
+          res.status(500).json({ message: 'เกิดข้อผิดพลาดในการอัปเดต serialnumber' });
+        });
+      }
+
+      // อัปเดตตาราง equipment
+      db.query(sqlUpdateEquipment, [newTypeId, oldTypeId], (err, result) => {
+        if (err) {
+          return db.rollback(() => {
+            res.status(500).json({ message: 'เกิดข้อผิดพลาดในการอัปเดต equipment' });
+          });
+        }
+
+        db.commit((err) => {
+          if (err) {
+            return db.rollback(() => {
+              res.status(500).json({ message: 'เกิดข้อผิดพลาดในการ commit การทำธุรกรรม' });
+            });
+          }
+
+          res.status(200).json({ message: 'อัปเดต type_id สำเร็จ' });
+        });
+      });
+    });
+  });
+});
+
+//Delete Type_id
+
+app.delete('/admin/deletetypeid/:typeId', (req, res) => {
+  const { typeId } = req.params;  // Extract typeId from request parameters
+
+  // SQL query to delete the type_id from serialnumber table
+  const query = 'DELETE FROM serialnumber WHERE type_id = ?';
+
+  // Execute the query
+  db.query(query, [typeId], (err, result) => {
+    if (err) {
+      console.error('Error deleting type ID:', err);
+      return res.status(500).json({ message: 'Error deleting type ID' });
+    }
+
+    // If no rows were affected, the type_id was not found
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ message: 'Type ID not found' });
+    }
+
+    // If deletion was successful
+    res.status(200).json({ message: 'Type ID deleted successfully' });
+  });
+});
+
+
 
 
 
