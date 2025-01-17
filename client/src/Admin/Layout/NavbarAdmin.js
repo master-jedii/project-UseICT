@@ -16,7 +16,7 @@ const NavbarAdmin = () => {
 
   return (
     <div className="admin-dashboard">
-      <div className="sidebar">
+      <div className="sidebar" >
         <div className="logo-container">
           <Link to="/main">
             <img src={myLogo} alt="SU Kits Logo" className="logo" />
