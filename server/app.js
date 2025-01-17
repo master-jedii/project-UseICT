@@ -543,6 +543,96 @@ app.get('/api/borrow/all', (req, res) => {
   });
 });
 
+//newborrow
+app.get('/api/stats/borrow-return', (req, res) => {
+  const query = `
+    SELECT 
+      MONTH(borrow_date) AS month, 
+      COUNT(CASE WHEN status = 'borrowed' THEN 1 END) AS borrowed,
+      COUNT(CASE WHEN status = 'returned' THEN 1 END) AS returned
+    FROM borrow
+    GROUP BY MONTH(borrow_date)
+    ORDER BY MONTH(borrow_date);
+  `;
+
+  db.query(query, (err, result) => {
+    if (err) {
+      console.error('Error fetching borrow stats:', err);
+      return res.status(500).json({ message: 'Error fetching borrow stats' });
+    }
+
+    // ส่งข้อมูลในรูปแบบ JSON
+    res.status(200).json(result);
+  });
+});
+
+// month dashboard
+app.get('/api/borrow/stats', (req, res) => {
+  const query = `
+    SELECT 
+      MONTH(created_at) AS month, 
+      COUNT(*) AS total 
+    FROM borrow 
+    GROUP BY MONTH(created_at)
+  `;
+
+  db.query(query, (err, result) => {
+    if (err) {
+      console.error('Error fetching borrow stats:', err);
+      return res.status(500).json({ message: 'Error fetching borrow stats' });
+    }
+
+    res.status(200).json(result);
+  });
+});
+
+app.get('/api/equipment/status', (req, res) => {
+  const query = `
+    SELECT status, COUNT(*) as count
+    FROM equipment
+    GROUP BY status;
+  `;
+
+  db.query(query, (err, results) => {
+    if (err) {
+      console.error('Error fetching equipment status stats:', err);
+      return res.status(500).json({ message: 'Error fetching equipment status stats' });
+    }
+    res.json(results);
+  });
+});
+
+//top5
+app.get('/api/top-borrowed-equipment', (req, res) => {
+  const query = `
+    SELECT 
+      e.name AS equipment_name, 
+      COUNT(b.equipment_id) AS borrow_count
+    FROM borrow b
+    JOIN equipment e 
+      ON b.equipment_id = e.equipment_id
+    GROUP BY b.equipment_id, e.name
+    ORDER BY borrow_count DESC
+    LIMIT 5;
+  `;
+
+  console.log("Executing query for top borrowed equipment...");
+
+  db.query(query, (err, result) => {
+    if (err) {
+      console.error('Error fetching top borrowed equipment:', err);
+      return res.status(500).json({ message: 'Error fetching top borrowed equipment' });
+    }
+
+    console.log("Query result:", result);
+
+    if (!result.length) {
+      return res.status(404).json({ message: 'No borrowed equipment found.' });
+    }
+
+    res.status(200).json(result);
+  });
+});
 
 
 

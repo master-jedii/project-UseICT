@@ -12,36 +12,29 @@ import {
   BarChart,
   Bar,
   Legend,
+  PieChart,
+  Pie,
+  Cell,
 } from 'recharts';
 import axios from 'axios';
 
-const data = [
-  { month: 'ม.ค.', borrowed: 40, returned: 30 },
-  { month: 'ก.พ.', borrowed: 30, returned: 20 },
-  { month: 'มี.ค.', borrowed: 20, returned: 10 },
-  { month: 'เม.ย.', borrowed: 27, returned: 25 },
-  { month: 'พ.ค.', borrowed: 50, returned: 45 },
-  { month: 'มิ.ย.', borrowed: 60, returned: 55 },
-];
-
 const Dashboard = () => {
-  const [equipmentStats, setEquipmentStats] = useState(null); // ข้อมูลสถิติอุปกรณ์
+  const [equipmentStats, setEquipmentStats] = useState(null);
   const [error, setError] = useState('');
-  const [showDetails, setShowDetails] = useState(false); // สำหรับควบคุมการแสดง/ซ่อนรายละเอียด
-  const [users, setUsers] = useState([]); // เก็บข้อมูลผู้ใช้งาน
-  const [showUserDetails, setShowUserDetails] = useState(false); // แสดง/ซ่อนข้อมูลผู้ใช้งาน
+  const [showDetails, setShowDetails] = useState(false);
+  const [users, setUsers] = useState([]);
+  const [showUserDetails, setShowUserDetails] = useState(false);
+  const [borrowRequests, setBorrowRequests] = useState([]);
+  const [showBorrowDetails, setShowBorrowDetails] = useState(false);
+  const [borrowStats, setBorrowStats] = useState([]);
+  const [equipmentStatusStats, setEquipmentStatusStats] = useState([]);
+  const [topBorrowedEquipment, setTopBorrowedEquipment] = useState([]);
 
-  // ดึงข้อมูลจำนวนอุปกรณ์ตามหมวดหมู่
   useEffect(() => {
     const fetchEquipmentStats = async () => {
       try {
-        const response = await axios.get('http://localhost:3333/equipment-stats'); // API ดึงข้อมูล
-        if (response.data) {
-          setEquipmentStats(response.data); // เก็บข้อมูลใน State
-        } else {
-          setEquipmentStats({});
-          setError('ไม่มีข้อมูลอุปกรณ์');
-        }
+        const response = await axios.get('http://localhost:3333/equipment-stats');
+        setEquipmentStats(response.data || {});
       } catch (error) {
         console.error('Error fetching equipment stats:', error);
         setError('ไม่สามารถดึงข้อมูลสถิติอุปกรณ์ได้');
@@ -50,7 +43,7 @@ const Dashboard = () => {
 
     const fetchUsers = async () => {
       try {
-        const response = await axios.get('http://localhost:3333/users'); // API ดึงข้อมูลผู้ใช้งาน
+        const response = await axios.get('http://localhost:3333/users');
         setUsers(response.data);
       } catch (error) {
         console.error('Error fetching users:', error);
@@ -58,21 +51,78 @@ const Dashboard = () => {
       }
     };
 
+    const fetchBorrowRequests = async () => {
+      try {
+        const response = await axios.get('http://localhost:3333/api/borrow/all');
+        const filteredRequests = response.data.filter(
+          (request) => request.status === 'รอดำเนินการ'
+        );
+        setBorrowRequests(filteredRequests);
+      } catch (error) {
+        console.error('Error fetching borrow requests:', error);
+      }
+    };
+
+    const fetchBorrowStats = async () => {
+      try {
+        const response = await axios.get('http://localhost:3333/api/borrow/stats');
+        const formattedData = response.data.map((item) => ({
+          month: new Date(2025, item.month - 1).toLocaleString('th-TH', { month: 'short' }),
+          total: item.total,
+        }));
+        setBorrowStats(formattedData);
+      } catch (error) {
+        console.error('Error fetching borrow stats:', error);
+        setError('ไม่สามารถดึงข้อมูลสถิติการยืมได้');
+      }
+    };
+
+    const fetchEquipmentStatusStats = async () => {
+      try {
+        const response = await axios.get('http://localhost:3333/api/equipment/status');
+        const formattedData = response.data.map((item) => ({
+          status: item.status,
+          value: item.count,
+          equipmentDetails: item.equipment_details ? item.equipment_details.split(',') : [],
+        }));
+        setEquipmentStatusStats(formattedData);
+      } catch (error) {
+        console.error('Error fetching equipment status stats:', error);
+        setError('ไม่สามารถดึงข้อมูลสถานะอุปกรณ์ได้');
+      }
+    };
+
+    const fetchTopBorrowedEquipment = async () => {
+      try {
+        const response = await axios.get('http://localhost:3333/api/top-borrowed-equipment');
+        const formattedData = response.data.map((item) => ({
+          name: item.equipment_name,
+          borrowCount: item.borrow_count,
+        }));
+        setTopBorrowedEquipment(formattedData);
+      } catch (error) {
+        console.error('Error fetching top borrowed equipment:', error);
+        setError('ไม่สามารถดึงข้อมูล Top 5 อุปกรณ์ที่ถูกยืมได้');
+      }
+    };
+
     fetchEquipmentStats();
     fetchUsers();
+    fetchBorrowRequests();
+    fetchBorrowStats();
+    fetchEquipmentStatusStats();
+    fetchTopBorrowedEquipment();
   }, []);
 
-  // คำนวณจำนวนอุปกรณ์ทั้งหมด
   const totalEquipment = equipmentStats
     ? Object.values(equipmentStats).reduce((total, count) => total + count, 0)
     : 0;
 
+  const COLORS = ['#00C49F', '#FFBB28', '#FF8042'];
+
   return (
     <div className="admin-dashboard">
-      {/* Navbar */}
       <NavbarAdmin />
-
-      {/* Main Content */}
       <div className="main-content">
         <div className="dashboard-container">
           <header className="admin-header">
@@ -81,7 +131,6 @@ const Dashboard = () => {
             </div>
           </header>
 
-          {/* Card Section */}
           <div className="dashboard-content cards-grid">
             <div className="dashboard-card">
               <h2>อุปกรณ์ทั้งหมด</h2>
@@ -93,7 +142,7 @@ const Dashboard = () => {
                 {showDetails ? 'ซ่อนรายละเอียด' : 'ดูรายละเอียด'}
               </button>
               {showDetails && equipmentStats && (
-                <ul className="equipment-list-dashboard-admin ">
+                <ul className="equipment-list-dashboard-admin">
                   {Object.entries(equipmentStats).map(([category, count]) => (
                     <li key={category} className="equipment-item-dashboard">
                       <strong>{category}:</strong> {count} ชิ้น
@@ -106,9 +155,32 @@ const Dashboard = () => {
               )}
             </div>
             <div className="dashboard-card">
-              <h2>สถานะการยืม</h2>
-              <p>ตรวจสอบและติดตามสถานะการยืมและการคืนอุปกรณ์</p>
-              <button className="dashboard-button">ตรวจสอบสถานะ</button>
+              <h2>คำร้องขอยืมอุปกรณ์ทั้งหมด</h2>
+              <p>คำร้องขอที่รอดำเนินการ: {borrowRequests.length}</p>
+              <button
+                className="dashboard-button"
+                onClick={() => setShowBorrowDetails(!showBorrowDetails)}
+              >
+                {showBorrowDetails ? 'ซ่อนรายละเอียด' : 'ดูรายละเอียด'}
+              </button>
+              {showBorrowDetails && borrowRequests.length > 0 && (
+                <ul className="equipment-list-dashboard-admin">
+                  {borrowRequests.map((request) => (
+                    <li key={request.borrow_id} className="equipment-item-dashboard">
+                      <strong>{request.subject}</strong>: {request.equipment_name}
+                      <br />
+                      <span>วันที่ยืม: {new Date(request.borrow_date).toLocaleDateString('th-TH')}</span>
+                      <br />
+                      <span>วันที่คืน: {new Date(request.return_date).toLocaleDateString('th-TH')}</span>
+                      <br />
+                      <span>สถานะ: {request.status}</span>
+                    </li>
+                  ))}
+                </ul>
+              )}
+              {showBorrowDetails && borrowRequests.length === 0 && (
+                <p>ไม่มีคำร้องขอการยืมในขณะนี้</p>
+              )}
             </div>
             <div className="dashboard-card">
               <h2>ผู้ใช้งานทั้งหมด</h2>
@@ -120,7 +192,7 @@ const Dashboard = () => {
                 {showUserDetails ? 'ซ่อนรายละเอียด' : 'ดูรายละเอียดผู้ใช้งาน'}
               </button>
               {showUserDetails && (
-                <ul className="equipment-list-dashboard-admin ">
+                <ul className="equipment-list-dashboard-admin">
                   {users.map((user) => (
                     <li key={user.UserID} className="equipment-item-dashboard">
                       <strong>{user.firstname} {user.lastname}</strong> ({user.email})
@@ -131,44 +203,79 @@ const Dashboard = () => {
             </div>
           </div>
 
-          {/* Graph Section */}
           <div className="dashboard-graphs">
             <h2>สถิติการยืมอุปกรณ์รายเดือน</h2>
-            <ResponsiveContainer width="100%" height={300}>
-              <LineChart
-                data={data}
-                margin={{ top: 10, right: 30, left: 0, bottom: 0 }}
-              >
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="month" />
-                <YAxis />
-                <Tooltip />
-                <Legend />
-                <Line
-                  type="monotone"
-                  dataKey="borrowed"
-                  stroke="#8884d8"
-                  activeDot={{ r: 8 }}
-                />
-                <Line type="monotone" dataKey="returned" stroke="#82ca9d" />
-              </LineChart>
-            </ResponsiveContainer>
+            {borrowStats.length > 0 ? (
+              <ResponsiveContainer width="100%" height={300}>
+                <BarChart
+                  data={borrowStats}
+                  margin={{ top: 10, right: 30, left: 0, bottom: 0 }}
+                >
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="month" />
+                  <YAxis />
+                  <Tooltip />
+                  <Legend />
+                  <Bar dataKey="total" fill="#82ca9d" />
+                </BarChart>
+              </ResponsiveContainer>
+            ) : (
+              <p>{error || 'กำลังโหลดข้อมูล...'}</p>
+            )}
 
-            <h2>การเปรียบเทียบการยืมและคืนอุปกรณ์</h2>
-            <ResponsiveContainer width="100%" height={300}>
-              <BarChart
-                data={data}
-                margin={{ top: 10, right: 30, left: 0, bottom: 0 }}
-              >
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="month" />
-                <YAxis />
-                <Tooltip />
-                <Legend />
-                <Bar dataKey="borrowed" fill="#8884d8" />
-                <Bar dataKey="returned" fill="#82ca9d" />
-              </BarChart>
-            </ResponsiveContainer>
+            <h2>สถานะอุปกรณ์</h2>
+            {equipmentStatusStats.length > 0 ? (
+              <ResponsiveContainer width="100%" height={400}>
+                <PieChart>
+                  <Tooltip
+                    formatter={(value, name, props) => {
+                      const equipmentDetails = props.payload.equipmentDetails || [];
+                      return [
+                        `${value} ชิ้น (${equipmentDetails.join(', ')})`,
+                        name,
+                      ];
+                    }}
+                  />
+                  <Legend />
+                  <Pie
+                    data={equipmentStatusStats}
+                    dataKey="value"
+                    nameKey="status"
+                    cx="50%"
+                    cy="50%"
+                    outerRadius={150}
+                    fill="#8884d8"
+                    label={(entry) => `${entry.status}: ${entry.value}`}
+                  >
+                    {equipmentStatusStats.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                    ))}
+                  </Pie>
+                </PieChart>
+              </ResponsiveContainer>
+            ) : (
+              <p>{error || 'กำลังโหลดข้อมูล...'}</p>
+            )}
+
+         <h2>Top 5 อุปกรณ์ที่ถูกยืมมากที่สุด</h2>
+            {topBorrowedEquipment.length > 0 ? (
+              <ResponsiveContainer width="100%" height={300}>
+                <BarChart
+                  data={topBorrowedEquipment}
+                  layout="vertical"
+                  margin={{ top: 10, right: 30, left: 50, bottom: 0 }}
+                >   
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis type="number" />
+                  <YAxis type="category" dataKey="name" />
+                  <Tooltip />
+                  <Legend />
+                  <Bar dataKey="borrowCount" fill="#8884d8" />
+                </BarChart>
+              </ResponsiveContainer>
+            ) : (
+              <p>{error || 'กำลังโหลดข้อมูล...'}</p>
+            )}
           </div>
         </div>
       </div>
