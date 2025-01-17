@@ -618,6 +618,59 @@ app.put('/api/borrow/delete/:borrowId', (req, res) => {
   });
 });
 
+app.get('/admin/showtypeid', (req, res) => {
+  const sqlQuery = 'SELECT * FROM serialnumber'; // ดึงข้อมูลทั้งหมดจาก serialnumber
+  db.query(sqlQuery, (err, results) => {
+    if (err) {
+      console.error('เกิดข้อผิดพลาดในการดึงข้อมูล:', err);
+      return res.status(500).json({ message: 'ไม่สามารถดึงข้อมูลได้' });
+    }
+    res.status(200).json(results);
+  });
+});
+
+app.put('/admin/updatetypeid', (req, res) => {
+  const { oldTypeId, newTypeId } = req.body; // รับข้อมูลจาก client
+
+  // สร้างคำสั่ง SQL เพื่ออัปเดตทั้งในตาราง serialnumber และ equipment
+  const sqlUpdateSerialnumber = 'UPDATE serialnumber SET type_id = ? WHERE type_id = ?';
+  const sqlUpdateEquipment = 'UPDATE equipment SET type_id = ? WHERE type_id = ?';
+
+  db.beginTransaction((err) => {
+    if (err) {
+      return res.status(500).json({ message: 'เกิดข้อผิดพลาดในการเริ่มต้นการทำธุรกรรม' });
+    }
+
+    // อัปเดตตาราง serialnumber
+    db.query(sqlUpdateSerialnumber, [newTypeId, oldTypeId], (err, result) => {
+      if (err) {
+        return db.rollback(() => {
+          res.status(500).json({ message: 'เกิดข้อผิดพลาดในการอัปเดต serialnumber' });
+        });
+      }
+
+      // อัปเดตตาราง equipment
+      db.query(sqlUpdateEquipment, [newTypeId, oldTypeId], (err, result) => {
+        if (err) {
+          return db.rollback(() => {
+            res.status(500).json({ message: 'เกิดข้อผิดพลาดในการอัปเดต equipment' });
+          });
+        }
+
+        db.commit((err) => {
+          if (err) {
+            return db.rollback(() => {
+              res.status(500).json({ message: 'เกิดข้อผิดพลาดในการ commit การทำธุรกรรม' });
+            });
+          }
+
+          res.status(200).json({ message: 'อัปเดต type_id สำเร็จ' });
+        });
+      });
+    });
+  });
+});
+
 
 
 
