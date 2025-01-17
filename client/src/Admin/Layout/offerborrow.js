@@ -186,18 +186,23 @@ const AdminBorrowStatus = () => {
     <div>
       <div className="admin-dashboard">
         <NavbarAdmin />
-        <div>
-            <h2 className="admin-status-title">รายการการยืมทั้งหมด</h2>
+        <div className="admin-status-container">
+            <header className="admin-header-1">
+              <div className="admin-header-info">
+                <h1>รายการยืมทั้งหมด</h1>
+              </div>
+            </header>
             {/* ช่องกรอกค้นหาตาม UserID */}
-        <div className="search-container">
-          <input 
-            type="number" 
-            value={searchUserID}
-            onChange={(e) => setSearchUserID(e.target.value)} // เก็บค่าที่กรอก
-            placeholder="ค้นหาด้วยรหัสนักศึกษา"
-          />
-          <button onClick={handleSearch}>ค้นหา</button>
-          <button onClick={handleClearSearch}>เคลียร์</button>
+            <div className="search-container">
+              <input 
+                className="Search-admin-2"
+                type="number" 
+                value={searchUserID}
+                onChange={(e) => setSearchUserID(e.target.value)} // เก็บค่าที่กรอก
+                placeholder="ค้นหาด้วยรหัสนักศึกษา"
+              />
+              <button className="Search-admin-1" onClick={handleSearch}>ค้นหา</button>
+              <button  onClick={handleClearSearch}>เคลียร์</button>
         </div>
 
         {loading && <div>กำลังโหลดข้อมูล...</div>}

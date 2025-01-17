@@ -6,7 +6,7 @@
     background-color: #ffffff; 
     width: 250px;
     padding: 20px;
-    height: 133%;
+    height: auto;
     color: #009688;
   }
 
@@ -156,4 +156,10 @@
 /* หมุนไอคอนเมื่อเปิดเมนูย่อย */
 .menu-item.active i {
   transform: rotate(90deg);
+}
+
+.submenu-link{
+  text-decoration: none;
+  color: #00796b;
+  
 }
