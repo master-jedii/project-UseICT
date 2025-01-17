@@ -1,0 +1,86 @@
+/* Styling for the entire container */
+.admin-status-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #f4f7fc;
+    border-radius: 8px;
+  }
+  
+  /* Title styling */
+  .admin-status-title {
+    text-align: center;
+    font-size: 2rem;
+    color: #333;
+    margin-bottom: 20px;
+  }
+  
+  /* Table Styling */
+  .admin-status-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+  }
+  
+  .admin-status-table th,
+  .admin-status-table td {
+    padding: 12px;
+    text-align: left;
+    border: 1px solid #ddd;
+  }
+  
+  .admin-status-table th {
+    background-color: #4CAF50;
+    color: white;
+    font-weight: bold;
+  }
+  
+  .admin-status-table tbody tr:nth-child(even) {
+    background-color: #f9f9f9;
+  }
+  
+  .admin-status-table tbody tr:hover {
+    background-color: #f1f1f1;
+  }
+  
+  /* Loading message styling */
+  .admin-status-loading {
+    text-align: center;
+    font-size: 1.2rem;
+    color: #007bff;
+    margin-top: 20px;
+  }
+  
+  /* Error message styling */
+  .admin-status-error {
+    text-align: center;
+    font-size: 1.2rem;
+    color: red;
+    margin-top: 20px;
+  }
+  
+  /* For no borrow data found */
+  .no-borrow-data {
+    text-align: center;
+    font-size: 1.2rem;
+    color: #666;
+    margin-top: 20px;
+  }
+  
+  /* Additional styling for buttons or actions if needed */
+  .admin-status-button {
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1rem;
+    margin-top: 20px;
+  }
+  
+  .admin-status-button:hover {
+    background-color: #0056b3;
+  }
+  
+  

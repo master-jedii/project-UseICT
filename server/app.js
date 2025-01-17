@@ -524,11 +524,24 @@ app.post('/api/addserial', (req, res) => {
 
 
 
+app.get('/api/borrow/all', (req, res) => {
+  // สร้าง query สำหรับดึงข้อมูลทั้งหมดจากตาราง borrow
+  const query = `
+    SELECT b.borrow_id, b.UserID, b.subject, b.objective, b.place, b.borrow_date, b.return_date, b.status, e.name AS equipment_name
+    FROM borrow b
+    JOIN equipment e ON b.equipment_id = e.equipment_id;
+  `;
 
+  db.query(query, (err, result) => {
+    if (err) {
+      console.error("Error fetching borrow data:", err);
+      return res.status(500).json({ message: 'Error fetching borrow data' });
+    }
 
-
-
-
+    // ส่งข้อมูลผลลัพธ์กลับในรูปแบบ JSON
+    res.status(200).json(result);
+  });
+});
 
 
 
