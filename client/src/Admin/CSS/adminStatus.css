@@ -1,120 +1,141 @@
 /* Styling for the entire container */
 .admin-status-container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 20px;
-    background-color: #f4f7fc;
-    border-radius: 8px;
-  }
-  
-  /* Title styling */
-  .admin-status-title {
-    text-align: center;
-    font-size: 2rem;
-    color: #333;
-    margin-bottom: 20px;
-  }
-  
-  /* Table Styling */
-  .admin-status-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 20px;
-  }
-  
-  .admin-status-table th,
-  .admin-status-table td {
-    padding: 12px;
-    text-align: left;
-    border: 1px solid #ddd;
-  }
-  
-  .admin-status-table th {
-    background-color: #4CAF50;
-    color: white;
-    font-weight: bold;
-  }
-  
-  .admin-status-table tbody tr:nth-child(even) {
-    background-color: #f9f9f9;
-  }
-  
-  .admin-status-table tbody tr:hover {
-    background-color: #f1f1f1;
-  }
-  
-  /* Loading message styling */
-  .admin-status-loading {
-    text-align: center;
-    font-size: 1.2rem;
-    color: #007bff;
-    margin-top: 20px;
-  }
-  
-  /* Error message styling */
-  .admin-status-error {
-    text-align: center;
-    font-size: 1.2rem;
-    color: red;
-    margin-top: 20px;
-  }
-  
-  /* For no borrow data found */
-  .no-borrow-data {
-    text-align: center;
-    font-size: 1.2rem;
-    color: #666;
-    margin-top: 20px;
-  }
-  
-  /* Additional styling for buttons or actions if needed */
-  .admin-status-button {
-    padding: 10px 20px;
-    background-color: #007bff;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 1rem;
-    margin-top: 20px;
-  }
-  
-  .admin-status-button:hover {
-    background-color: #0056b3;
-  }
-  
-/* สไตล์สำหรับปุ่ม "Approve" */
+  max-width: 1500px;
+  margin: 0 auto;
+  padding: 20px;
+  background-color: #ffffff;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  font-family: Arial, sans-serif;
+}
+
+/* Title styling */
+.admin-status-title {
+  text-align: center;
+  font-size: 2rem;
+  color: #4CAF50;
+  font-weight: bold;
+  margin-bottom: 20px;
+}
+
+/* Table Styling */
+.admin-status-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+  font-size: 1rem;
+  color: #333;
+}
+
+.admin-status-table th,
+.admin-status-table td {
+  padding: 12px;
+  text-align: center;
+  border: 1px solid #ddd;
+}
+
+.admin-status-table th {
+  background-color: #4CAF50;
+  color: white;
+  font-weight: bold;
+}
+
+.admin-status-table tbody tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
+
+.admin-status-table tbody tr:hover {
+  background-color: #eaf5ea;
+  cursor: pointer;
+}
+
+/* Loading message styling */
+.admin-status-loading {
+  text-align: center;
+  font-size: 1.2rem;
+  color: #007bff;
+  margin-top: 20px;
+}
+
+/* Error message styling */
+.admin-status-error {
+  text-align: center;
+  font-size: 1.2rem;
+  color: red;
+  margin-top: 20px;
+}
+
+/* For no borrow data found */
+.no-borrow-data {
+  text-align: center;
+  font-size: 1.2rem;
+  color: #666;
+  margin-top: 20px;
+}
+
+/* Button Styling */
+.admin-status-button {
+  padding: 10px 20px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 1rem;
+  margin-top: 20px;
+}
+
+.admin-status-button:hover {
+  background-color: #0056b3;
+}
+
+/* Approve Button */
 .approve-button {
-    padding: 8px 16px;
-    background-color: #28a745;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 1rem;
-    transition: background-color 0.3s ease;
-  }
-  
-  .approve-button:hover {
-    background-color: #218838;
-  }
-  .reject-button {
-    background-color: red;
-    color: white;
-    border: none;
-    padding: 5px 10px;
-    cursor: pointer;
-  }
-  
-  .delete-button {
-    background-color: gray;
-    color: white;
-    border: none;
-    padding: 5px 10px;
-    cursor: pointer;
-  }
-  
-  .reject-button:hover, .delete-button:hover {
-    opacity: 0.8;
-  }
-  
+  padding: 8px 16px;
+  background-color: #28a745;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: background-color 0.3s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.approve-button:hover {
+  background-color: #218838;
+}
+
+/* Reject Button */
+.reject-button {
+  padding: 8px 16px;
+  background-color: #dc3545;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: background-color 0.3s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.reject-button:hover {
+  background-color: #c82333;
+}
+
+/* Delete Button */
+.delete-button {
+  padding: 8px 16px;
+  background-color: #6c757d;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: background-color 0.3s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.delete-button:hover {
+  background-color: #5a6268;
+}

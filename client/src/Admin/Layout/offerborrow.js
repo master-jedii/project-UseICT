@@ -184,17 +184,17 @@ const AdminBorrowStatus = () => {
 
   return (
     <div>
-      <NavbarAdmin />
-      <div className="admin-status-container">
-        <h2 className="admin-status-title">รายการการยืมทั้งหมด</h2>
-
-        {/* ช่องกรอกค้นหาตาม UserID */}
+      <div className="admin-dashboard">
+        <NavbarAdmin />
+        <div>
+            <h2 className="admin-status-title">รายการการยืมทั้งหมด</h2>
+            {/* ช่องกรอกค้นหาตาม UserID */}
         <div className="search-container">
           <input 
             type="number" 
             value={searchUserID}
             onChange={(e) => setSearchUserID(e.target.value)} // เก็บค่าที่กรอก
-            placeholder="ค้นหาโดย UserID (ตัวเลขเท่านั้น)"
+            placeholder="ค้นหาด้วยรหัสนักศึกษา"
           />
           <button onClick={handleSearch}>ค้นหา</button>
           <button onClick={handleClearSearch}>เคลียร์</button>
@@ -259,6 +259,7 @@ const AdminBorrowStatus = () => {
             </tbody>
           </table>
         )}
+        </div>
       </div>
     </div>
   );
