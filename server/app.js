@@ -9,7 +9,6 @@ const router = express.Router();
 const path = require("path");
 
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
-
 app.use(cors());
 // CORS
 app.use(cors({
@@ -37,6 +36,8 @@ db.connect((err) => {
   console.log("Connected to database!");
 });
 
+
+// USER USER USER USER USER USER USER USER USER USER USER USER USER USER USER USER USER USER USER USER USER USER USER USER USER USER USER // 
 
 app.get('/main', (req, res) => {
   const token = req.headers.authorization?.split(' ')[1];
@@ -108,10 +109,6 @@ app.post('/login', async (req, res) => {
 });
 
 
-
-
-
-
 app.post('/signup', async (req, res) => {
   const { UserID, firstname, lastname, grade, branch, email, password, phone_number, role } = req.body;
   // ตรวจสอบว่า UserID ซ้ำหรือไม่
@@ -160,6 +157,121 @@ app.post('/signup', async (req, res) => {
 });
 
 
+
+
+
+// fetch ในหน้าแต่ละอุปกรณ์
+app.get("/showcategory", (req, res) => {
+  const { category } = req.query; // รับค่าหมวดหมู่จาก query string
+
+  // สร้าง query พื้นฐาน
+  let query = "SELECT * FROM equipment";
+  const queryParams = [];
+
+  // ถ้ามีหมวดหมู่ที่ระบุ กรองตามหมวดหมู่
+  if (category && category !== "ทั้งหมด") {
+    query += " WHERE category = ?";
+    queryParams.push(category);
+  }
+
+  // รัน query
+  db.query(query, queryParams, (err, result) => {
+    if (err) {
+      console.error("เกิดข้อผิดพลาด:", err);
+      return res.status(500).json({ message: "Error fetching equipment" });
+    }
+
+    // ส่งข้อมูลกลับ client
+    res.json(result);
+  });
+});
+
+app.get('/api/equipment', (req, res) => {
+  // เลือกเฉพาะ column equipment_id และ name
+  const query = "SELECT equipment_id, name FROM equipment";
+
+  db.query(query, (err, result) => {
+    if (err) {
+      console.error("Error fetching equipment data:", err);
+      return res.status(500).json({ message: "Error fetching equipment data" });
+    }
+
+    // ส่งเฉพาะข้อมูลที่เลือกกลับไปในรูปแบบ JSON
+    res.status(200).json(result);
+  });
+});
+
+
+
+app.post('/api/borrow', (req, res) => {
+  const { UserID, equipmentId, subject, name, place, objective, borrow_d, return_d } = req.body;
+
+  if (!UserID || !equipmentId || !subject || !name || !place || !objective || !borrow_d || !return_d) {
+    return res.status(400).json({ message: 'กรุณากรอกข้อมูลให้ครบถ้วน' });
+  }
+
+  // คำสั่ง SQL ที่จะตั้งค่า status เป็น 'รอดำเนินการ'
+  const query = `
+    INSERT INTO borrow (UserID, subject, objective, place, borrow_date, return_date, equipment_id, status)
+    VALUES (?, ?, ?, ?, ?, ?, ?, 'รอดำเนินการ')
+  `;
+
+  db.execute(query, [UserID, subject, objective, place, borrow_d, return_d, equipmentId], (err, result) => {
+    if (err) {
+      console.error('Error executing SQL query:', err);  // แสดงข้อผิดพลาด SQL
+      return res.status(500).json({ message: 'เกิดข้อผิดพลาดในการบันทึกข้อมูล' });
+    }
+
+    res.status(200).json({ message: 'บันทึกข้อมูลสำเร็จ' });
+  });
+});
+
+// API แสดงรายการอุปกรณ์ทั้งหมดหรือกรองตามหมวดหมู่
+app.get('/showequipment', (req, res) => {
+  const { category } = req.query; // รับค่าหมวดหมู่จาก query string
+
+  let query = "SELECT * FROM equipment";
+  const params = [];
+
+  if (category && category !== "ทั้งหมด") {
+    query += " WHERE category = ?";
+    params.push(category);
+  }
+
+  db.query(query, params, (err, results) => {
+    if (err) {
+      console.error('Error fetching equipment:', err);
+      return res.status(500).json({ message: 'Error fetching equipment' });
+    }
+    res.json(results); // ส่งข้อมูลกลับในรูปแบบ JSON
+  });
+});
+
+
+
+// ตัวอย่างการกรองข้อมูลตาม type_id ใน Backend
+app.get("/showequipment/type/:typeId", (req, res) => {
+  const { typeId } = req.params;  // รับค่า typeId จาก URL path
+
+  const query = "SELECT * FROM equipment WHERE type_id = ?";
+  
+  db.query(query, [typeId], (err, result) => {
+    if (err) {
+      console.log("เกิดข้อผิดพลาดอะไรบางอย่าง", err);
+      return res.status(500).json({ message: "Error fetching equipment" });
+    } else {
+      res.send(result); // ส่งข้อมูลที่กรองตาม type_id
+    }
+  });
+});
+
+
+// #################################################################################################################################################################### //
+
+
+
+
+// ADMIN ADMIN ADMIN ADMIN ADMIN ADMIN ADMIN ADMIN ADMIN ADMIN ADMIN ADMIN ADMIN ADMIN ADMIN ADMIN ADMIN ADMIN ADMIN ADMIN ADMIN ADMIN ADMIN ADMIN ADMIN ADMIN ADMIN // 
 
 app.get('/admin', (req, res) => {
   const token = req.headers['authorization'];  // ดึง token จาก header
@@ -257,54 +369,6 @@ app.post("/create", upload.fields([{ name: "image", maxCount: 1 }]), (req, res) 
 });
 
 
-// อันใหม่แสดงรายการอุปกรณ์ทั้งหมดหรือกรองตามหมวดหมู่
-app.get("/showequipment", (req, res) => {
-  const { category } = req.query;
-
-  let query = "SELECT * FROM equipment";
-  const params = [];
-
-  if (category && category !== "ทั้งหมด") {
-    query += " WHERE category = ?";
-    params.push(category);
-  }
-
-  db.query(query, params, (err, results) => {
-    if (err) {
-      console.error('Error fetching equipment:', err);
-      return res.status(500).json({ message: 'Error fetching equipment' });
-    }
-    res.json(results);
-  });
-});
-
-
-// fetch ในหน้าแต่ละอุปกรณ์
-app.get("/showcategory", (req, res) => {
-  const { category } = req.query; // รับค่าหมวดหมู่จาก query string
-
-  // สร้าง query พื้นฐาน
-  let query = "SELECT * FROM equipment";
-  const queryParams = [];
-
-  // ถ้ามีหมวดหมู่ที่ระบุ กรองตามหมวดหมู่
-  if (category && category !== "ทั้งหมด") {
-    query += " WHERE category = ?";
-    queryParams.push(category);
-  }
-
-  // รัน query
-  db.query(query, queryParams, (err, result) => {
-    if (err) {
-      console.error("เกิดข้อผิดพลาด:", err);
-      return res.status(500).json({ message: "Error fetching equipment" });
-    }
-
-    // ส่งข้อมูลกลับ client
-    res.json(result);
-  });
-});
-
 //ใหม่ลบ
 app.delete('/api/equipments/:id', (req, res) => {
   const equipmentId = req.params.id;
@@ -360,56 +424,6 @@ app.put('/api/equipments/:id', upload.single('image'), (req, res) => {
 
 
 
-app.get('/api/equipment', (req, res) => {
-  // เลือกเฉพาะ column equipment_id และ name
-  const query = "SELECT equipment_id, name FROM equipment";
-
-  db.query(query, (err, result) => {
-    if (err) {
-      console.error("Error fetching equipment data:", err);
-      return res.status(500).json({ message: "Error fetching equipment data" });
-    }
-
-    // ส่งเฉพาะข้อมูลที่เลือกกลับไปในรูปแบบ JSON
-    res.status(200).json(result);
-  });
-});
-
-
-
-
-
-app.post('/api/borrow', (req, res) => {
-  const { UserID, equipmentId, subject, name, place, objective, borrow_d, return_d } = req.body;
-
-  if (!UserID || !equipmentId || !subject || !name || !place || !objective || !borrow_d || !return_d) {
-    return res.status(400).json({ message: 'กรุณากรอกข้อมูลให้ครบถ้วน' });
-  }
-
-  // คำสั่ง SQL ที่จะตั้งค่า status เป็น 'รอดำเนินการ'
-  const query = `
-    INSERT INTO borrow (UserID, subject, objective, place, borrow_date, return_date, equipment_id, status)
-    VALUES (?, ?, ?, ?, ?, ?, ?, 'รอดำเนินการ')
-  `;
-
-  db.execute(query, [UserID, subject, objective, place, borrow_d, return_d, equipmentId], (err, result) => {
-    if (err) {
-      console.error('Error executing SQL query:', err);  // แสดงข้อผิดพลาด SQL
-      return res.status(500).json({ message: 'เกิดข้อผิดพลาดในการบันทึกข้อมูล' });
-    }
-
-    res.status(200).json({ message: 'บันทึกข้อมูลสำเร็จ' });
-  });
-});
-
-
-
-
-
-
-
-
-
 //dashboard
 app.get('/equipment-stats', (req, res) => {
   const query = `
@@ -434,45 +448,6 @@ app.get('/equipment-stats', (req, res) => {
   });
 });
 
-// API แสดงรายการอุปกรณ์ทั้งหมดหรือกรองตามหมวดหมู่
-app.get('/showequipment', (req, res) => {
-  const { category } = req.query; // รับค่าหมวดหมู่จาก query string
-
-  let query = "SELECT * FROM equipment";
-  const params = [];
-
-  if (category && category !== "ทั้งหมด") {
-    query += " WHERE category = ?";
-    params.push(category);
-  }
-
-  db.query(query, params, (err, results) => {
-    if (err) {
-      console.error('Error fetching equipment:', err);
-      return res.status(500).json({ message: 'Error fetching equipment' });
-    }
-    res.json(results); // ส่งข้อมูลกลับในรูปแบบ JSON
-  });
-});
-
-
-// ตัวอย่างการกรองข้อมูลตาม type_id ใน Backend
-app.get("/showequipment/type/:typeId", (req, res) => {
-  const { typeId } = req.params;  // รับค่า typeId จาก URL path
-
-  const query = "SELECT * FROM equipment WHERE type_id = ?";
-  
-  db.query(query, [typeId], (err, result) => {
-    if (err) {
-      console.log("เกิดข้อผิดพลาดอะไรบางอย่าง", err);
-      return res.status(500).json({ message: "Error fetching equipment" });
-    } else {
-      res.send(result); // ส่งข้อมูลที่กรองตาม type_id
-    }
-  });
-});
-
-
 
 //ดึงข้อมูลผู้ใช้งาน dashboard
 app.get('/users', (req, res) => {
@@ -485,7 +460,6 @@ app.get('/users', (req, res) => {
     }
   });
 });
-
 
 
 // ดึงข้อมูลจากตาราง serialnumber
@@ -512,6 +486,10 @@ app.post('/api/addserial', (req, res) => {
     res.status(200).json({ message: 'เพิ่มรหัสอุปกรณ์สำเร็จ' });
   });
 });
+
+
+
+
 
 
 
