@@ -55,6 +55,7 @@
 }
 
 
+
   .main-content {
     flex-grow: 1;
     background-color: #f5f5f5;
@@ -117,3 +118,42 @@
   
   
   
+/* เมนูย่อย (ซ่อนอยู่โดยค่าเริ่มต้น) */
+.submenu {
+  list-style: none;
+  padding-left: 20px;
+  max-height: 0;
+  opacity: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease, opacity 0.3s ease;
+}
+
+/* เมนูย่อยเมื่อแสดง */
+.menu-item.active .submenu {
+  max-height: 200px; /* กำหนดความสูงที่เหมาะสม */
+  opacity: 1;
+}
+
+/* หัวข้อย่อย */
+.submenu-item {
+  margin: 10px 0;
+  font-size: 16px;
+  color: #00796b; /* สีข้อความ */
+  transition: transform 0.2s, color 0.3s;
+}
+
+.submenu-item:hover {
+  transform: translateX(5px); /* ขยับข้อความเมื่อ hover */
+  color: #004d40; /* เปลี่ยนสีเมื่อ hover */
+}
+
+/* ไอคอนในเมนูหลัก */
+.menu-item i {
+  margin-right: 12px; /* ระยะห่างระหว่างไอคอนและข้อความ */
+  transition: transform 0.3s ease; /* เพิ่มลูกเล่นการหมุน */
+}
+
+/* หมุนไอคอนเมื่อเปิดเมนูย่อย */
+.menu-item.active i {
+  transform: rotate(90deg);
+}

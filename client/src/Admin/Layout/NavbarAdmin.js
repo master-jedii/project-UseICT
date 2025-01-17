@@ -1,8 +1,8 @@
-import React, { useState } from 'react'; // เพิ่ม useState
+import React, { useState } from 'react';
 import '../CSS/MainAdmin.css';
 import myLogo from '../../assets/LOGO.png';
 import '../CSS/NavbarAdmin.css';
-import { NavLink } from 'react-router-dom'; // ใช้ NavLink แทน Link
+import { NavLink } from 'react-router-dom';
 import { Link } from 'react-router-dom';
 
 const NavbarAdmin = () => {
@@ -11,6 +11,8 @@ const NavbarAdmin = () => {
   const toggleSubmenu = () => {
     setShowSubmenu(!showSubmenu); // สลับสถานะ
   };
+
+  
 
   return (
     <div className="admin-dashboard">
@@ -31,29 +33,33 @@ const NavbarAdmin = () => {
               Dashboard
             </NavLink>
           </li>
-          <li className="menu-item">
-            
+          <li className={`menu-item ${showSubmenu ? 'active' : ''}`}>
             <div onClick={toggleSubmenu} className="submenu-toggle">
               <i className="fas fa-tools"></i>
               รายการอุปกรณ์
             </div>
-            {showSubmenu && ( // แสดงหัวข้อย่อยเมื่อ showSubmenu เป็น true
-              <ul className="submenu">
-                <li className="submenu-item">
-                  <NavLink to="/mainadmin" className="submenu-link">
-                    รายการทั้งหมด
-                  </NavLink>
-                </li>
-                <li className="submenu-item">
-                  <NavLink to="/equipment/code" className="submenu-link">
-                    รหัสอุปกรณ์
-                  </NavLink>
-                </li>
-              </ul>
-            )}
+            <ul className="submenu">
+              <li className="submenu-item">
+                <NavLink to="/mainadmin" className="submenu-link">
+                  รายการทั้งหมด
+                </NavLink>
+              </li>
+              <li className="submenu-item">
+                <NavLink to="/admin/equipment/code" className="submenu-link">
+                  รหัสอุปกรณ์
+                </NavLink>
+              </li>
+            </ul>
           </li>
+
           <li className="menu-item">
-            <i className="fas fa-handshake"></i> สถานะการยืม
+            <i className="fas fa-handshake"></i> 
+            <NavLink
+              to="/offerBorrow"
+              className={({ isActive }) => (isActive ? 'menu-item active' : 'menu-item')}
+            >
+              สถานะการยืม
+            </NavLink>
           </li>
           <li className="menu-item">
             <i className="fas fa-history"></i> กำหนดการคืน
