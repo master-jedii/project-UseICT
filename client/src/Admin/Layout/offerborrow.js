@@ -6,8 +6,10 @@ import Swal from 'sweetalert2'; // นำเข้า SweetAlert2
 
 const AdminBorrowStatus = () => {
   const [borrowData, setBorrowData] = useState([]);
+  const [filteredData, setFilteredData] = useState([]);  // เก็บข้อมูลที่กรองแล้ว
   const [loading, setLoading] = useState(true);  // สถานะการโหลด
   const [error, setError] = useState(null);  // เก็บข้อผิดพลาด
+  const [searchUserID, setSearchUserID] = useState(""); // เก็บค่าที่กรอกเพื่อค้นหา UserID
 
   // ฟังก์ชันสำหรับการอนุมัติคำขอ
   const approveBorrowRequest = (borrowId) => {
@@ -146,6 +148,7 @@ const AdminBorrowStatus = () => {
     })
       .then((response) => {
         setBorrowData(response.data);
+        setFilteredData(response.data);  // เริ่มต้นแสดงข้อมูลทั้งหมด
         setLoading(false);
       })
       .catch((err) => {
@@ -153,6 +156,26 @@ const AdminBorrowStatus = () => {
         setError('Error fetching borrow data.');
         setLoading(false);
       });
+  };
+
+  // ฟังก์ชันสำหรับค้นหาข้อมูลตาม UserID
+  const handleSearch = () => {
+    if (isNaN(searchUserID) || searchUserID.trim() === "") {
+      setError('กรุณากรอกหมายเลข UserID ที่ถูกต้อง');
+      setFilteredData(borrowData);  // คืนค่ากลับเป็นข้อมูลทั้งหมด
+      return;
+    }
+
+    const filtered = borrowData.filter(borrow => borrow.UserID.toString().includes(searchUserID));
+    setFilteredData(filtered);
+    setError(null);  // เคลียร์ข้อผิดพลาด
+  };
+
+  // ฟังก์ชันสำหรับเคลียร์การค้นหา
+  const handleClearSearch = () => {
+    setSearchUserID(""); // เคลียร์ช่องค้นหา
+    setFilteredData(borrowData); // แสดงข้อมูลทั้งหมด
+    setError(null);  // เคลียร์ข้อผิดพลาด
   };
 
   useEffect(() => {
@@ -164,6 +187,19 @@ const AdminBorrowStatus = () => {
       <NavbarAdmin />
       <div className="admin-status-container">
         <h2 className="admin-status-title">รายการการยืมทั้งหมด</h2>
+
+        {/* ช่องกรอกค้นหาตาม UserID */}
+        <div className="search-container">
+          <input 
+            type="number" 
+            value={searchUserID}
+            onChange={(e) => setSearchUserID(e.target.value)} // เก็บค่าที่กรอก
+            placeholder="ค้นหาโดย UserID (ตัวเลขเท่านั้น)"
+          />
+          <button onClick={handleSearch}>ค้นหา</button>
+          <button onClick={handleClearSearch}>เคลียร์</button>
+        </div>
+
         {loading && <div>กำลังโหลดข้อมูล...</div>}
         {error && <div style={{ color: 'red' }}>{error}</div>}
 
@@ -174,7 +210,7 @@ const AdminBorrowStatus = () => {
                 <th>ลำดับ</th>
                 <th>ผู้ใช้</th>
                 <th>อุปกรณ์</th>
-                <th>อุปกรณ์ ID</th> {/* เพิ่มคอลัมน์นี้ */}
+                <th>อุปกรณ์ ID</th>
                 <th>วันที่ยืม</th>
                 <th>วันที่คืน</th>
                 <th>สถานะ</th>
@@ -183,12 +219,12 @@ const AdminBorrowStatus = () => {
               </tr>
             </thead>
             <tbody>
-              {borrowData.map((borrow) => (
+              {filteredData.map((borrow) => (
                 <tr key={borrow.borrow_id}>
                   <td>{borrow.borrow_id}</td>
                   <td>{borrow.UserID}</td>
                   <td>{borrow.equipment_name}</td>
-                  <td>{borrow.equipment_id}</td> {/* เพิ่มการแสดง equipment_id */}
+                  <td>{borrow.equipment_id}</td>
                   <td>{new Date(borrow.borrow_date).toLocaleDateString("th-TH")}</td>
                   <td>{new Date(borrow.return_date).toLocaleDateString("th-TH")}</td>
                   <td>{borrow.status}</td>
