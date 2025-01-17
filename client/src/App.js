@@ -17,7 +17,7 @@ import AllEquipment from './interface/AllEquipment.js';
 import Status from './components/status.js';
 import EquipmentListByType from './interface/EquipmentListByType';
 import PrivateRoute from './Admin/Layout/Private.js';  // การนำเข้า PrivateRoute ที่สร้างขึ้น
-import OfferBorrow from './Admin/Layout/offerborrow';
+import OfferBorrow from './Admin/Layout/offerBorrow';
 
 const MainLayout = ({ children }) => (
   <>
