@@ -157,3 +157,9 @@
 .menu-item.active i {
   transform: rotate(90deg);
 }
+
+.submenu-link{
+  text-decoration: none;
+  color: #00796b;
+  
+}

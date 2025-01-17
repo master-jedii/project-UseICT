@@ -283,7 +283,7 @@ app.get('/api/borrow-status', (req, res) => {
 
     // Query ดึงข้อมูลจากตาราง borrow ตาม UserID
     const query = `
-      SELECT b.borrow_id, e.name AS equipment_name, b.equipment_id, b.borrow_date, b.status
+      SELECT b.borrow_id, e.name AS equipment_name, b.equipment_id, b.borrow_date, b.return_date,b.created_at, b.status
       FROM borrow b
       JOIN equipment e ON b.equipment_id = e.equipment_id
       WHERE b.UserID = ?
