@@ -128,17 +128,17 @@ const ShowEquipment = () => {
 
       {/* Search bar */}
       <div className="search-bar-custom">
-  <div className="search-input-container-custom">
-    <i className="fas fa-search search-icon-custom"></i>
-    <input
-      type="text"
-      placeholder="ค้นหา..."
-      value={searchTerm}
-      onChange={handleSearch}
-      className="search-input-custom"
-    />
-  </div>
-</div>
+        <div className="search-input-container-custom">
+          <i className="fas fa-search search-icon-custom"></i>
+          <input
+            type="text"
+            placeholder="ค้นหา..."
+            value={searchTerm}
+            onChange={handleSearch}
+            className="search-input-custom-admin "
+          />
+        </div>
+      </div>
 
 
       <div className="category-buttons">
@@ -161,7 +161,7 @@ const ShowEquipment = () => {
               alt={item.name}
               className="equipment-info-img-1"
             />
-            <div className="equipment-info">
+            <div className="equipment-info-Showtext">
               <h2>{item.name}</h2>
               <p><span>รายละเอียด:</span> {item.description}</p>
               <p><span>สถานะ:</span> {item.status}</p>
