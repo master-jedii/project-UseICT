@@ -41,8 +41,8 @@
   }
   
   .equipment-image-1 img {
-    width: 316px; /* ความกว้างรูปภาพเท่ากับความสูงของกล่อง */
-    height: 316px; /* ความสูงตามขนาดกล่อง */
+    width: 300px; /* ความกว้างรูปภาพเท่ากับความสูงของกล่อง */
+    height: 300px; /* ความสูงตามขนาดกล่อง */
     object-fit: cover;
     border-right: 1px solid #ddd;
   }

@@ -159,7 +159,7 @@ const ShowEquipment = () => {
             <img
               src={`http://localhost:3333/uploads/${item.image}`}
               alt={item.name}
-              className="equipment-info-img"
+              className="equipment-info-img-1"
             />
             <div className="equipment-info">
               <h2>{item.name}</h2>

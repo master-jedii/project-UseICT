@@ -72,7 +72,7 @@
   gap: 10px;
 }
 
-.equipment-info img {
+.equipment-info-img-1 {
   width: 300px; /* ขยายขนาดรูปภาพ */
   height: 300px; /* ให้สมดุลกับความกว้าง */
   object-fit: cover; /* ทำให้รูปภาพเต็มกรอบ */

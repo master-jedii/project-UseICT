@@ -1,13 +1,16 @@
 
   .open-modal-btn {
+    width: 114px;
+    height: 48px;
     background-color: #009498;
     border: none;
-    padding: 8px 30px;
+    padding: 8px 10px;
     font-family: 'Prompt', sans-serif;
     font-size: 0.9rem;
     border-radius: 5px;
     cursor: pointer;
     transition: background-color 0.2s ease;
+    font-size: 16px;
     
     
   }
