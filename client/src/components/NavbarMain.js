@@ -47,19 +47,18 @@ const NavbarMain = ({ userData, onLogout }) => {
         <Link to="/return"><p>กำหนดการคืน</p></Link>
       </div>
 
-      {/* แสดงปุ่มสำหรับไปหน้า Admin เฉพาะผู้ใช้ที่มี role เป็น admin */}
-      {isAdmin && (
-        <div style={{ textAlign: 'center', margin: '20px 0' }}>
-          <button onClick={() => navigate('/admin')} className="btn btn-primary">
-            ไปที่หน้า Admin
-          </button>
-        </div>
-      )}
-
       <div className="navbar-right">
         <div className="user-info">
-          <FontAwesomeIcon icon={faUser} />
+          <FontAwesomeIcon className='icon-user' icon={faUser} />
           <span>{userData?.firstname || 'Guest'}</span>
+          {/* แสดงปุ่มสำหรับไปหน้า Admin เฉพาะผู้ใช้ที่มี role เป็น admin */}
+          {isAdmin && (
+            <div style={{ textAlign: 'center', margin: '20px 0px' }}>
+              <button onClick={() => navigate('/admin')} className="btn btn-primary-1">
+                ไปที่หน้า Admin
+              </button>
+            </div>
+          )}
           <button className="logout-button" onClick={handleLogout}>
             Logout
           </button>

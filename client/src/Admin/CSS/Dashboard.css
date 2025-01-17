@@ -49,7 +49,7 @@
   background-color: #00796b;
 }
 
-.equipment-list-dashboard {
+.equipment-list-dashboard-admin {
   list-style: none;
   padding: 0;
   margin: 0;
@@ -57,17 +57,15 @@
   overflow-y: auto; /* เพิ่ม scroll หากเนื้อหาเกิน */
   background: #ffffff;
   border-radius: 10px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
   padding: 10px;
 }
 
-.equipment-item {
+.equipment-item-dashboard{
   font-size: 1rem;
   margin-bottom: 10px;
   color: #555;
   padding: 8px;
   background: #f8f9fa;
-  border-radius: 5px;
   text-align: left;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
