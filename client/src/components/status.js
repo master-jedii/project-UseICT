@@ -41,6 +41,7 @@ const Status = () => {
         });
     }
   };
+
   useEffect(() => {
     fetchUser(); // ดึงข้อมูลผู้ใช้
     fetchBorrowStatus(); // ดึงข้อมูลสถานะการยืม
@@ -63,6 +64,7 @@ const Status = () => {
             <tr>
               <th>ลำดับ</th>
               <th>อุปกรณ์</th>
+              <th>รหัสอุปกรณ์</th> {/* เพิ่มคอลัมน์รหัสอุปกรณ์ */}
               <th>วันที่ยืม</th>
               <th>สถานะ</th>
             </tr>
@@ -72,6 +74,7 @@ const Status = () => {
               <tr key={borrow.borrow_id}>
                 <td>{index + 1}</td>
                 <td>{borrow.equipment_name}</td>
+                <td>{borrow.equipment_id}</td> {/* แสดงรหัสอุปกรณ์ */}
                 <td>{new Date(borrow.borrow_date).toLocaleDateString()}</td>
                 <td>{borrow.status}</td>
               </tr>
