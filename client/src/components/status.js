@@ -5,10 +5,10 @@ import { useLocation, useNavigate } from "react-router-dom";
 import '../View/status.css';
 
 const Status = () => {
-  const [transactions, setTransactions] = useState([]); // เก็บข้อมูลรายการในตาราง
   const [user, setUser] = useState(null);
   const location = useLocation();
   const navigate = useNavigate();
+  const [borrowStatus, setBorrowStatus] = useState([]);
 
   // ดึงข้อมูลผู้ใช้
   const fetchUser = () => {
@@ -27,19 +27,24 @@ const Status = () => {
     }
   };
 
-  // ดึงข้อมูลรายการจาก API
-  const fetchTransactions = () => {
-    Axios.get("http://localhost:3333/transactions")
-      .then((response) => {
-        setTransactions(response.data);
+  const fetchBorrowStatus = () => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      Axios.get("http://localhost:3333/api/borrow-status", {
+        headers: { Authorization: `Bearer ${token}` },
       })
-      .catch((err) => console.error("Error fetching transactions:", err));
+        .then((response) => {
+          setBorrowStatus(response.data); // เก็บข้อมูล borrow status
+        })
+        .catch((err) => {
+          console.error("Error fetching borrow status:", err);
+        });
+    }
   };
-
   useEffect(() => {
-    fetchUser();
-    fetchTransactions();
-  }, []); // โหลดครั้งเดียวเมื่อ Component เริ่มทำงาน
+    fetchUser(); // ดึงข้อมูลผู้ใช้
+    fetchBorrowStatus(); // ดึงข้อมูลสถานะการยืม
+  }, []); // เรียกทั้งสองฟังก์ชันเมื่อ Component เริ่มทำงาน
 
   // ฟังก์ชัน Logout
   const handleLogout = () => {
@@ -63,22 +68,19 @@ const Status = () => {
             </tr>
           </thead>
           <tbody>
-            {transactions.map((transaction, index) => (
-              <tr key={index}>
-                <td className={`status-${transaction.status.toLowerCase()}`}>
-                  {transaction.status}
-                </td>
-                <td>{transaction.no}</td>
-                <td>{transaction.eq}</td>
-                <td>{transaction.dbr}</td>
-                <td>{transaction.status}</td>
+            {borrowStatus.map((borrow, index) => (
+              <tr key={borrow.borrow_id}>
+                <td>{index + 1}</td>
+                <td>{borrow.equipment_name}</td>
+                <td>{new Date(borrow.borrow_date).toLocaleDateString()}</td>
+                <td>{borrow.status}</td>
               </tr>
             ))}
           </tbody>
         </table>
       </div>
     </div>
-  );
+  );  
 };
 
 export default Status;
