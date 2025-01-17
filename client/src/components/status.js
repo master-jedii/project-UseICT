@@ -66,6 +66,8 @@ const Status = () => {
               <th>อุปกรณ์</th>
               <th>รหัสอุปกรณ์</th> {/* เพิ่มคอลัมน์รหัสอุปกรณ์ */}
               <th>วันที่ยืม</th>
+              <th>วันที่คืน</th>
+              <th>เวลาส่งคำร้อง</th>
               <th>สถานะ</th>
             </tr>
           </thead>
@@ -75,7 +77,15 @@ const Status = () => {
                 <td>{index + 1}</td>
                 <td>{borrow.equipment_name}</td>
                 <td>{borrow.equipment_id}</td> {/* แสดงรหัสอุปกรณ์ */}
-                <td>{new Date(borrow.borrow_date).toLocaleDateString()}</td>
+                <td>{new Date(borrow.borrow_date).toLocaleDateString("th-TH")}</td>
+                <td>{new Date(borrow.return_date).toLocaleDateString("th-TH")}</td>
+                <td>{new Date(borrow.created_at).toLocaleString("th-TH", {
+                    year: "numeric",   
+                    month: "long",     
+                    day: "numeric",    
+                    hour: "numeric",   
+                    minute: "numeric", 
+                })}</td>
                 <td>{borrow.status}</td>
               </tr>
             ))}
