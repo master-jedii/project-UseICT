@@ -1,0 +1,236 @@
+.admin-dashboard {
+    display: flex;
+}
+
+.main-content {
+    flex-grow: 1;
+    background-color: #f9fafb; /* สีพื้นหลังอ่อนโยน */
+    padding: 20px;
+}
+
+.admin-header {
+    background-color: #00796b; /* เขียวเข้มที่ดูสงบ */
+    padding: 15px 25px;
+    border-radius: 8px;
+    color: #ffffff; /* ข้อความสีขาว */
+    margin-bottom: 25px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* เงา */
+}
+
+.admin-header-info h1 {
+    margin: 0;
+    font-size: 26px;
+    font-weight: bold;
+}
+
+.content {
+    background-color: #ffffff; /* พื้นหลังขาวเพื่อความสะอาด */
+    padding: 25px;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); /* เงาเพิ่มมิติ */
+    font-family: 'Arial', sans-serif; /* ตัวอักษรอ่านง่าย */
+}
+
+.return-schedule-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.schedule-item {
+    border-bottom: 1px solid #e0e0e0; /* เส้นแบ่งสีอ่อน */
+    padding: 15px 10px;
+    transition: background-color 0.2s ease-in-out; /* เพิ่มลูกเล่นเมื่อ hover */
+}
+
+.schedule-item:last-child {
+    border-bottom: none;
+}
+
+.schedule-item:hover {
+    background-color: #f1f8e9; /* สีเขียวอ่อนเมื่อ hover */
+}
+
+.schedule-item p {
+    margin: 8px 0; /* เพิ่มระยะห่าง */
+    font-size: 16px;
+    color: #333333; /* สีข้อความสีเข้มเพื่อความชัดเจน */
+}
+
+.schedule-item p strong {
+    color: #00796b; /* สีตัวหนาสำหรับเน้นข้อความ */
+}
+
+.error-message {
+    color: #d32f2f; /* สีแดงเข้มสำหรับข้อความข้อผิดพลาด */
+    font-weight: bold;
+    font-size: 18px;
+    text-align: center;
+}
+
+.navbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background-color: #00796b; /* สีเขียวเข้ม */
+    padding: 15px 25px;
+    color: #ffffff; /* ข้อความสีขาว */
+    font-family: 'Arial', sans-serif; /* ตัวอักษรที่อ่านง่าย */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* เพิ่มเงา */
+  }
+  
+  .navbar a {
+    color: #ffffff; /* ลิงก์สีขาว */
+    text-decoration: none;
+    font-size: 16px;
+    font-weight: bold;
+    margin-left: 15px;
+    transition: color 0.3s ease; /* เพิ่มเอฟเฟกต์ */
+  }
+  
+  .navbar a:hover {
+    color: #f1f8e9; /* สีเขียวอ่อนเมื่อ hover */
+  }
+  
+  .navbar .logo {
+    font-size: 20px;
+    font-weight: bold;
+    text-transform: uppercase; /* ข้อความเป็นตัวพิมพ์ใหญ่ */
+  }
+  
+  .navbar .menu {
+    display: flex;
+    align-items: center;
+  }
+  
+  .navbar .menu a {
+    margin-left: 20px;
+  }
+  
+  .navbar .button {
+    padding: 8px 15px;
+    background-color: #004d40; /* สีเขียวเข้มอีกเฉด */
+    border: none;
+    border-radius: 5px;
+    color: #ffffff; /* ข้อความสีขาว */
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.3s ease;
+  }
+  
+  .navbar .button:hover {
+    background-color: #00251a; /* สีเข้มเมื่อ hover */
+  }
+
+  /* ปุ่มกรอง */
+.filter-container {
+    display: flex;
+    gap: 10px; /* ระยะห่างระหว่าง input และปุ่ม */
+    margin-bottom: 20px;
+  }
+  
+  .filter-container input[type="date"] {
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 14px;
+    color: #333;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* เงาเบา */
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  }
+  
+  .filter-container input[type="date"]:focus {
+    border-color: #00796b; /* สีเขียวเข้ม */
+    box-shadow: 0 4px 8px rgba(0, 121, 107, 0.2); /* เพิ่มเงาเมื่อโฟกัส */
+    outline: none;
+  }
+  
+  .filter-container button {
+    padding: 10px 20px;
+    background-color: #00796b; /* สีเขียวเข้ม */
+    color: #fff; /* ข้อความสีขาว */
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* เงาเบา */
+  }
+  
+  .filter-container button:hover {
+    background-color: #004d40; /* สีเข้มขึ้นเมื่อ Hover */
+    transform: translateY(-2px); /* ขยับขึ้นเล็กน้อย */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* เพิ่มเงา */
+  }
+  
+  .filter-container button:active {
+    transform: translateY(0); /* คืนค่าหากกด */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  
+  .toggle-filter-button {
+    padding: 10px 15px;
+    background-color: #ff9800; /* สีส้ม */
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: bold;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    margin-bottom: 15px;
+  }
+  .toggle-filter-button:hover {
+    background-color: #e65100;
+    transform: translateY(-2px);
+  }
+  
+  .filter-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+  
+  .filter-input {
+    padding: 10px 15px 10px 35px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 14px;
+    color: #333;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    background-repeat: no-repeat;
+    background-position: 10px center;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  }
+  
+  .filter-input:focus {
+    border-color: #00796b;
+    box-shadow: 0 4px 8px rgba(0, 121, 107, 0.2);
+    outline: none;
+  }
+  
+  .filter-button {
+    padding: 10px 20px;
+    background-color: #00796b;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  
+  .filter-button:hover {
+    background-color: #004d40;
+    transform: translateY(-2px);
+  }
+  
+  .filter-button:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  

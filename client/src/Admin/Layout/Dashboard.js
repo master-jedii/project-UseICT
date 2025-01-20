@@ -2,15 +2,13 @@ import React, { useState, useEffect } from 'react';
 import NavbarAdmin from './NavbarAdmin';
 import '../CSS/Dashboard.css';
 import {
-  LineChart,
-  Line,
+  BarChart,
+  Bar,
   XAxis,
   YAxis,
   CartesianGrid,
   Tooltip,
   ResponsiveContainer,
-  BarChart,
-  Bar,
   Legend,
   PieChart,
   Pie,
@@ -29,6 +27,7 @@ const Dashboard = () => {
   const [borrowStats, setBorrowStats] = useState([]);
   const [equipmentStatusStats, setEquipmentStatusStats] = useState([]);
   const [topBorrowedEquipment, setTopBorrowedEquipment] = useState([]);
+  const [dailyBorrowStats, setDailyBorrowStats] = useState([]);
 
   useEffect(() => {
     const fetchEquipmentStats = async () => {
@@ -73,7 +72,6 @@ const Dashboard = () => {
         setBorrowStats(formattedData);
       } catch (error) {
         console.error('Error fetching borrow stats:', error);
-        setError('ไม่สามารถดึงข้อมูลสถิติการยืมได้');
       }
     };
 
@@ -88,7 +86,6 @@ const Dashboard = () => {
         setEquipmentStatusStats(formattedData);
       } catch (error) {
         console.error('Error fetching equipment status stats:', error);
-        setError('ไม่สามารถดึงข้อมูลสถานะอุปกรณ์ได้');
       }
     };
 
@@ -102,7 +99,19 @@ const Dashboard = () => {
         setTopBorrowedEquipment(formattedData);
       } catch (error) {
         console.error('Error fetching top borrowed equipment:', error);
-        setError('ไม่สามารถดึงข้อมูล Top 5 อุปกรณ์ที่ถูกยืมได้');
+      }
+    };
+
+    const fetchDailyBorrowStats = async () => {
+      try {
+        const response = await axios.get('http://localhost:3333/api/borrow/daily-stats');
+        const formattedData = response.data.map((item) => ({
+          date: new Date(item.date).toLocaleDateString('th-TH'),
+          total: item.total,
+        }));
+        setDailyBorrowStats(formattedData);
+      } catch (error) {
+        console.error('Error fetching daily borrow stats:', error);
       }
     };
 
@@ -112,6 +121,7 @@ const Dashboard = () => {
     fetchBorrowStats();
     fetchEquipmentStatusStats();
     fetchTopBorrowedEquipment();
+    fetchDailyBorrowStats();
   }, []);
 
   const totalEquipment = equipmentStats
@@ -203,9 +213,12 @@ const Dashboard = () => {
             </div>
           </div>
 
-          <div className="dashboard-graphs">
-            <h2>สถิติการยืมอุปกรณ์รายเดือน</h2>
-            {borrowStats.length > 0 ? (
+          <div className="dashboard-graphs-wrapper">
+            <div className="graphs-header">
+              <h2>การวิเคราะห์ข้อมูลการยืมและอุปกรณ์</h2>
+            </div>
+            <div className="graph-item">
+              <h3>สถิติการยืมอุปกรณ์รายเดือน</h3>
               <ResponsiveContainer width="100%" height={300}>
                 <BarChart
                   data={borrowStats}
@@ -219,63 +232,75 @@ const Dashboard = () => {
                   <Bar dataKey="total" fill="#82ca9d" />
                 </BarChart>
               </ResponsiveContainer>
-            ) : (
-              <p>{error || 'กำลังโหลดข้อมูล...'}</p>
-            )}
-
-            <h2>สถานะอุปกรณ์</h2>
-            {equipmentStatusStats.length > 0 ? (
-              <ResponsiveContainer width="100%" height={400}>
-                <PieChart>
-                  <Tooltip
-                    formatter={(value, name, props) => {
-                      const equipmentDetails = props.payload.equipmentDetails || [];
-                      return [
-                        `${value} ชิ้น (${equipmentDetails.join(', ')})`,
-                        name,
-                      ];
-                    }}
-                  />
-                  <Legend />
-                  <Pie
-                    data={equipmentStatusStats}
-                    dataKey="value"
-                    nameKey="status"
-                    cx="50%"
-                    cy="50%"
-                    outerRadius={150}
-                    fill="#8884d8"
-                    label={(entry) => `${entry.status}: ${entry.value}`}
-                  >
-                    {equipmentStatusStats.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                    ))}
-                  </Pie>
-                </PieChart>
-              </ResponsiveContainer>
-            ) : (
-              <p>{error || 'กำลังโหลดข้อมูล...'}</p>
-            )}
-
-         <h2>Top 5 อุปกรณ์ที่ถูกยืมมากที่สุด</h2>
-            {topBorrowedEquipment.length > 0 ? (
+            </div>
+            <div className="graph-item">
+              <h3>สถิติการยืมอุปกรณ์รายวัน</h3>
               <ResponsiveContainer width="100%" height={300}>
                 <BarChart
-                  data={topBorrowedEquipment}
-                  layout="vertical"
-                  margin={{ top: 10, right: 30, left: 50, bottom: 0 }}
-                >   
+                  data={dailyBorrowStats}
+                  margin={{ top: 10, right: 30, left: 0, bottom: 0 }}
+                >
                   <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis type="number" />
-                  <YAxis type="category" dataKey="name" />
+                  <XAxis dataKey="date" />
+                  <YAxis />
                   <Tooltip />
                   <Legend />
-                  <Bar dataKey="borrowCount" fill="#8884d8" />
+                  <Bar dataKey="total" fill="#82ca9d" />
                 </BarChart>
               </ResponsiveContainer>
-            ) : (
-              <p>{error || 'กำลังโหลดข้อมูล...'}</p>
-            )}
+            </div>
+            <div className="graph-pair-wrapper">
+              <div className="graph-pair">
+                <div className="graph-item">
+                  <h3>สถานะอุปกรณ์</h3>
+                  <ResponsiveContainer width="100%" height={300}>
+                    <PieChart>
+                      <Tooltip
+                        formatter={(value, name, props) => {
+                          const equipmentDetails = props.payload.equipmentDetails || [];
+                          return [
+                            `${value} ชิ้น (${equipmentDetails.join(', ')})`,
+                            name,
+                          ];
+                        }}
+                      />
+                      <Legend />
+                      <Pie
+                        data={equipmentStatusStats}
+                        dataKey="value"
+                        nameKey="status"
+                        cx="50%"
+                        cy="50%"
+                        outerRadius={120}
+                        fill="#8884d8"
+                        labelLine = {false}
+                      >
+                        {equipmentStatusStats.map((entry, index) => (
+                          <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                        ))}
+                      </Pie>
+                    </PieChart>
+                  </ResponsiveContainer>
+                </div>
+                <div className="graph-item">
+                  <h3>Top 5 อุปกรณ์ที่ถูกยืมมากที่สุด</h3>
+                  <ResponsiveContainer width="100%" height={300}>
+                    <BarChart
+                      data={topBorrowedEquipment}
+                      layout="vertical"
+                      margin={{ top: 10, right: 30, left: 50, bottom: 0 }}
+                    >
+                      <CartesianGrid strokeDasharray="3 3" />
+                      <XAxis type="number" />
+                      <YAxis type="category" dataKey="name" />
+                      <Tooltip />
+                      <Legend />
+                      <Bar dataKey="borrowCount" fill="#8884d8" />
+                    </BarChart>
+                  </ResponsiveContainer>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
