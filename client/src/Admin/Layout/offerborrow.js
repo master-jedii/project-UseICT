@@ -182,88 +182,126 @@ const AdminBorrowStatus = () => {
     fetchAllBorrowData();
   }, []);
 
+  // ฟังก์ชันสำหรับการกรองตามสถานะ
+  const handleFilterStatus = (status) => {
+    if (status === "ทั้งหมด") {
+      setFilteredData(borrowData); // คืนค่าข้อมูลทั้งหมด
+    } else {
+      const filtered = borrowData.filter(borrow => borrow.status === status);
+      setFilteredData(filtered);
+    }
+  };
+
+
   return (
     <div>
       <div className="admin-dashboard">
         <NavbarAdmin />
-        <div className="admin-status-container">
-            <header className="admin-header-1">
-              <div className="admin-header-info">
-                <h1>รายการยืมทั้งหมด</h1>
-              </div>
-            </header>
-            {/* ช่องกรอกค้นหาตาม UserID */}
-            <div className="search-container">
-              <input 
-                className="Search-admin-2"
-                type="number" 
-                value={searchUserID}
-                onChange={(e) => setSearchUserID(e.target.value)} // เก็บค่าที่กรอก
-                placeholder="ค้นหาด้วยรหัสนักศึกษา"
-              />
-              <button className="Search-admin-1" onClick={handleSearch}>ค้นหา</button>
-              <button  onClick={handleClearSearch}>เคลียร์</button>
-        </div>
+        <div className="admin-dashboard-typeid">
+          <header className="admin-header-info-typeid">
+            <div className="admin-header-info">
+              <h1>รายการยืมทั้งหมด</h1>
+            </div>
+          </header>
+          {/* ช่องกรอกค้นหาตาม UserID */}
+          <div className="search-container">
+            <input
+              className="Search-admin-2"
+              type="number"
+              value={searchUserID}
+              onChange={(e) => setSearchUserID(e.target.value)} // เก็บค่าที่กรอก
+              placeholder="ค้นหาด้วยรหัสนักศึกษา"
+            />
+            <button className="Search-admin-1" onClick={handleSearch}>ค้นหา</button>
+            <button onClick={handleClearSearch}>เคลียร์</button>
+          </div>
 
-        {loading && <div>กำลังโหลดข้อมูล...</div>}
-        {error && <div style={{ color: 'red' }}>{error}</div>}
+        
+          <div className="filter-buttons-container-status">
+            <button onClick={() => handleFilterStatus("ทั้งหมด")} className="filter-button-status">
+              ทั้งหมด
+            </button>
+            <button onClick={() => handleFilterStatus("อนุมัติ")} className="filter-button-status">
+              อนุมัติ
+            </button>
+            <button onClick={() => handleFilterStatus("รอดำเนินการ")} className="filter-button-status">
+              รอดำเนินการ
+            </button>
+            <button onClick={() => handleFilterStatus("ปฏิเสธ")} className="filter-button-status">
+              ปฏิเสธ
+            </button>
+          </div>
 
-        {!loading && !error && (
-          <table className="admin-status-table">
-            <thead>
-              <tr>
-                <th>ลำดับ</th>
-                <th>ผู้ใช้</th>
-                <th>อุปกรณ์</th>
-                <th>อุปกรณ์ ID</th>
-                <th>วันที่ยืม</th>
-                <th>วันที่คืน</th>
-                <th>สถานะ</th>
-                <th>เวลาส่งคำร้อง</th>
-                <th>ดำเนินการ</th>
-              </tr>
-            </thead>
-            <tbody>
-              {filteredData.map((borrow) => (
-                <tr key={borrow.borrow_id}>
-                  <td>{borrow.borrow_id}</td>
-                  <td>{borrow.UserID}</td>
-                  <td>{borrow.equipment_name}</td>
-                  <td>{borrow.equipment_id}</td>
-                  <td>{new Date(borrow.borrow_date).toLocaleDateString("th-TH")}</td>
-                  <td>{new Date(borrow.return_date).toLocaleDateString("th-TH")}</td>
-                  <td>{borrow.status}</td>
-                  <td>{new Date(borrow.created_at).toLocaleString("th-TH", {
-                    year: "numeric",   
-                    month: "long",     
-                    day: "numeric",    
-                    hour: "numeric",   
-                    minute: "numeric", 
-                  })}</td>
-                  <td>
-                    <button 
-                      onClick={() => approveBorrowRequest(borrow.borrow_id)} 
-                      className="approve-button"
-                      disabled={borrow.status === "อนุมัติแล้ว" || borrow.status === "ถูกปฏิเสธ"}
-                    >
-                      Approve
-                    </button>
-                    <button 
-                      onClick={() => rejectBorrowRequest(borrow.borrow_id)} 
-                      className="reject-button"
-                      disabled={borrow.status === "ถูกปฏิเสธ"}
-                    >
-                      Reject
-                    </button>
-                    <button onClick={() => deleteBorrowRequest(borrow.borrow_id)} className="delete-button">
-                      Delete
-                    </button>
-                  </td>
+
+          {loading && <div>กำลังโหลดข้อมูล...</div>}
+          {error && <div style={{ color: 'red' }}>{error}</div>}
+
+          {!loading && !error && (
+            <table className="admin-status-table">
+              <thead>
+                <tr>
+                  <th>ลำดับ</th>
+                  <th>ผู้ใช้</th>
+                  <th>อุปกรณ์</th>
+                  <th>อุปกรณ์ ID</th>
+                  <th>วันที่ยืม</th>
+                  <th>วันที่คืน</th>
+                  <th>สถานะ</th>
+                  <th>เวลาส่งคำร้อง</th>
+                  <th>ดำเนินการ</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        )}
+              </thead>
+              <tbody>
+                {filteredData.map((borrow) => (
+                  <tr key={borrow.borrow_id}>
+                    <td>{borrow.borrow_id}</td>
+                    <td>{borrow.UserID}</td>
+                    <td>{borrow.equipment_name}</td>
+                    <td>{borrow.equipment_id}</td>
+                    <td>{new Date(borrow.borrow_date).toLocaleDateString("th-TH")}</td>
+                    <td>{new Date(borrow.return_date).toLocaleDateString("th-TH")}</td>
+                    <td className={
+                      borrow.status === "อนุมัติ"
+                        ? "status-approved"
+                        : borrow.status === "รอดำเนินการ"
+                          ? "status-pending"
+                          : borrow.status === "ปฏิเสธ"
+                            ? "status-rejected"
+                            : ""
+                    }>
+                      {borrow.status}
+                    </td>
+                    <td>{new Date(borrow.created_at).toLocaleString("th-TH", {
+                      year: "numeric",
+                      month: "long",
+                      day: "numeric",
+                      hour: "numeric",
+                      minute: "numeric",
+                    })}</td>
+                    <td>
+                      <button
+                        onClick={() => approveBorrowRequest(borrow.borrow_id)}
+                        className="approve-button"
+                        disabled={borrow.status === "อนุมัติแล้ว" || borrow.status === "ถูกปฏิเสธ"}
+                      >
+                        อนุมัติ
+                      </button>
+                      <button
+                        onClick={() => rejectBorrowRequest(borrow.borrow_id)}
+                        className="reject-button"
+                        disabled={borrow.status === "ถูกปฏิเสธ"}
+                      >
+                        ปฏิเสธ
+                      </button>
+                      <button onClick={() => deleteBorrowRequest(borrow.borrow_id)} className="delete-button">
+                        ลบคำร้องขอ
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )}
         </div>
       </div>
     </div>

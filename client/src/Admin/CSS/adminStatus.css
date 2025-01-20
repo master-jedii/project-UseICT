@@ -15,6 +15,7 @@
   
 }
 
+
 /* Title styling */
 .admin-status-title {
   text-align: center;
@@ -29,7 +30,7 @@
 
 /* Table Styling */
 .admin-status-table {
-  width: 1600px;
+  width: 1580px;
   border-collapse: collapse;
   margin-top: 20px;
   font-size: 1rem;
@@ -178,8 +179,29 @@
   color: #ffffff; 
   border-radius: 0px 0px 5px 5px; 
   margin-bottom: 20px;
-  width: 1600px;
+  width: 1580px;
   margin-left: -10px;
   
   
+}
+
+.filter-buttons-container-status {
+  width: 50%;
+  margin-top: 20px;
+  margin-bottom: 20px;
+  position: relative;
+  right: 13px;
+  
+}
+
+.filter-button-status{
+  margin: 0px 5px 0px 5px;
+}
+
+.filter-button-status:hover {
+  background-color: #ddd;
+}
+
+.filter-button-status:active {
+  background-color: #bbb;
 }
