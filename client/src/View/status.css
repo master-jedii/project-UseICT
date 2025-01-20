@@ -105,3 +105,14 @@
     background-color: darkred;
   }
   
+  .print-button-status{
+    background-color: #F8F9FA;
+    position: relative;
+    bottom: 7px;
+    color: #009498;
+  }
+
+  .print-button-status:hover {
+    transform: scale(1.1); /* ขยายขนาดขึ้น 10% */
+    transition: transform 0.2s ease, ;
+  }

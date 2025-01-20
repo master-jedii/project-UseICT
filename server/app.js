@@ -281,11 +281,28 @@ app.get('/api/borrow-status', (req, res) => {
 
     const userId = decoded.UserID;
 
-    // Query ดึงข้อมูลจากตาราง borrow ตาม UserID
+    // Query ดึงข้อมูลจากตาราง borrow, equipment และ users
     const query = `
-      SELECT b.borrow_id, e.name AS equipment_name, b.equipment_id, b.borrow_date, b.return_date,b.created_at, b.status
+      SELECT 
+        b.borrow_id, 
+        e.name AS equipment_name, 
+        b.equipment_id, 
+        b.borrow_date, 
+        b.return_date, 
+        b.created_at, 
+        b.status,
+        b.objective,
+        b.place,
+        u.UserID, 
+        u.firstname, 
+        u.lastname, 
+        u.grade, 
+        u.branch, 
+        u.email,
+        u.phone_number
       FROM borrow b
       JOIN equipment e ON b.equipment_id = e.equipment_id
+      JOIN users u ON b.UserID = u.UserID
       WHERE b.UserID = ?
     `;
 
@@ -299,6 +316,7 @@ app.get('/api/borrow-status', (req, res) => {
     });
   });
 });
+
 
 ///ลบคำขอ
 
@@ -314,6 +332,10 @@ app.delete("/api/borrow-status/:id",  (req, res) => {
     res.status(200).send("Borrow request cancelled successfully");
   });
 });
+
+
+
+
 
 
 
