@@ -60,6 +60,11 @@
     color: #FF7878; /* สีแดง */
     font-weight: bold;
 }
+.status-deleted {
+    color: #FF7878;
+    font-weight: bold;
+  }
+  
 
   
 /* ปุ่มดาวน์โหลด */
@@ -83,3 +88,31 @@
     justify-content: center;
     align-items: center;
 }
+
+.cancel-button-status {
+    background-color: #ff5858;
+    color: white;
+    border: none;
+    padding: 5px 7px;
+    border-radius: 5px;
+    cursor: pointer;
+    position: relative;
+    bottom: 7px;
+    
+  }
+  
+  .cancel-button:hover {
+    background-color: darkred;
+  }
+  
+  .print-button-status{
+    background-color: #F8F9FA;
+    position: relative;
+    bottom: 7px;
+    color: #009498;
+  }
+
+  .print-button-status:hover {
+    transform: scale(1.1); /* ขยายขนาดขึ้น 10% */
+    transition: transform 0.2s ease, ;
+  }

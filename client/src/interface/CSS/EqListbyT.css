@@ -2,6 +2,7 @@
   display: flex;
   flex-direction: column;
   gap: 20px;
+  font-family: 'Prompt', sans-serif;
 }
 
 .header-equipment-list-2{
@@ -13,6 +14,7 @@
   display: flex;
   justify-content: center;
   margin: 40px 0px 40px 150px ;
+  font-family: 'Prompt', sans-serif;
 
 }
 

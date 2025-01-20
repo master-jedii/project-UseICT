@@ -52,18 +52,18 @@ const UpdateTypeId = () => {
             alert('กรุณากรอกข้อมูลให้ครบถ้วน');
             return;
         }
-
+    
         try {
             const response = await axios.put('http://localhost:3333/admin/updatetypeid', {
                 oldTypeId: editingData.type_id,
                 newTypeId: editingData.new_type_id,
-                typeSerial: editingData.type_serial,
+                typeSerial: editingData.type_serial,  // ส่ง type_serial ด้วย
             });
-
+    
             if (response.status === 200) {
                 alert('บันทึกสำเร็จ');
                 setEditingData(null);
-
+    
                 // ดึงข้อมูลใหม่
                 const result = await axios.get('http://localhost:3333/admin/showtypeid');
                 setTypeIds(result.data);
@@ -73,6 +73,7 @@ const UpdateTypeId = () => {
             alert('ไม่สามารถอัปเดตข้อมูลได้');
         }
     };
+    
 
     const submitSerial = async () => {
         if (!newSerial.type_serial || !newSerial.type_id) {
@@ -129,9 +130,9 @@ const UpdateTypeId = () => {
                     <table className="table-typeid">
                         <thead>
                             <tr>
-                                <th>รหัสประจำอุปกรณ์</th>
-                                <th>ชื่อรหัสประจำอุปกรณ์</th>
-                                <th>รหัสอุปกรณ์</th> {/* เพิ่มคอลัมน์ใหม่ */}
+                                <th>รหัสอุปกรณ์</th>
+                                <th>ชื่ออุปกรณ์</th>
+                                <th>เลขครุภัณฑ์</th> {/* เพิ่มคอลัมน์ใหม่ */}
                                 <th>การกระทำ</th>
                             </tr>
                         </thead>
@@ -175,16 +176,7 @@ const UpdateTypeId = () => {
                     <div className="modal-typeid">
                         <div className="modal-content-typeid">
                             <h2>แก้ไขรหัสประจำอุปกรณ์</h2>
-                            <label>
-                                ชื่อรหัสประจำอุปกรณ์ (ใหม่):
-                                <input
-                                    type="text"
-                                    value={editingData.type_serial}
-                                    onChange={(e) =>
-                                        setEditingData({ ...editingData, type_serial: e.target.value })
-                                    }
-                                />
-                            </label>
+                            
                             <label>
                                 รหัสประจำอุปกรณ์ (ใหม่):
                                 <input
@@ -192,6 +184,16 @@ const UpdateTypeId = () => {
                                     value={editingData.new_type_id || ''}
                                     onChange={(e) =>
                                         setEditingData({ ...editingData, new_type_id: e.target.value })
+                                    }
+                                />
+                            </label>
+                            <label>
+                                ชื่อรหัสประจำอุปกรณ์ (ใหม่):
+                                <input
+                                    type="text"
+                                    value={editingData.type_serial|| ''}
+                                    onChange={(e) =>
+                                        setEditingData({ ...editingData, type_serial: e.target.value })
                                     }
                                 />
                             </label>
@@ -218,6 +220,14 @@ const UpdateTypeId = () => {
                             &times;
                         </span>
                         <h2>เพิ่มรหัสประจำอุปกรณ์</h2>
+                        <label>รหัสอุปกรณ์</label>
+                        <input
+                            type="text"
+                            value={newSerial.type_id}
+                            onChange={(e) =>
+                                setNewSerial({ ...newSerial, type_id: e.target.value })
+                            }
+                        />
                         <label>ชื่อรหัสประจำอุปกรณ์</label>
                         <input
                             type="text"
@@ -226,14 +236,7 @@ const UpdateTypeId = () => {
                                 setNewSerial({ ...newSerial, type_serial: e.target.value })
                             }
                         />
-                        <label>รหัสประจำอุปกรณ์</label>
-                        <input
-                            type="text"
-                            value={newSerial.type_id}
-                            onChange={(e) =>
-                                setNewSerial({ ...newSerial, type_id: e.target.value })
-                            }
-                        />
+                       
                         <button onClick={submitSerial}>บันทึก</button>
                     </div>
                 </div>

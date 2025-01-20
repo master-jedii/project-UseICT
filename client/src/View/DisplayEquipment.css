@@ -1,7 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Prompt:wght@400;500;700&display=swap');
 
 body {
-    font-family: 'Prompt', sans-serif;
+  font-family: 'Prompt', sans-serif;
     
 }
 
@@ -36,6 +36,7 @@ body {
     min-height: 600vh;
     background-color: #E3E6E6;
     min-height: 790vh;
+    font-family: 'Prompt', sans-serif;
   }
   
   /* ส่วน header */
@@ -173,7 +174,7 @@ body {
 
   .search-cata-bar {
     display: flex;
-    justify-content: center;
+    justify-content: flex-start;
     align-items: center;
     height: 50px;
     margin-top: 25px;
@@ -181,15 +182,17 @@ body {
   
   .input-container {
     position: relative;
+    
   }
   
   .input-container input {
-    width: 500px;
+    width: 600px;
     padding: 10px 20px;
     padding-left: 40px; /* เพิ่ม padding ให้มีพื้นที่สำหรับไอคอน */
     border-radius: 10px;
     border: 1px solid #ccc;
     font-size: 16px;
+  
   }
   
   .search-icon {

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+// นำเข้าภาพไอคอนต่าง ๆ
 import cameraIcon from '../assets/Camera.png';
 import lensIcon from '../assets/Aperture.png';
 import tripodIcon from '../assets/Camera on Tripod.png';
@@ -72,15 +73,20 @@ const DisplayEquipment = () => {
     )
     : [];
 
+  // กรองรายการที่มีชื่อไม่ซ้ำกัน
+  const getUniqueItems = (items) => {
+    const seen = new Set();
+    return items.filter((item) => {
+      const duplicate = seen.has(item.name);
+      seen.add(item.name);
+      return !duplicate;
+    });
+  };
+
   const handleViewAllClick = (typeId) => {
     // ใช้ navigate เพื่อไปยังหน้าที่กรองข้อมูลโดยใช้ type_id
     navigate(`/equipment/${typeId}`);
   };
-
-  // ฟังก์ชันสำหรับปุ่มไปหน้า Admin
-  
-  
-
 
   return (
     <div className="equipment-list">
@@ -97,50 +103,22 @@ const DisplayEquipment = () => {
           </div>
         </div>
 
-
         <div className="category-icons">
-          <div className="category" onClick={() => handleIconClick("กล้อง")}>
-            <div className="image-box">
-              <img src={cameraIcon} alt="กล้อง" />
+          {/* หมวดหมู่ต่าง ๆ */}
+          {categories.map((category, index) => (
+            <div className="category" key={index} onClick={() => handleIconClick(category)}>
+              <div className={`image-box${index + 1}`}>
+                <img src={category === "กล้อง" ? cameraIcon :
+                          category === "เลนส์" ? lensIcon :
+                          category === "ขาตั้งกล้อง" ? tripodIcon :
+                          category === "ไฟสำหรับถ่ายทำ" ? lightIcon :
+                          category === "อุปกรณ์ด้านเสียง" ? audioIcon :
+                          category === "อุปกรณ์จัดแสง" ? lightEquipmentIcon :
+                          otherIcon} alt={category} />
+              </div>
+              <p className="category-text">{category}</p>
             </div>
-            <p className="category-text">กล้อง</p>
-          </div>
-          <div className="category" onClick={() => handleIconClick("เลนส์")}>
-            <div className="image-box2">
-              <img src={lensIcon} alt="เลนส์" />
-            </div>
-            <p className="category-text">เลนส์</p>
-          </div>
-          <div className="category" onClick={() => handleIconClick("ขาตั้งกล้อง")}>
-            <div className="image-box3">
-              <img src={tripodIcon} alt="ขาตั้งกล้อง" />
-            </div>
-            <p className="category-text">ขาตั้งกล้อง</p>
-          </div>
-          <div className="category" onClick={() => handleIconClick("ไฟสำหรับถ่ายทำ")}>
-            <div className="image-box4">
-              <img src={lightIcon} alt="ไฟสำหรับถ่ายทำ" />
-            </div>
-            <p className="category-text">ไฟสำหรับถ่ายทำ</p>
-          </div>
-          <div className="category" onClick={() => handleIconClick("อุปกรณ์ด้านเสียง")}>
-            <div className="image-box5">
-              <img src={audioIcon} alt="อุปกรณ์ด้านเสียง" />
-            </div>
-            <p className="category-text">อุปกรณ์ด้านเสียง</p>
-          </div>
-          <div className="category" onClick={() => handleIconClick("อุปกรณ์จัดแสง")}>
-            <div className="image-box6">
-              <img src={lightEquipmentIcon} alt="อุปกรณ์จัดแสง" />
-            </div>
-            <p className="category-text">อุปกรณ์จัดแสง</p>
-          </div>
-          <div className="category" onClick={() => handleIconClick("อุปกรณ์อื่นๆ")}>
-            <div className="image-box7">
-              <img src={otherIcon} alt="อุปกรณ์อื่นๆ" />
-            </div>
-            <p className="category-text">อุปกรณ์อื่นๆ</p>
-          </div>
+          ))}
           <div className="category" onClick={() => window.location.reload()}>
             <div className="image-box8">
               <img src={All} alt="อุปกรณ์อื่นๆ" />
@@ -154,8 +132,8 @@ const DisplayEquipment = () => {
           <div>
             <h1 style={{ textAlign: "center", margin: "110px 0 0 0" }}>{selectedCategory}</h1>
             <div className="equipment-container">
-              {selectedCategoryItems.length > 0 ? (
-                selectedCategoryItems.slice(0, 8).map((item, idx) => (
+              {getUniqueItems(selectedCategoryItems).length > 0 ? (
+                getUniqueItems(selectedCategoryItems).slice(0, 8).map((item, idx) => (
                   <div className="card" style={{ width: "18rem", margin: "10px" }} key={idx}>
                     <img
                       src={`http://localhost:3333/uploads/${item.image}`}
@@ -187,8 +165,8 @@ const DisplayEquipment = () => {
             <div key={index}>
               <h1>{categoryData.category}</h1>
               <div className="equipment-container">
-                {categoryData.items.length > 0 ? (
-                  categoryData.items.slice(0, 8).map((item, idx) => (
+                {getUniqueItems(categoryData.items).length > 0 ? (
+                  getUniqueItems(categoryData.items).slice(0, 8).map((item, idx) => (
                     <div className="card" style={{ width: "290px", margin: "10px" }} key={idx}>
                       <img
                         src={`http://localhost:3333/uploads/${item.image}`}
@@ -221,6 +199,5 @@ const DisplayEquipment = () => {
     </div>
   );
 };
-
 
 export default DisplayEquipment;
