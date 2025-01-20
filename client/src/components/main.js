@@ -46,6 +46,7 @@ const Main = () => {
     console.log("Logging out...");
     localStorage.removeItem('token'); // ลบ token ออกจาก localStorage
     sessionStorage.removeItem('authToken'); // ลบ token ออกจาก sessionStorage
+    localStorage.removeItem('notifications');
     console.log("localStorage and sessionStorage cleaned");
 
     // นำผู้ใช้กลับไปหน้า Login ทันที

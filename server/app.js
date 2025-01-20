@@ -1,23 +1,71 @@
-const express = require("express");
-const cors = require("cors");
-const bcrypt = require("bcryptjs");
-const mysql = require("mysql2"); // ใช้ MySQL (หรือเปลี่ยนเป็น DB ที่คุณใช้งาน)
-const jwt = require("jsonwebtoken"); // ใช้ JWT สำหรับการสร้าง Token
+import express from "express";
+import cors from "cors";
+import bcrypt from "bcryptjs";
+import mysql  from "mysql2"; // ใช้ MySQL (หรือเปลี่ยนเป็น DB ที่คุณใช้งาน)
+import jwt  from "jsonwebtoken"; // ใช้ JWT สำหรับการสร้าง Token
 const app = express();
-const multer = require('multer');
+import multer  from 'multer';
 const router = express.Router();
-const path = require("path");
-
+import path  from "path";
+import { fileURLToPath } from "url";
+import { Server } from "socket.io";
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 app.use(cors());
 // CORS
 app.use(cors({
-  origin: 'http://localhost:3000', // ให้ frontend ที่รันที่ localhost:3000 สามารถเข้าถึงได้
+  origin: 'http://localhost:3001', // ให้ frontend ที่รันที่ localhost:3000 สามารถเข้าถึงได้
   methods: 'GET,POST',
 }));
 
 // Body parser
 app.use(express.json());
+
+
+//socket
+const io = new Server(5000, {
+  cors: {
+    origin: "http://localhost:3001", // URL ของ Client
+    methods: ["GET", "POST"],
+  },
+});
+
+io.on("connection", (socket) => {
+  console.log("Client connected:", socket.id);
+  io.emit("firstEvent","hellow this is it test!")
+
+  socket.on("disconnect", () => {
+    console.log("Client disconnected:", socket.id);
+  });
+});
+
+const notifications = {}; // เก็บการแจ้งเตือนตาม userId
+
+io.on("connection", (socket) => {
+  const userId = socket.handshake.query.userId;  // ดึง userId จาก query string หรือจาก session
+
+  // ฟัง event 'borrowApproved'
+  socket.on("borrowApproved", (notification) => {
+    console.log("Borrow approved notification for user:", userId);
+
+    // เก็บการแจ้งเตือนใน memory (หรือฐานข้อมูล)
+    if (!notifications[userId]) {
+      notifications[userId] = [];
+    }
+    notifications[userId].push(notification);
+
+    // ส่งการแจ้งเตือนให้ผู้ใช้
+    io.to(socket.id).emit("borrowApproved", notification);
+  });
+
+  // เมื่อ socket disconnect, ลบการแจ้งเตือนของผู้ใช้
+  socket.on("disconnect", () => {
+    delete notifications[userId];
+  });
+});
+
+
 
 // ตั้งค่าการเชื่อมต่อฐานข้อมูล
 const db = mysql.createConnection({
@@ -222,9 +270,57 @@ app.post('/api/borrow', (req, res) => {
       return res.status(500).json({ message: 'เกิดข้อผิดพลาดในการบันทึกข้อมูล' });
     }
 
-    res.status(200).json({ message: 'บันทึกข้อมูลสำเร็จ' });
+    const borrowId = result.insertId; // ใช้ borrowId ที่ได้จากการแทรกข้อมูลเข้าไปในตาราง borrow
+
+    // คำสั่ง SQL สำหรับบันทึกข้อมูลการแจ้งเตือนในตาราง notifications
+    const notificationQuery = `
+      INSERT INTO notifications (equipment_id, borrow_id, UserID, subject, objective, place, borrow_date, return_date, status, created_at, updated_at)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'รอดำเนินการ', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+    `;
+
+    // เปลี่ยนจาก borrowId เป็น equipmentId ในการส่งค่า
+    db.execute(notificationQuery, [equipmentId, borrowId, UserID, subject, objective, place, borrow_d, return_d], (err, notificationResult) => {
+      if (err) {
+        console.error('Error executing SQL query for notifications:', err);  // แสดงข้อผิดพลาด SQL สำหรับ notifications
+        return res.status(500).json({ message: 'เกิดข้อผิดพลาดในการบันทึกข้อมูลการแจ้งเตือน' });
+      }
+
+      // การอัปเดตสถานะของ borrow และ notifications
+      const updateStatusQuery = `
+        UPDATE borrow
+        SET status = 'รอดำเนินการ'
+        WHERE borrow_id = ?
+      `;
+
+      db.execute(updateStatusQuery, [borrowId], (err, updateResult) => {
+        if (err) {
+          console.error('Error updating borrow status:', err);
+          return res.status(500).json({ message: 'เกิดข้อผิดพลาดในการอัปเดตสถานะของการยืม' });
+        }
+
+        // อัปเดตสถานะของการแจ้งเตือนใน notifications
+        const updateNotificationQuery = `
+          UPDATE notifications
+          SET status = 'รอดำเนินการ'
+          WHERE borrow_id = ?
+        `;
+
+        db.execute(updateNotificationQuery, [borrowId], (err, notificationUpdateResult) => {
+          if (err) {
+            console.error('Error updating notification status:', err);
+            return res.status(500).json({ message: 'เกิดข้อผิดพลาดในการอัปเดตสถานะการแจ้งเตือน' });
+          }
+
+          // ส่ง response กลับไปที่ client
+          res.status(200).json({ message: 'บันทึกข้อมูลสำเร็จและการแจ้งเตือนถูกสร้าง' });
+        });
+      });
+    });
   });
 });
+
+
+
 
 
 // API แสดงรายการอุปกรณ์ทั้งหมดหรือกรองตามหมวดหมู่
@@ -299,6 +395,70 @@ app.get('/api/borrow-status', (req, res) => {
     });
   });
 });
+
+
+
+
+app.get('/api/notifications', (req, res) => {
+  const { userId, borrowId } = req.query;  // เพิ่มการดึง borrowId หากต้องการเจาะจง borrow_id
+
+  if (!userId) {
+    console.error('User ID is required but not provided');
+    return res.status(400).json({ message: 'User ID is required' });
+  }
+
+  console.log('Received User ID:', userId);
+
+  // ถ้ามี borrowId ให้ใช้ในการกรองข้อมูลเพิ่มเติม
+  const borrowIdCondition = borrowId ? 'AND n.borrow_id = ?' : ''; // ตรวจสอบว่ามี borrowId หรือไม่
+
+  const query = `
+    SELECT 
+      n.notification_id AS id,
+      n.borrow_id,
+      n.UserID,
+      n.subject,
+      n.objective,
+      n.place,
+      n.borrow_date,
+      n.return_date,
+      n.status,
+      n.created_at,
+      n.updated_at,
+      e.equipment_id,
+      e.name AS equipment_name  -- เพิ่มคอลัมน์ชื่ออุปกรณ์จากตาราง equipment
+    FROM notifications n
+    LEFT JOIN equipment e ON e.equipment_id = n.equipment_id  -- เชื่อมโยง borrow_id กับ equipment_id
+    WHERE n.UserID = ?
+    ${borrowIdCondition}  -- ถ้ามี borrowId จะเพิ่มเงื่อนไขกรอง
+    ORDER BY n.created_at DESC
+  `;
+
+  const queryParams = borrowId ? [userId, borrowId] : [userId];  // กำหนดพารามิเตอร์ในการ query
+
+  db.query(query, queryParams, (err, results) => {
+    if (err) {
+      console.error('Error executing query:', err);
+      return res.status(500).json({ message: 'Database query error', error: err });
+    }
+
+    console.log('Query Results:', results);
+
+    if (results.length === 0) {
+      return res.status(404).json({ message: 'No notifications found for this user' });
+    }
+
+    res.status(200).json(results);
+  });
+});
+
+
+
+
+
+
+
+
 
 
 
@@ -638,32 +798,71 @@ app.get('/api/top-borrowed-equipment', (req, res) => {
 
 
 
+// เมื่อมีการอัปเดตสถานะการยืม
 app.put('/api/borrow/approve/:borrowId', (req, res) => {
-  const { borrowId } = req.params; // ดึง borrowId จาก URL
-  
-  // เริ่มต้นคำสั่ง SQL ที่จะอัปเดตทั้งสองตาราง
+  const { borrowId } = req.params;
+
+  // คำสั่ง SQL สำหรับการอัปเดตสถานะการยืมและอุปกรณ์
   const query = `
     UPDATE borrow b
     JOIN equipment e ON b.equipment_id = e.equipment_id
     SET b.status = 'อนุมัติ', e.status = 'อยู่ในระหว่างการใช้งาน'
     WHERE b.borrow_id = ?;
   `;
-  
-  // เรียกใช้คำสั่ง SQL
+
   db.query(query, [borrowId], (err, result) => {
     if (err) {
-      console.error("Error updating borrow status and equipment status:", err);
-      return res.status(500).json({ message: 'Error updating borrow status and equipment status' });
+      console.error("Error updating borrow status and equipment status:", err.message);
+      return res.status(500).json({ message: 'Error updating borrow status and equipment status', error: err.message });
     }
 
-    // ตรวจสอบว่ามีการอัปเดตแถวในฐานข้อมูลหรือไม่
-    if (result.affectedRows > 0) {
-      res.status(200).json({ message: 'Borrow request approved and equipment status updated successfully' });
-    } else {
-      res.status(404).json({ message: 'Borrow request not found' });
+    if (result.affectedRows === 0) {
+      console.log("No borrow request found for borrowId:", borrowId);
+      return res.status(404).json({ message: 'Borrow request not found' });
     }
+
+    console.log("Borrow request approved and equipment status updated successfully");
+
+    // คิวรีข้อมูลการยืมจากฐานข้อมูลเพื่อสร้างข้อความแจ้งเตือน
+    const fetchBorrowDetails = `
+      SELECT b.borrow_id, b.status, b.borrow_date, b.return_date, b.UserID, e.name as equipment_name, e.equipment_id
+      FROM borrow b
+      JOIN equipment e ON b.equipment_id = e.equipment_id
+      WHERE b.borrow_id = ?;
+    `;
+    
+    db.query(fetchBorrowDetails, [borrowId], (err, borrowDetails) => {
+      if (err) {
+        console.error("Error fetching borrow details:", err.message);
+        return res.status(500).json({ message: 'Error fetching borrow details', error: err.message });
+      }
+
+      if (borrowDetails.length === 0) {
+        return res.status(404).json({ message: 'Borrow details not found' });
+      }
+
+      const borrowInfo = borrowDetails[0]; // ข้อมูลการยืมที่คิวรีมา
+
+      // สร้างข้อความแจ้งเตือนจากข้อมูลการยืม
+      const message = `การยืมอุปกรณ์ "${borrowInfo.equipment_name}" ได้รับการอนุมัติแล้ว.`;
+
+      // ส่งข้อมูลทั้งหมดไปยัง client ผ่าน WebSocket
+      io.emit('borrowApproved', {
+        borrowDetails: borrowInfo, // ส่งข้อมูลการยืมที่คิวรีมา
+        userId: borrowInfo.UserID, // ส่ง userId
+        message: message // ส่งข้อความที่สร้างจากข้อมูลการยืม
+      });
+
+      // ส่ง response กลับไปที่ client
+      return res.status(200).json({ message: 'Borrow request approved and equipment status updated successfully', borrowDetails: borrowInfo });
+    });
   });
 });
+
+
+
+
+
 
 
 // ฟังก์ชันสำหรับการปฏิเสธคำขอ (Reject)
