@@ -36,14 +36,14 @@ const NavbarAdmin = () => {
               รายการอุปกรณ์
             </div>
             <ul className="submenu">
-              <li className="submenu-item">
-                <NavLink to="/mainadmin" className="submenu-link">
-                  รายการทั้งหมด
+            <li className="submenu-item">
+                <NavLink to="/admin/equipment/code" className="submenu-link">
+                  รหัสอุปกรณ์
                 </NavLink>
               </li>
               <li className="submenu-item">
-                <NavLink to="/admin/equipment/code" className="submenu-link">
-                  รหัสอุปกรณ์
+                <NavLink to="/mainadmin" className="submenu-link">
+                  รายการทั้งหมด
                 </NavLink>
               </li>
             </ul>
