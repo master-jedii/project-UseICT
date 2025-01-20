@@ -788,8 +788,115 @@ app.delete('/admin/deletetypeid/:typeId', (req, res) => {
   });
 });
 
+// สถิติการยืมรายวัน
+app.get('/api/borrow/daily-stats', (req, res) => {
+  const query = `
+    SELECT 
+      DATE(borrow_date) AS date, 
+      COUNT(*) AS total 
+    FROM borrow 
+    GROUP BY DATE(borrow_date)
+    ORDER BY DATE(borrow_date);
+  `;
+
+  db.query(query, (err, results) => {
+    if (err) {
+      console.error('Error fetching daily borrow stats:', err);
+      return res.status(500).json({ message: 'Error fetching daily borrow stats' });
+    }
+
+    // ส่งข้อมูลในรูปแบบ JSON
+    res.status(200).json(results);
+  });
+});
 
 
+//กำหนดการคืน
+app.get('/api/borrow/schedule', (req, res) => {
+  const query = `
+    SELECT 
+      b.borrow_id, 
+      b.UserID AS user_id, 
+      e.name AS equipment_name, 
+      b.return_date,
+      u.phone_number
+    FROM borrow b
+    JOIN equipment e ON b.equipment_id = e.equipment_id
+    JOIN users u ON b.UserID = u.UserID
+    WHERE b.status = 'อนุมัติ'
+    ORDER BY b.return_date ASC;
+  `;
+
+  db.query(query, (err, results) => {
+    if (err) {
+      console.error('Error fetching return schedule:', err);
+      return res.status(500).json({ message: 'Error fetching return schedule' });
+    }
+
+    const today = new Date();
+    const formattedResults = results.map((row) => {
+      const returnDate = new Date(row.return_date);
+      const daysLeft = Math.ceil((returnDate - today) / (1000 * 60 * 60 * 24)); // คำนวณจำนวนวันที่เหลือ
+      return {
+        ...row,
+        days_left: daysLeft >= 0 ? daysLeft : 0, // ถ้าครบกำหนดแล้วให้แสดง 0
+      };
+    });
+
+    res.status(200).json(formattedResults);
+  });
+});
+
+//Mark as Returned
+app.put('/api/borrow/mark-returned/:borrowId', (req, res) => {
+  const { borrowId } = req.params;
+  const query = `UPDATE borrow SET status = 'คืนแล้ว' WHERE borrow_id = ?`;
+
+  db.query(query, [borrowId], (err, result) => {
+    if (err) {
+      console.error('Error updating status:', err);
+      return res.status(500).send('Error updating status');
+    }
+
+    if (result.affectedRows === 0) {
+      return res.status(404).send('Borrow request not found');
+    }
+
+    res.status(200).json({ message: 'Status updated to "คืนแล้ว"' });
+  });
+});
+
+
+//Save Remark
+app.put('/api/borrow/save-remark/:borrowId', (req, res) => {
+  const { borrowId } = req.params;
+  const { remark } = req.body;
+  const query = `UPDATE borrow SET remark = ? WHERE borrow_id = ?`;
+  db.query(query, [remark, borrowId], (err, result) => {
+    if (err) return res.status(500).send('Error saving remark');
+    res.send('Remark saved successfully');
+  });
+});
+
+//ลบสถานะการยืม
+app.delete('/api/borrow/:borrowId', (req, res) => {
+  const { borrowId } = req.params;
+
+  const query = 'DELETE FROM borrow WHERE borrow_id = ?';
+
+  db.query(query, [borrowId], (err, result) => {
+    if (err) {
+      console.error('Error deleting record:', err);
+      return res.status(500).json({ message: 'Error deleting record' });
+    }
+
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ message: 'Record not found' });
+    }
+
+    res.status(200).json({ message: 'Record deleted successfully' });
+  });
+});
 
 
 // เริ่มเซิร์ฟเวอร์

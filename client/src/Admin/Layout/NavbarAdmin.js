@@ -6,22 +6,19 @@ import { NavLink } from 'react-router-dom';
 import { Link } from 'react-router-dom';
 
 const NavbarAdmin = () => {
-  const [showSubmenu, setShowSubmenu] = useState(false); // สถานะสำหรับควบคุมการแสดงหัวข้อย่อย
+  const [showSubmenu, setShowSubmenu] = useState(false);
 
   const toggleSubmenu = () => {
-    setShowSubmenu(!showSubmenu); // สลับสถานะ
+    setShowSubmenu(!showSubmenu);
   };
-
-  
 
   return (
     <div className="admin-dashboard">
-      <div className="sidebar" >
+      <div className="sidebar">
         <div className="logo-container">
           <Link to="/main">
             <img src={myLogo} alt="SU Kits Logo" className="logo" />
           </Link>
-          <h1 className="title"></h1>
         </div>
         <ul className="menu">
           <li className="menu-item">
@@ -51,9 +48,8 @@ const NavbarAdmin = () => {
               </li>
             </ul>
           </li>
-
           <li className="menu-item">
-            <i className="fas fa-handshake"></i> 
+            <i className="fas fa-handshake"></i>
             <NavLink
               to="/offerBorrow"
               className={({ isActive }) => (isActive ? 'menu-item active' : 'menu-item')}
@@ -62,7 +58,13 @@ const NavbarAdmin = () => {
             </NavLink>
           </li>
           <li className="menu-item">
-            <i className="fas fa-history"></i> กำหนดการคืน
+            <i className="fas fa-history"></i>
+            <NavLink
+              to="/return-schedule"
+              className={({ isActive }) => (isActive ? 'menu-item active' : 'menu-item')}
+            >
+              กำหนดการคืน
+            </NavLink>
           </li>
         </ul>
       </div>
