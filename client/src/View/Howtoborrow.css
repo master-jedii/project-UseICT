@@ -6,6 +6,7 @@
     justify-items: center; /* จัดให้กล่องอยู่กลางแนวนอน */
     align-items: center; /* จัดให้กล่องอยู่กลางแนวตั้ง */
     position: relative; /* ใช้สำหรับจัดข้อความ */
+    
 }
 
 #texthead {

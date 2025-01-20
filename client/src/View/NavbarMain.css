@@ -6,6 +6,7 @@
     color: white;
     padding: 20px 40px; /* เพิ่ม Padding ให้มีความสมดุล */
     height: 100px; /* ปรับความสูงของ navbar_main ให้ใหญ่ขึ้น */
+    font-family: 'Prompt', sans-serif;
 }
 
 .navbar-left img{
