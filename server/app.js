@@ -738,10 +738,10 @@ app.get('/admin/showtypeid', (req, res) => {
 //UPDATE Type_id
 
 app.put('/admin/updatetypeid', (req, res) => {
-  const { oldTypeId, newTypeId } = req.body; // รับข้อมูลจาก client
+  const { oldTypeId, newTypeId, typeSerial } = req.body;  // รับ typeSerial จาก client
 
   // สร้างคำสั่ง SQL เพื่ออัปเดตทั้งในตาราง serialnumber และ equipment
-  const sqlUpdateSerialnumber = 'UPDATE serialnumber SET type_id = ? WHERE type_id = ?';
+  const sqlUpdateSerialnumber = 'UPDATE serialnumber SET type_id = ?, type_serial = ? WHERE type_id = ?';
   const sqlUpdateEquipment = 'UPDATE equipment SET type_id = ? WHERE type_id = ?';
 
   db.beginTransaction((err) => {
@@ -750,7 +750,7 @@ app.put('/admin/updatetypeid', (req, res) => {
     }
 
     // อัปเดตตาราง serialnumber
-    db.query(sqlUpdateSerialnumber, [newTypeId, oldTypeId], (err, result) => {
+    db.query(sqlUpdateSerialnumber, [newTypeId, typeSerial, oldTypeId], (err, result) => {
       if (err) {
         return db.rollback(() => {
           res.status(500).json({ message: 'เกิดข้อผิดพลาดในการอัปเดต serialnumber' });
@@ -778,6 +778,7 @@ app.put('/admin/updatetypeid', (req, res) => {
     });
   });
 });
+
 
 //Delete Type_id
 
