@@ -10,6 +10,7 @@ Install
 -npm install bcryptjs
 -npm install jsonwebtoken
 -npm install jwt-decode
-
+-npm install socket.io
+-npm install socket.io-client
 
 
