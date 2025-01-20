@@ -60,7 +60,7 @@ const NavbarMain = ({ userData, onLogout }) => {
             </div>
           )}
           <button className="logout-button" onClick={handleLogout}>
-            Logout
+            ออกจากระบบ
           </button>
         </div>
       </div>
