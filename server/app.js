@@ -300,6 +300,22 @@ app.get('/api/borrow-status', (req, res) => {
   });
 });
 
+///ลบคำขอ
+
+app.delete("/api/borrow-status/:id",  (req, res) => {
+  const borrowId = req.params.id;
+
+  const sql = "DELETE FROM borrow WHERE borrow_id = ?";
+  db.query(sql, [borrowId], (err, result) => {
+    if (err) {
+      console.error("Error deleting borrow request:", err);
+      return res.status(500).send("Error deleting request");
+    }
+    res.status(200).send("Borrow request cancelled successfully");
+  });
+});
+
+
 
 
 
