@@ -183,10 +183,10 @@ const Status = () => {
             <!-- รายละเอียดการยืมอุปกรณ์ -->
             <div class="section">
               <h3>รายละเอียดการยืมอุปกรณ์</h3>
+              <p><strong>รหัสอุปกรณ์:</strong> ${borrow.equipment_id}</p>
+              <p><strong>ชื่ออุปกรณ์ที่ยืม:</strong> ${borrow.equipment_name}</p>
               <p><strong>วัตถุประสงค์:</strong> ${borrow.objective}</p>
               <p><strong>สถานที่ใช้งาน:</strong> ${borrow.place}</p>
-              <p><strong>ชื่ออุปกรณ์ที่ยืม:</strong> ${borrow.equipment_name}</p>
-              <p><strong>รหัสอุปกรณ์:</strong> ${borrow.equipment_id}</p>
             </div>
 
             <!-- กำหนดการยืมคืน -->
