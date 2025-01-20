@@ -1,7 +1,9 @@
 /* Layout ส่วนหลัก */
+  
+
 .status-container-1 {
     margin: 20px auto; /* ตั้ง margin auto เพื่อให้อยู่ตรงกลางแนวนอน */
-    font-family: 'Arial', sans-serif;
+    font-family: 'Prompt', sans-serif;
     display: flex;
     flex-direction: column;
     align-items: center; /* จัดให้อยู่ตรงกลางแนวนอน */
@@ -9,7 +11,7 @@
 }
   
 .status-title-1 {
-    font-size: 24px;
+    font-size: 28px;
     font-weight: bold;
     margin-left: -60%;
 }
@@ -22,7 +24,7 @@
 }
   
 .status-table-1 thead {
-    background-color: #f8f9fa;
+    background-color: #009498;
 }
   
 .status-table-1 th {
@@ -30,8 +32,8 @@
     text-align: center; /* จัดข้อความให้อยู่ตรงกลางแนวนอน */
     vertical-align: middle; /* จัดข้อความให้อยู่ตรงกลางแนวตั้ง */
     font-weight: bold;
-    font-size: 14px;
-    color: #333;
+    font-size: 16px;
+    color: #ffffff;
     border-bottom: 2px solid #ddd;
 }
   
@@ -40,20 +42,25 @@
     text-align: center; /* จัดข้อความให้อยู่ตรงกลางแนวนอน */
     vertical-align: middle; /* จัดข้อความให้อยู่ตรงกลางแนวตั้ง */
     border-bottom: 1px solid #ddd;
-    font-size: 14px;
-    color: #555;
+    font-size: 16px;
+    
 }
   
-/* สีสถานะ */
-.status-สำเร็จ {
-    color: #28a745; /* สีเขียว */
+.status-approved {
+    color: #009498; /* สีเขียว */
     font-weight: bold;
 }
-  
-.status-ล้มเหลว {
-    color: #dc3545; /* สีแดง */
+
+.status-pending {
+    color: #ffaf38; /* สีส้ม */
     font-weight: bold;
 }
+
+.status-rejected {
+    color: #FF7878; /* สีแดง */
+    font-weight: bold;
+}
+
   
 /* ปุ่มดาวน์โหลด */
 .receipt-button-1 {

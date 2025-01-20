@@ -80,20 +80,30 @@ const Status = () => {
                 <td>{new Date(borrow.borrow_date).toLocaleDateString("th-TH")}</td>
                 <td>{new Date(borrow.return_date).toLocaleDateString("th-TH")}</td>
                 <td>{new Date(borrow.created_at).toLocaleString("th-TH", {
-                    year: "numeric",   
-                    month: "long",     
-                    day: "numeric",    
-                    hour: "numeric",   
-                    minute: "numeric", 
+                  year: "numeric",
+                  month: "long",
+                  day: "numeric",
+                  hour: "numeric",
+                  minute: "numeric",
                 })}</td>
-                <td>{borrow.status}</td>
+                <td className={
+                  borrow.status === "อนุมัติ"
+                    ? "status-approved"
+                    : borrow.status === "รอดำเนินการ"
+                      ? "status-pending"
+                      : borrow.status === "ปฏิเสธ"
+                        ? "status-rejected"
+                        : ""
+                }>
+                  {borrow.status}
+                </td>
               </tr>
             ))}
           </tbody>
         </table>
       </div>
     </div>
-  );  
+  );
 };
 
 export default Status;
