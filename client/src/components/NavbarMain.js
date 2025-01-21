@@ -170,11 +170,16 @@ const NavbarMain = ({ userData, onLogout }) => {
                   const isLatest = index === 0;  // เช็คว่าเป็นข้อมูลล่าสุด
                   return (
                     <li key={notification.borrow_id} className={isLatest ? 'new-notification' : ''}>
-                      {isLatest && <strong>แจ้งเตือนใหม่!!</strong>}
+                      {isLatest && (
+                        <span className="notification-icon">
+                          <FontAwesomeIcon icon={faBell} style={{ marginRight: '8px', color: '#FF5722' }} />
+                          <strong>แจ้งเตือนใหม่!!</strong>
+                        </span>
+                      )}
                       <p>สถานะ: {notification.status}</p>
                       <p>ชื่ออุปกรณ์: {notification.equipment_name}</p>
                       <p>รหัสอุปกรณ์: {notification.equipment_id}</p>
-                      <p>อัพเดตเมื่อ: {new Date(notification.updated_at).toLocaleString('th-TH',{ hour12: false })}</p>
+                      <p>อัพเดตเมื่อ: {new Date(notification.updated_at).toLocaleString('th-TH', { hour12: false })}</p>
                     </li>
                   );
                 })

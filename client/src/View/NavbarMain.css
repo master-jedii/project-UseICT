@@ -306,6 +306,6 @@ background-color: #004d4d;
 
 .new-notification strong {
   color: #FF5722;  /* สีของข้อความ "ใหม่!" */
-  font-size: 1.2em;
+  font-size: 0.9em;
   font-weight: bold;
 }
