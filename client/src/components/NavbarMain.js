@@ -40,7 +40,6 @@ const NavbarMain = ({ userData, onLogout }) => {
       if (data.userId === userData.id) {
         setNotifications(prevNotifications => {
           const updatedNotifications = [...prevNotifications, { ...data.borrowDetails, message: data.message }];
-          // เรียงลำดับข้อมูลใหม่สุดไปเก่าสุด
           return updatedNotifications.sort((a, b) => new Date(b.updated_at) - new Date(a.updated_at));
         });
         setNewNotificationsCount(prevCount => prevCount + 1);
@@ -55,7 +54,6 @@ const NavbarMain = ({ userData, onLogout }) => {
       if (data.userId === userData.id) {
         setNotifications(prevNotifications => {
           const updatedNotifications = [...prevNotifications, { ...data.borrowDetails, message: data.message }];
-          // เรียงลำดับข้อมูลใหม่สุดไปเก่าสุด
           return updatedNotifications.sort((a, b) => new Date(b.updated_at) - new Date(a.updated_at));
         });
         setNewNotificationsCount(prevCount => prevCount + 1);
@@ -70,7 +68,6 @@ const NavbarMain = ({ userData, onLogout }) => {
       if (data.userId === userData.id) {
         setNotifications(prevNotifications => {
           const updatedNotifications = [...prevNotifications, { ...data.borrowDetails, message: data.message }];
-          // เรียงลำดับข้อมูลใหม่สุดไปเก่าสุด
           return updatedNotifications.sort((a, b) => new Date(b.updated_at) - new Date(a.updated_at));
         });
         setNewNotificationsCount(prevCount => prevCount + 1);
@@ -169,14 +166,18 @@ const NavbarMain = ({ userData, onLogout }) => {
             <h2>การแจ้งเตือน</h2>
             <ul>
               {notifications.length > 0 ? (
-                notifications.map((notification) => (
-                  <li key={notification.borrow_id}>
-                    <p>สถานะ: {notification.status}</p>
-                    <p>ชื่ออุปกรณ์: {notification.equipment_name}</p>
-                    <p>รหัสอุปกรณ์: {notification.equipment_id}</p>
-                    <p>อัพเดตเมื่อ: {new Date(notification.updated_at).toLocaleString('th-TH',{ hour12: false })}</p>
-                  </li>
-                ))
+                notifications.map((notification, index) => {
+                  const isLatest = index === 0;  // เช็คว่าเป็นข้อมูลล่าสุด
+                  return (
+                    <li key={notification.borrow_id} className={isLatest ? 'new-notification' : ''}>
+                      {isLatest && <strong>แจ้งเตือนใหม่!!</strong>}
+                      <p>สถานะ: {notification.status}</p>
+                      <p>ชื่ออุปกรณ์: {notification.equipment_name}</p>
+                      <p>รหัสอุปกรณ์: {notification.equipment_id}</p>
+                      <p>อัพเดตเมื่อ: {new Date(notification.updated_at).toLocaleString('th-TH',{ hour12: false })}</p>
+                    </li>
+                  );
+                })
               ) : (
                 <li>ไม่มีการแจ้งเตือนใหม่</li>
               )}

@@ -96,8 +96,8 @@ background-color: #004d4d;
 /* ปรับแต่งสำหรับ Notification Popup */
 .notification-popup {
   position: fixed;
-  top: 50%;
-  left: 50%;
+  top: 35%;
+  left: 87.4%;
   transform: translate(-50%, -50%);
   z-index: 1000;
   background-color: white;
@@ -122,6 +122,7 @@ background-color: #004d4d;
   text-align: center;
   border-bottom: 1px solid #ddd;
   padding-bottom: 10px;
+  margin-left: 5px;
 }
 
 .popup-content ul {
@@ -292,3 +293,19 @@ background-color: #004d4d;
   background-color: #ff9800; /* สีส้มสำหรับเตือนภัย */
 }
 
+
+/* เพิ่มคลาสใหม่สำหรับการแจ้งเตือนล่าสุด */
+.new-notification {
+  background-color: #FFEB3B;  /* สีพื้นหลังเหลืองอ่อนเพื่อทำให้โดดเด่น */
+  font-weight: bold;
+  padding: 10px;
+  border-radius: 5px;
+  margin-bottom: 10px;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+}
+
+.new-notification strong {
+  color: #FF5722;  /* สีของข้อความ "ใหม่!" */
+  font-size: 1.2em;
+  font-weight: bold;
+}
