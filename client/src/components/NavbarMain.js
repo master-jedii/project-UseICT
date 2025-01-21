@@ -23,7 +23,9 @@ const NavbarMain = ({ userData, onLogout }) => {
         const response = await axios.get('http://localhost:3333/api/notifications', { 
           params: { userId: userData.id }
         });
-        setNotifications(response.data);
+        // เรียงลำดับการแจ้งเตือนจากใหม่สุดไปเก่าสุด
+        const sortedNotifications = response.data.sort((a, b) => new Date(b.updated_at) - new Date(a.updated_at));
+        setNotifications(sortedNotifications);
         setNewNotificationsCount(0); 
       } catch (error) {
         console.error("Error fetching notifications:", error);
@@ -36,7 +38,11 @@ const NavbarMain = ({ userData, onLogout }) => {
   
     socket.on("borrowApproved", (data) => {
       if (data.userId === userData.id) {
-        setNotifications(prevNotifications => [...prevNotifications, { ...data.borrowDetails, message: data.message }]);
+        setNotifications(prevNotifications => {
+          const updatedNotifications = [...prevNotifications, { ...data.borrowDetails, message: data.message }];
+          // เรียงลำดับข้อมูลใหม่สุดไปเก่าสุด
+          return updatedNotifications.sort((a, b) => new Date(b.updated_at) - new Date(a.updated_at));
+        });
         setNewNotificationsCount(prevCount => prevCount + 1);
         setAlertMessage(data.message);
         setAlertClass('success');  // ประเภทการแจ้งเตือน (สำเร็จ)
@@ -47,7 +53,11 @@ const NavbarMain = ({ userData, onLogout }) => {
 
     socket.on("borrowRejected", (data) => {
       if (data.userId === userData.id) {
-        setNotifications(prevNotifications => [...prevNotifications, { ...data.borrowDetails, message: data.message }]);
+        setNotifications(prevNotifications => {
+          const updatedNotifications = [...prevNotifications, { ...data.borrowDetails, message: data.message }];
+          // เรียงลำดับข้อมูลใหม่สุดไปเก่าสุด
+          return updatedNotifications.sort((a, b) => new Date(b.updated_at) - new Date(a.updated_at));
+        });
         setNewNotificationsCount(prevCount => prevCount + 1);
         setAlertMessage(data.message);
         setAlertClass('error');  // ประเภทการแจ้งเตือน (ข้อผิดพลาด)
@@ -58,7 +68,11 @@ const NavbarMain = ({ userData, onLogout }) => {
 
     socket.on("borrowDeleted", (data) => {
       if (data.userId === userData.id) {
-        setNotifications(prevNotifications => [...prevNotifications, { ...data.borrowDetails, message: data.message }]);
+        setNotifications(prevNotifications => {
+          const updatedNotifications = [...prevNotifications, { ...data.borrowDetails, message: data.message }];
+          // เรียงลำดับข้อมูลใหม่สุดไปเก่าสุด
+          return updatedNotifications.sort((a, b) => new Date(b.updated_at) - new Date(a.updated_at));
+        });
         setNewNotificationsCount(prevCount => prevCount + 1);
         setAlertMessage(data.message);
         setAlertClass('warning');  // ประเภทการแจ้งเตือน (เตือนภัย)
@@ -160,6 +174,7 @@ const NavbarMain = ({ userData, onLogout }) => {
                     <p>สถานะ: {notification.status}</p>
                     <p>ชื่ออุปกรณ์: {notification.equipment_name}</p>
                     <p>รหัสอุปกรณ์: {notification.equipment_id}</p>
+                    <p>อัพเดตเมื่อ: {new Date(notification.updated_at).toLocaleString('th-TH',{ hour12: false })}</p>
                   </li>
                 ))
               ) : (
