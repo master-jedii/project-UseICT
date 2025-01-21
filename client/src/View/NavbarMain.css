@@ -105,7 +105,7 @@ background-color: #004d4d;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   width: 90%;
   max-width: 400px;
-  animation: fadeIn 0.3s ease-in-out;
+
 }
 
 /* ปรับแต่งเนื้อหาด้านใน Popup */
@@ -184,6 +184,17 @@ background-color: #004d4d;
   }
 }
 
+@keyframes fadeOut {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+}
+
 /* Scrollbar ที่ดูทันสมัย */
 .popup-content ul::-webkit-scrollbar {
   width: 6px;
@@ -218,7 +229,7 @@ background-color: #004d4d;
   position: fixed;
   bottom: 20px; /* เพิ่มระยะห่างจากด้านล่าง */
   right: 20px; /* เพิ่มระยะห่างจากด้านขวา */
-  background-color: #04ce55; /* สีแดง */
+  background-color: #04ce55; /* สีเขียว */
   color: white;
   padding: 15px;
   border-radius: 10px; /* เปลี่ยนเป็นมุมมน */
@@ -247,6 +258,18 @@ background-color: #004d4d;
   }
 }
 
+/* Animation สำหรับการซ่อน alert */
+@keyframes fadeOut {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+}
+
 /* ปุ่มปิดที่ด้านขวาของ alert */
 .alert-box .closebtn {
   font-size: 20px;
@@ -268,17 +291,10 @@ background-color: #004d4d;
   padding-right: 10px;
 }
 
-.alert-box .closebtn {
-  font-size: 20px;
-  font-weight: bold;
-  cursor: pointer;
-  transition: 0.3s;
-  color: white;
-  margin-left: 10px;
-}
-
-.alert-box .closebtn:hover {
-  color: #ddd;
+/* เมื่อมีการเพิ่มคลาส .fade-out ให้ทำการใช้ fadeOut */
+.alert-box.fade-out {
+  animation: fadeOut 0.5s forwards;
+  pointer-events: none; /* ปิดการคลิกระหว่างที่กำลัง fade */
 }
 
 .alert-box.success {
@@ -292,6 +308,7 @@ background-color: #004d4d;
 .alert-box.warning {
   background-color: #ff9800; /* สีส้มสำหรับเตือนภัย */
 }
+
 
 
 /* เพิ่มคลาสใหม่สำหรับการแจ้งเตือนล่าสุด */
