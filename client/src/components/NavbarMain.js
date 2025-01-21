@@ -5,41 +5,48 @@ import { useNavigate, Link } from 'react-router-dom';
 import '../View/NavbarMain.css';
 import { jwtDecode } from 'jwt-decode';
 import { io } from "socket.io-client";
-import axios from '../service/axios'; // เพิ่ม axios สำหรับเรียก API
+import axios from '../service/axios';
 
 const NavbarMain = ({ userData, onLogout }) => {
   const navigate = useNavigate();
-  const [notifications, setNotifications] = useState([]); // เก็บข้อมูลการแจ้งเตือน
-  const [isPopupOpen, setIsPopupOpen] = useState(false); // ใช้สำหรับเปิด/ปิด Modal
-  const [newNotificationsCount, setNewNotificationsCount] = useState(0); // เก็บจำนวนการแจ้งเตือนใหม่
-  
+  const [notifications, setNotifications] = useState([]);
+  const [isPopupOpen, setIsPopupOpen] = useState(false);
+  const [newNotificationsCount, setNewNotificationsCount] = useState(0);
+  const [alertMessage, setAlertMessage] = useState("");
+  const [isAlertVisible, setIsAlertVisible] = useState(false);
+
   const togglePopup = async () => {
     setIsPopupOpen(prevState => !prevState);
     if (!isPopupOpen) {
       try {
-        // เรียก API ดึงข้อมูลการแจ้งเตือน
         const response = await axios.get('http://localhost:3333/api/notifications', { 
-          params: { userId: userData.id } 
+          params: { userId: userData.id }
         });
-        console.log('Fetched Notifications:', response.data); // ตรวจสอบข้อมูลที่ได้
-        setNotifications(response.data); // อัปเดต State
-        setNewNotificationsCount(0); // รีเซ็ตจำนวนการแจ้งเตือนใหม่เมื่อเปิด Modal
+        setNotifications(response.data);
+        setNewNotificationsCount(0); 
       } catch (error) {
         console.error("Error fetching notifications:", error);
       }
     }
   };
-  
 
   useEffect(() => {
-    const socket = io("http://localhost:5000", {
-      query: { userId: userData?.id }
-    });
-    socket.on("borrowApproved", (notification) => {
-      // ตรวจสอบว่า notification เป็นของผู้ใช้คนนี้หรือไม่
-      if (notification.userId === userData.id) {
+    const socket = io("http://localhost:5000", { query: { userId: userData?.id } });
+
+    socket.on("borrowApproved", (data) => {
+      console.log("Received data from socket:", data);
+      if (data.userId === userData.id) {
+        const notification = {
+          ...data.borrowDetails,
+          message: data.message,
+        };
+
         setNotifications(prevNotifications => [...prevNotifications, notification]);
-        setNewNotificationsCount(prevCount => prevCount + 1); // เพิ่มจำนวนการแจ้งเตือนใหม่
+        setNewNotificationsCount(prevCount => prevCount + 1);
+        setAlertMessage(data.message);
+        setIsAlertVisible(true);
+
+        setTimeout(() => setIsAlertVisible(false), 5000);
       }
     });
 
@@ -48,10 +55,7 @@ const NavbarMain = ({ userData, onLogout }) => {
     };
   }, [userData]);
 
-  const handleLogoClick = () => {
-    navigate('/');
-  };
-
+  const handleLogoClick = () => navigate('/');
   const handleLogout = () => {
     onLogout();
     navigate('/');
@@ -65,8 +69,6 @@ const NavbarMain = ({ userData, onLogout }) => {
       const currentTime = Math.floor(Date.now() / 1000);
       if (decodedToken.exp && decodedToken.exp > currentTime) {
         isAdmin = decodedToken.role === "admin";
-      } else {
-        console.warn("Token has expired");
       }
     }
   } catch (error) {
@@ -108,12 +110,10 @@ const NavbarMain = ({ userData, onLogout }) => {
             <FontAwesomeIcon 
               icon={faBell} 
               style={{ cursor: 'pointer', fontSize: '24px' }} 
-              onClick={togglePopup} // เมื่อคลิกที่ไอคอนการแจ้งเตือน
+              onClick={togglePopup} 
             />
             {newNotificationsCount > 0 && (
-              <div className="notification-count">
-                {newNotificationsCount}
-              </div>
+              <div className="notification-count">{newNotificationsCount}</div>
             )}
           </div>
 
@@ -123,7 +123,15 @@ const NavbarMain = ({ userData, onLogout }) => {
         </div>
       </div>
 
-      {/* แสดง modal เมื่อ isPopupOpen เป็น true */}
+      {/* แสดง alert เมื่อมีข้อความแจ้งเตือน */}
+      {isAlertVisible && (
+        <div className="alert-box">
+          <p>{alertMessage}</p>
+          <span className="closebtn" onClick={() => setIsAlertVisible(false)}>&times;</span>
+        </div>
+      )}
+
+      {/* แสดง Modal ถ้าต้องการ */}
       {isPopupOpen && (
         <div className="notification-popup">
           <div className="popup-content">
@@ -131,11 +139,10 @@ const NavbarMain = ({ userData, onLogout }) => {
             <ul>
               {notifications.length > 0 ? (
                 notifications.map((notification) => (
-                  <li key={notification.id}>
+                  <li key={notification.borrow_id}>
                     <p>สถานะ: {notification.status}</p>
                     <p>ชื่ออุปกรณ์: {notification.equipment_name}</p>
                     <p>รหัสอุปกรณ์: {notification.equipment_id}</p>
-                    <p>{notification.message}</p> {/* ข้อความจาก server */}
                   </li>
                 ))
               ) : (
