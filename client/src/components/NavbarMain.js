@@ -134,7 +134,7 @@ const NavbarMain = ({ userData, onLogout }) => {
             </div>
           )}
 
-          <div className="notification-icon" style={{ position: 'relative' }}>
+          <div className="notification-icon" style={{ position: 'relative',left: '5px' ,top:'5px'}}>
             <FontAwesomeIcon 
               icon={faBell} 
               style={{ cursor: 'pointer', fontSize: '24px' }} 
