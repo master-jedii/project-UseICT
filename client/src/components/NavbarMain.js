@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUser, faBell } from '@fortawesome/free-solid-svg-icons';
 import { useNavigate, Link } from 'react-router-dom';
-import '../View/NavbarMain.css';
+import '../View/NavbarMain.css'; // ใช้ไฟล์ CSS แยก
 import { jwtDecode } from 'jwt-decode';
 import { io } from "socket.io-client";
 import axios from '../service/axios';
@@ -14,6 +14,7 @@ const NavbarMain = ({ userData, onLogout }) => {
   const [newNotificationsCount, setNewNotificationsCount] = useState(0);
   const [alertMessage, setAlertMessage] = useState("");
   const [isAlertVisible, setIsAlertVisible] = useState(false);
+  const [alertClass, setAlertClass] = useState(""); // สำหรับจัดการคลาส alert
 
   const togglePopup = async () => {
     setIsPopupOpen(prevState => !prevState);
@@ -32,24 +33,40 @@ const NavbarMain = ({ userData, onLogout }) => {
 
   useEffect(() => {
     const socket = io("http://localhost:5000", { query: { userId: userData?.id } });
-
+  
     socket.on("borrowApproved", (data) => {
-      console.log("Received data from socket:", data);
       if (data.userId === userData.id) {
-        const notification = {
-          ...data.borrowDetails,
-          message: data.message,
-        };
-
-        setNotifications(prevNotifications => [...prevNotifications, notification]);
+        setNotifications(prevNotifications => [...prevNotifications, { ...data.borrowDetails, message: data.message }]);
         setNewNotificationsCount(prevCount => prevCount + 1);
         setAlertMessage(data.message);
+        setAlertClass('success');  // ประเภทการแจ้งเตือน (สำเร็จ)
         setIsAlertVisible(true);
-
         setTimeout(() => setIsAlertVisible(false), 5000);
       }
     });
 
+    socket.on("borrowRejected", (data) => {
+      if (data.userId === userData.id) {
+        setNotifications(prevNotifications => [...prevNotifications, { ...data.borrowDetails, message: data.message }]);
+        setNewNotificationsCount(prevCount => prevCount + 1);
+        setAlertMessage(data.message);
+        setAlertClass('error');  // ประเภทการแจ้งเตือน (ข้อผิดพลาด)
+        setIsAlertVisible(true);
+        setTimeout(() => setIsAlertVisible(false), 5000);
+      }
+    });
+
+    socket.on("borrowDeleted", (data) => {
+      if (data.userId === userData.id) {
+        setNotifications(prevNotifications => [...prevNotifications, { ...data.borrowDetails, message: data.message }]);
+        setNewNotificationsCount(prevCount => prevCount + 1);
+        setAlertMessage(data.message);
+        setAlertClass('warning');  // ประเภทการแจ้งเตือน (เตือนภัย)
+        setIsAlertVisible(true);
+        setTimeout(() => setIsAlertVisible(false), 5000);
+      }
+    });
+  
     return () => {
       socket.disconnect();
     };
@@ -125,7 +142,7 @@ const NavbarMain = ({ userData, onLogout }) => {
 
       {/* แสดง alert เมื่อมีข้อความแจ้งเตือน */}
       {isAlertVisible && (
-        <div className="alert-box">
+        <div className={`alert-box ${alertClass}`}>
           <p>{alertMessage}</p>
           <span className="closebtn" onClick={() => setIsAlertVisible(false)}>&times;</span>
         </div>

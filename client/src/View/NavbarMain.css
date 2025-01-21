@@ -279,3 +279,15 @@ background-color: #004d4d;
 .alert-box .closebtn:hover {
   color: #ddd;
 }
+
+.alert-box.success {
+  background-color: #4CAF50; /* สีเขียวสำหรับการแจ้งเตือนสำเร็จ */
+}
+
+.alert-box.error {
+  background-color: #f44336; /* สีแดงสำหรับข้อผิดพลาด */
+}
+
+.alert-box.warning {
+  background-color: #ff9800; /* สีส้มสำหรับเตือนภัย */
+}
