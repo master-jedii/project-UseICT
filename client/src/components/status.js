@@ -4,6 +4,7 @@ import Axios from "axios";
 import { useLocation, useNavigate } from "react-router-dom";
 import '../View/status.css';
 import logo from '../assets/LOGO.png';
+import Swal from "sweetalert2";
 
 const Status = () => {
   const [user, setUser] = useState(null);
@@ -46,17 +47,30 @@ const Status = () => {
   const cancelRequest = (borrowId) => {
     const token = localStorage.getItem("token");
     if (token) {
-      Axios.delete(`http://localhost:3333/api/borrow-status/${borrowId}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      })
-        .then((response) => {
-          alert("คำร้องขอถูกยกเลิกเรียบร้อยแล้ว");
-          setBorrowStatus((prev) => prev.filter((borrow) => borrow.borrow_id !== borrowId));
-        })
-        .catch((err) => {
-          console.error("Error cancelling request:", err);
-          alert("ไม่สามารถยกเลิกคำร้องขอได้ กรุณาลองใหม่อีกครั้ง");
-        });
+      Swal.fire({
+        title: "คุณแน่ใจหรือไม่?",
+        text: "คุณต้องการยกเลิกคำร้องขอนี้ใช่หรือไม่?",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "ใช่, ยกเลิกเลย!",
+        cancelButtonText: "ไม่, ยกเลิก",
+      }).then((result) => {
+        if (result.isConfirmed) {
+          Axios.delete(`http://localhost:3333/api/borrow-status/${borrowId}`, {
+            headers: { Authorization: `Bearer ${token}` },
+          })
+            .then((response) => {
+              Swal.fire("ยกเลิกสำเร็จ!", "คำร้องขอถูกยกเลิกเรียบร้อยแล้ว", "success");
+              setBorrowStatus((prev) => prev.filter((borrow) => borrow.borrow_id !== borrowId));
+            })
+            .catch((err) => {
+              console.error("Error cancelling request:", err);
+              Swal.fire("เกิดข้อผิดพลาด", "ไม่สามารถยกเลิกคำร้องขอได้ กรุณาลองใหม่อีกครั้ง", "error");
+            });
+        }
+      });
     }
   };
 

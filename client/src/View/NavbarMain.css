@@ -1,165 +1,328 @@
 .navbar_main {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background-color: #009498; /* สีพื้นหลัง */
-    color: white;
-    padding: 20px 40px; /* เพิ่ม Padding ให้มีความสมดุล */
-    height: 100px; /* ปรับความสูงของ navbar_main ให้ใหญ่ขึ้น */
-    font-family: 'Prompt', sans-serif;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #009498; /* สีพื้นหลัง */
+  color: white;
+  padding: 20px 40px; /* เพิ่ม Padding ให้มีความสมดุล */
+  height: 100px; /* ปรับความสูงของ navbar_main ให้ใหญ่ขึ้น */
+  font-family: 'Prompt', sans-serif;
 }
 
 .navbar-left img{
-  height: 80px; /* ปรับขนาดโลโก้ให้ใหญ่ขึ้น */
-  width: 80px;
-  margin-right: 20px; /* เพิ่มระยะห่างระหว่างโลโก้กับข้อความ */
-  background-color: white;
-  border-radius: 100px;
+height: 80px; /* ปรับขนาดโลโก้ให้ใหญ่ขึ้น */
+width: 80px;
+margin-right: 20px; /* เพิ่มระยะห่างระหว่างโลโก้กับข้อความ */
+background-color: white;
+border-radius: 100px;
 }
 
 
 
 .user-info {
-  display: flex;
-  align-items: center;
-  gap: 20px; /* เพิ่มระยะห่างระหว่างไอคอนผู้ใช้และชื่อ */
+display: flex;
+align-items: center;
+gap: 20px; /* เพิ่มระยะห่างระหว่างไอคอนผู้ใช้และชื่อ */
 }
 
 .user-info span {
-  font-size: 16px; /* เพิ่มขนาดตัวอักษรชื่อผู้ใช้ */
-  font-weight: bold;
-  margin-top: 10px;
+font-size: 16px; /* เพิ่มขนาดตัวอักษรชื่อผู้ใช้ */
+font-weight: bold;
+margin-top: 10px;
 }
 .icon-user{
-  margin-top: 10px;
+margin-top: 10px;
 }
 .logout-button {
-  background-color: white;
-  color: #008080;
-  border: none;
-  border-radius: 5px;
-  padding: 10px 20px; /* เพิ่มขนาดปุ่ม */
-  font-size: 16px; /* ขนาดตัวอักษรใหญ่ขึ้น */
-  font-weight: bold;
-  cursor: pointer;
-  transition: background-color 0.3s, color 0.3s;
-  margin-top: 10px;
+background-color: white;
+color: #008080;
+border: none;
+border-radius: 5px;
+padding: 10px 20px; /* เพิ่มขนาดปุ่ม */
+font-size: 16px; /* ขนาดตัวอักษรใหญ่ขึ้น */
+font-weight: bold;
+cursor: pointer;
+transition: background-color 0.3s, color 0.3s;
+margin-top: 10px;
 }
 
 .logout-button:hover {
-  background-color: #004d4d; /* สีพื้นหลังเมื่อ Hover */
-  color: white;
+background-color: #004d4d; /* สีพื้นหลังเมื่อ Hover */
+color: white;
 }
 
 .navbar-links {
-  display: flex;
-  justify-content: space-around;
-  align-items: center;
-  gap: 50px;
-  margin-top: 10px;
-  margin-left: 250px ;
-  
+display: flex;
+justify-content: space-around;
+align-items: center;
+gap: 50px;
+margin-top: 10px;
+margin-left: 250px ;
+
 
 }
 
 .navbar-links p {
-  margin: 0;
-  padding: 0 15px;
-  font-size: 18px;
-  font-weight: 100;
-  
-  
+margin: 0;
+padding: 0 15px;
+font-size: 18px;
+font-weight: 100;
+
+
 }
 .navbar-links a {
-  text-decoration: none; /* ปิดการแสดงเส้นใต้ */
-  
+text-decoration: none; /* ปิดการแสดงเส้นใต้ */
+
 }
 .navbar-links a :hover {
-  text-decoration: underline; /* ปิดการแสดงเส้นใต้ */
-  color: bisque;
-  text-underline-offset: 10px;
+text-decoration: underline; /* ปิดการแสดงเส้นใต้ */
+color: bisque;
+text-underline-offset: 10px;
 }
 
 button.btn-primary-1 {
-  margin-top: 10px;
-  background-color: #ff7878;
-  color: #ffffff;
-  height: 44px;
-  font-weight: bold;
+margin-top: 10px;
+background-color: #ff7878;
+color: #ffffff;
+height: 44px;
+font-weight: bold;
 }
 
 button.btn-primary-1:hover {
-  background-color: #004d4d;
-  
+background-color: #004d4d;
+
 }
 
-
-/* styles สำหรับ Modal ของการแจ้งเตือน */
+/* ปรับแต่งสำหรับ Notification Popup */
 .notification-popup {
   position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.5); /* สร้างพื้นหลังสีเทาทึบให้ Modal */
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 9999; /* ให้ Modal อยู่ด้านหน้าของทุกอย่าง */
+  top: 35%;
+  left: 87.4%;
+  transform: translate(-50%, -50%);
+  z-index: 1000;
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  width: 90%;
+  max-width: 400px;
+
 }
 
+/* ปรับแต่งเนื้อหาด้านใน Popup */
 .popup-content {
-  background-color: #fff;
   padding: 20px;
-  border-radius: 8px;
-  width: 80%;
-  max-width: 400px;
-  height: 500px;
-  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
-  text-align: center;
+  font-family: 'Arial', sans-serif;
+  color: #333;
 }
 
 .popup-content h2 {
-  font-size: 24px;
-  margin-bottom: 20px;
-  color: #333;
+  font-size: 20px;
+  margin-bottom: 15px;
+  color: #444;
+  text-align: center;
+  border-bottom: 1px solid #ddd;
+  padding-bottom: 10px;
+  margin-left: 5px;
 }
 
 .popup-content ul {
-  list-style-type: none;
+  list-style: none;
   padding: 0;
   margin: 0;
-  max-height: 300px;
-  overflow-y: auto;
+  max-height: 300px; /* จำกัดความสูง */
+  overflow-y: auto; /* เพิ่ม scroll หากรายการยาว */
 }
 
 .popup-content ul li {
-  padding: 10px;
+  padding: 10px 15px;
   margin-bottom: 10px;
+  border-radius: 6px;
   background-color: #f9f9f9;
-  border-radius: 4px;
-  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
-  font-size: 16px;
-  color: #333;
-  transition: background-color 0.3s ease;
+  border: 1px solid #eee;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
-.popup-content ul li:hover {
-  background-color: #f0f0f0; /* เมื่อ hover จะเปลี่ยนสีพื้นหลัง */
+.popup-content ul li p {
+  margin: 5px 0;
+  font-size: 14px;
+  line-height: 1.4;
+  color: #555;
 }
 
+.popup-content ul li:last-child {
+  margin-bottom: 0;
+}
+
+/* ปุ่มปิด Popup */
 .close-popup-button {
-  background-color: #ff4d4d;
-  color: white;
-  border: none;
+  display: block;
+  margin: 20px auto 0;
   padding: 10px 20px;
-  font-size: 16px;
-  border-radius: 5px;
+  font-size: 14px;
+  font-weight: bold;
+  color: white;
+  background-color: #007bff;
+  border: none;
+  border-radius: 4px;
   cursor: pointer;
-  margin-top: 300px;
-  transition: background-color 0.3s ease;
+  transition: background-color 0.3s;
 }
 
 .close-popup-button:hover {
-  background-color: #e60000; /* เมื่อ hover จะเปลี่ยนสีพื้นหลัง */
+  background-color: #0056b3;
+}
+
+/* เอฟเฟกต์การแสดง Popup */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -45%);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%);
+  }
+}
+
+@keyframes fadeOut {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+}
+
+/* Scrollbar ที่ดูทันสมัย */
+.popup-content ul::-webkit-scrollbar {
+  width: 6px;
+}
+
+.popup-content ul::-webkit-scrollbar-thumb {
+  background: #ccc;
+  border-radius: 3px;
+}
+
+.popup-content ul::-webkit-scrollbar-thumb:hover {
+  background: #999;
+}
+
+.notification-count {
+  position: absolute;
+  top: -15px;
+  right: -10px;
+  background-color: red; /* สีแดงสำหรับแจ้งเตือนใหม่ */
+  color: white; /* สีข้อความ */
+  border-radius: 50%; /* ให้เป็นวงกลม */
+  padding: 5px 10px; /* ขนาดภายใน */
+  font-size: 10px; /* ขนาดข้อความ */
+  font-weight: bold; /* ตัวหนา */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Alert box ที่มุมล่างขวาของหน้าจอ */
+.alert-box {
+  position: fixed;
+  bottom: 20px; /* เพิ่มระยะห่างจากด้านล่าง */
+  right: 20px; /* เพิ่มระยะห่างจากด้านขวา */
+  background-color: #04ce55; /* สีเขียว */
+  color: white;
+  padding: 15px;
+  border-radius: 10px; /* เปลี่ยนเป็นมุมมน */
+  font-size: 16px; /* ขยายขนาดตัวอักษร */
+  font-family: 'Arial', sans-serif; /* ใช้ฟอนต์ที่สวยงาม */
+  z-index: 1000;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2); /* เพิ่มเงา */
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 400px;
+  transition: all 0.3s ease; /* เพิ่ม transition เพื่อให้ดูนุ่มนวล */
+  opacity: 0;
+  animation: fadeIn 0.5s forwards; /* เพิ่ม animation ในการแสดง alert */
+}
+
+/* Animation สำหรับการแสดง alert */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Animation สำหรับการซ่อน alert */
+@keyframes fadeOut {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+}
+
+/* ปุ่มปิดที่ด้านขวาของ alert */
+.alert-box .closebtn {
+  font-size: 20px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.3s ease; /* เพิ่ม transition ให้ปุ่มปิด */
+  color: white;
+}
+
+.alert-box .closebtn:hover {
+  color: #ddd; /* สีปุ่มปิดเมื่อ hover */
+}
+
+/* เพิ่ม padding ด้านขวาของข้อความ */
+.alert-box p {
+  margin: 0;
+  font-size: 16px;
+  flex-grow: 1;
+  padding-right: 10px;
+}
+
+/* เมื่อมีการเพิ่มคลาส .fade-out ให้ทำการใช้ fadeOut */
+.alert-box.fade-out {
+  animation: fadeOut 0.5s forwards;
+  pointer-events: none; /* ปิดการคลิกระหว่างที่กำลัง fade */
+}
+
+.alert-box.success {
+  background-color: #4CAF50; /* สีเขียวสำหรับการแจ้งเตือนสำเร็จ */
+}
+
+.alert-box.error {
+  background-color: #f44336; /* สีแดงสำหรับข้อผิดพลาด */
+}
+
+.alert-box.warning {
+  background-color: #ff9800; /* สีส้มสำหรับเตือนภัย */
+}
+
+
+
+/* เพิ่มคลาสใหม่สำหรับการแจ้งเตือนล่าสุด */
+.new-notification {
+  background-color: #FFEB3B;  /* สีพื้นหลังเหลืองอ่อนเพื่อทำให้โดดเด่น */
+  font-weight: bold;
+  padding: 10px;
+  border-radius: 5px;
+  margin-bottom: 10px;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+}
+
+.new-notification strong {
+  color: #FF5722;  /* สีของข้อความ "ใหม่!" */
+  font-size: 0.9em;
+  font-weight: bold;
 }

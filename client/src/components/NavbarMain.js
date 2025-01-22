@@ -2,56 +2,88 @@ import React, { useEffect, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUser, faBell } from '@fortawesome/free-solid-svg-icons';
 import { useNavigate, Link } from 'react-router-dom';
-import '../View/NavbarMain.css';
+import '../View/NavbarMain.css'; // ใช้ไฟล์ CSS แยก
 import { jwtDecode } from 'jwt-decode';
 import { io } from "socket.io-client";
-import axios from '../service/axios'; // เพิ่ม axios สำหรับเรียก API
+import axios from '../service/axios';
 
 const NavbarMain = ({ userData, onLogout }) => {
   const navigate = useNavigate();
-  const [notifications, setNotifications] = useState([]); // เก็บข้อมูลการแจ้งเตือน
-  const [isPopupOpen, setIsPopupOpen] = useState(false); // ใช้สำหรับเปิด/ปิด Modal
-  const [newNotificationsCount, setNewNotificationsCount] = useState(0); // เก็บจำนวนการแจ้งเตือนใหม่
-  
+  const [notifications, setNotifications] = useState([]);
+  const [isPopupOpen, setIsPopupOpen] = useState(false);
+  const [newNotificationsCount, setNewNotificationsCount] = useState(0);
+  const [alertMessage, setAlertMessage] = useState("");
+  const [isAlertVisible, setIsAlertVisible] = useState(false);
+  const [alertClass, setAlertClass] = useState(""); // สำหรับจัดการคลาส alert
+
   const togglePopup = async () => {
     setIsPopupOpen(prevState => !prevState);
     if (!isPopupOpen) {
       try {
-        // เรียก API ดึงข้อมูลการแจ้งเตือน
         const response = await axios.get('http://localhost:3333/api/notifications', { 
-          params: { userId: userData.id } 
+          params: { userId: userData.id }
         });
-        console.log('Fetched Notifications:', response.data); // ตรวจสอบข้อมูลที่ได้
-        setNotifications(response.data); // อัปเดต State
-        setNewNotificationsCount(0); // รีเซ็ตจำนวนการแจ้งเตือนใหม่เมื่อเปิด Modal
+        // เรียงลำดับการแจ้งเตือนจากใหม่สุดไปเก่าสุด
+        const sortedNotifications = response.data.sort((a, b) => new Date(b.updated_at) - new Date(a.updated_at));
+        setNotifications(sortedNotifications);
+        setNewNotificationsCount(0); 
       } catch (error) {
         console.error("Error fetching notifications:", error);
       }
     }
   };
-  
 
   useEffect(() => {
-    const socket = io("http://localhost:5000", {
-      query: { userId: userData?.id }
-    });
-    socket.on("borrowApproved", (notification) => {
-      // ตรวจสอบว่า notification เป็นของผู้ใช้คนนี้หรือไม่
-      if (notification.userId === userData.id) {
-        setNotifications(prevNotifications => [...prevNotifications, notification]);
-        setNewNotificationsCount(prevCount => prevCount + 1); // เพิ่มจำนวนการแจ้งเตือนใหม่
+    const socket = io("http://localhost:5000", { query: { userId: userData?.id } });
+  
+    socket.on("borrowApproved", (data) => {
+      if (data.userId === userData.id) {
+        setNotifications(prevNotifications => {
+          const updatedNotifications = [...prevNotifications, { ...data.borrowDetails, message: data.message }];
+          return updatedNotifications.sort((a, b) => new Date(b.updated_at) - new Date(a.updated_at));
+        });
+        setNewNotificationsCount(prevCount => prevCount + 1);
+        setAlertMessage(data.message);
+        setAlertClass('success');  // ประเภทการแจ้งเตือน (สำเร็จ)
+        setIsAlertVisible(true);
+        setTimeout(() => setIsAlertVisible(false), 5000);
       }
     });
 
+    socket.on("borrowRejected", (data) => {
+      if (data.userId === userData.id) {
+        setNotifications(prevNotifications => {
+          const updatedNotifications = [...prevNotifications, { ...data.borrowDetails, message: data.message }];
+          return updatedNotifications.sort((a, b) => new Date(b.updated_at) - new Date(a.updated_at));
+        });
+        setNewNotificationsCount(prevCount => prevCount + 1);
+        setAlertMessage(data.message);
+        setAlertClass('error');  // ประเภทการแจ้งเตือน (ข้อผิดพลาด)
+        setIsAlertVisible(true);
+        setTimeout(() => setIsAlertVisible(false), 5000);
+      }
+    });
+
+    socket.on("borrowDeleted", (data) => {
+      if (data.userId === userData.id) {
+        setNotifications(prevNotifications => {
+          const updatedNotifications = [...prevNotifications, { ...data.borrowDetails, message: data.message }];
+          return updatedNotifications.sort((a, b) => new Date(b.updated_at) - new Date(a.updated_at));
+        });
+        setNewNotificationsCount(prevCount => prevCount + 1);
+        setAlertMessage(data.message);
+        setAlertClass('warning');  // ประเภทการแจ้งเตือน (เตือนภัย)
+        setIsAlertVisible(true);
+        setTimeout(() => setIsAlertVisible(false), 5000);
+      }
+    });
+  
     return () => {
       socket.disconnect();
     };
   }, [userData]);
 
-  const handleLogoClick = () => {
-    navigate('/');
-  };
-
+  const handleLogoClick = () => navigate('/');
   const handleLogout = () => {
     onLogout();
     navigate('/');
@@ -65,8 +97,6 @@ const NavbarMain = ({ userData, onLogout }) => {
       const currentTime = Math.floor(Date.now() / 1000);
       if (decodedToken.exp && decodedToken.exp > currentTime) {
         isAdmin = decodedToken.role === "admin";
-      } else {
-        console.warn("Token has expired");
       }
     }
   } catch (error) {
@@ -104,16 +134,14 @@ const NavbarMain = ({ userData, onLogout }) => {
             </div>
           )}
 
-          <div className="notification-icon" style={{ position: 'relative' }}>
+          <div className="notification-icon" style={{ position: 'relative',left: '5px' ,top:'5px'}}>
             <FontAwesomeIcon 
               icon={faBell} 
               style={{ cursor: 'pointer', fontSize: '24px' }} 
-              onClick={togglePopup} // เมื่อคลิกที่ไอคอนการแจ้งเตือน
+              onClick={togglePopup} 
             />
             {newNotificationsCount > 0 && (
-              <div className="notification-count">
-                {newNotificationsCount}
-              </div>
+              <div className="notification-count">{newNotificationsCount}</div>
             )}
           </div>
 
@@ -123,21 +151,38 @@ const NavbarMain = ({ userData, onLogout }) => {
         </div>
       </div>
 
-      {/* แสดง modal เมื่อ isPopupOpen เป็น true */}
+      {/* แสดง alert เมื่อมีข้อความแจ้งเตือน */}
+      {isAlertVisible && (
+        <div className={`alert-box ${alertClass}`}>
+          <p>{alertMessage}</p>
+          <span className="closebtn" onClick={() => setIsAlertVisible(false)}>&times;</span>
+        </div>
+      )}
+
+      {/* แสดง Modal ถ้าต้องการ */}
       {isPopupOpen && (
         <div className="notification-popup">
           <div className="popup-content">
             <h2>การแจ้งเตือน</h2>
             <ul>
               {notifications.length > 0 ? (
-                notifications.map((notification) => (
-                  <li key={notification.id}>
-                    <p>สถานะ: {notification.status}</p>
-                    <p>ชื่ออุปกรณ์: {notification.equipment_name}</p>
-                    <p>รหัสอุปกรณ์: {notification.equipment_id}</p>
-                    <p>{notification.message}</p> {/* ข้อความจาก server */}
-                  </li>
-                ))
+                notifications.map((notification, index) => {
+                  const isLatest = index === 0;  // เช็คว่าเป็นข้อมูลล่าสุด
+                  return (
+                    <li key={notification.borrow_id} className={isLatest ? 'new-notification' : ''}>
+                      {isLatest && (
+                        <span className="notification-icon">
+                          <FontAwesomeIcon icon={faBell} style={{ marginRight: '8px', color: '#FF5722' }} />
+                          <strong>แจ้งเตือนใหม่!!</strong>
+                        </span>
+                      )}
+                      <p>สถานะ: {notification.status}</p>
+                      <p>ชื่ออุปกรณ์: {notification.equipment_name}</p>
+                      <p>รหัสอุปกรณ์: {notification.equipment_id}</p>
+                      <p>อัพเดตเมื่อ: {new Date(notification.updated_at).toLocaleString('th-TH', { hour12: false })}</p>
+                    </li>
+                  );
+                })
               ) : (
                 <li>ไม่มีการแจ้งเตือนใหม่</li>
               )}

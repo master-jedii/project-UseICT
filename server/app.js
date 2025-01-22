@@ -432,11 +432,6 @@ app.delete("/api/borrow-status/:id",  (req, res) => {
 
 
 
-
-
-
-
-
 app.get('/api/notifications', (req, res) => {
   const { userId, borrowId } = req.query;  // เพิ่มการดึง borrowId หากต้องการเจาะจง borrow_id
 
@@ -899,10 +894,6 @@ app.put('/api/borrow/approve/:borrowId', (req, res) => {
 
 
 
-
-
-
-
 // ฟังก์ชันสำหรับการปฏิเสธคำขอ (Reject)
 app.put('/api/borrow/reject/:borrowId', (req, res) => {
   const borrowId = req.params.borrowId;
@@ -920,9 +911,41 @@ app.put('/api/borrow/reject/:borrowId', (req, res) => {
       return res.status(500).json({ message: 'เกิดข้อผิดพลาดในการปฏิเสธคำขอ' });
     }
 
-    res.status(200).json({ message: 'คำขอถูกปฏิเสธและสถานะอุปกรณ์ถูกตั้งเป็น "พร้อมใช้งาน"' });
+    // คิวรีข้อมูลการยืมหลังจากการอัปเดตสถานะ
+    const fetchBorrowDetails = `
+      SELECT b.borrow_id, b.status, b.borrow_date, b.return_date, b.UserID, e.name as equipment_name, e.equipment_id
+      FROM borrow b
+      JOIN equipment e ON b.equipment_id = e.equipment_id
+      WHERE b.borrow_id = ?;
+    `;
+
+    db.query(fetchBorrowDetails, [borrowId], (err, borrowDetails) => {
+      if (err) {
+        console.error("Error fetching borrow details:", err.message);
+        return res.status(500).json({ message: 'Error fetching borrow details', error: err.message });
+      }
+
+      if (borrowDetails.length === 0) {
+        return res.status(404).json({ message: 'Borrow details not found' });
+      }
+
+      const borrowInfo = borrowDetails[0]; // ข้อมูลการยืมที่คิวรีมา
+
+      const message = `การยืมอุปกรณ์ "${borrowInfo.equipment_name}" ถูกปฏิเสธ.`; // ข้อความแจ้งเตือน
+
+      // ส่งข้อมูลทั้งหมดไปยัง client ผ่าน WebSocket
+      io.emit('borrowRejected', {
+        borrowDetails: borrowInfo,
+        userId: borrowInfo.UserID,
+        message: message
+      });
+
+      // ส่ง response กลับไปที่ client
+      return res.status(200).json({ message: 'คำขอถูกปฏิเสธและสถานะอุปกรณ์ถูกตั้งเป็น "พร้อมใช้งาน"', borrowDetails: borrowInfo });
+    });
   });
 });
+
 
 // ฟังก์ชันสำหรับการลบคำขอ (Delete)
 app.put('/api/borrow/delete/:borrowId', (req, res) => {
@@ -941,9 +964,42 @@ app.put('/api/borrow/delete/:borrowId', (req, res) => {
       return res.status(500).json({ message: 'เกิดข้อผิดพลาดในการลบคำขอ' });
     }
 
-    res.status(200).json({ message: 'คำขอถูกลบและสถานะอุปกรณ์ถูกตั้งเป็น "พร้อมใช้งาน"' });
+    // คิวรีข้อมูลการยืมหลังจากการอัปเดตสถานะ
+    const fetchBorrowDetails = `
+      SELECT b.borrow_id, b.status, b.borrow_date, b.return_date, b.UserID, e.name as equipment_name, e.equipment_id
+      FROM borrow b
+      JOIN equipment e ON b.equipment_id = e.equipment_id
+      WHERE b.borrow_id = ?;
+    `;
+
+    db.query(fetchBorrowDetails, [borrowId], (err, borrowDetails) => {
+      if (err) {
+        console.error("Error fetching borrow details:", err.message);
+        return res.status(500).json({ message: 'Error fetching borrow details', error: err.message });
+      }
+
+      if (borrowDetails.length === 0) {
+        return res.status(404).json({ message: 'Borrow details not found' });
+      }
+
+      const borrowInfo = borrowDetails[0]; // ข้อมูลการยืมที่คิวรีมา
+
+      const message = `การยืมอุปกรณ์ "${borrowInfo.equipment_name}" ข้อเสนอถูกลบ.`; // ข้อความแจ้งเตือน
+
+      // ส่งข้อมูลทั้งหมดไปยัง client ผ่าน WebSocket
+      io.emit('borrowDeleted', {
+        borrowDetails: borrowInfo,
+        userId: borrowInfo.UserID,
+        message: message
+      });
+
+      // ส่ง response กลับไปที่ client
+      return res.status(200).json({ message: 'คำขอถูกลบและสถานะอุปกรณ์ถูกตั้งเป็น "พร้อมใช้งาน"', borrowDetails: borrowInfo });
+    });
   });
 });
+
+
 
 app.get('/admin/showtypeid', (req, res) => {
   const sqlQuery = 'SELECT * FROM serialnumber'; // ดึงข้อมูลทั้งหมดจาก serialnumber
@@ -1002,7 +1058,6 @@ app.put('/admin/updatetypeid', (req, res) => {
 
 
 //Delete Type_id
-
 app.delete('/admin/deletetypeid/:typeId', (req, res) => {
   const { typeId } = req.params;  // Extract typeId from request parameters
 
