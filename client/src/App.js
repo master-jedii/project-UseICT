@@ -20,6 +20,7 @@ import PrivateRoute from './Admin/Layout/Private.js';  // การนำเข�
 import OfferBorrow from './Admin/Layout/offerBorrow.js';
 import UpdateTypeId from './Admin/Layout/UpdataTypeid.js';
 import ReturnSchedule from './Admin/Layout/ReturnSchedule.js';
+import Return from './components/return.js';
 
 const MainLayout = ({ children }) => (
   <>
@@ -60,6 +61,7 @@ const App = () => {
         {/* content user */}
         <Route path="/main" element={<Main />} />
         <Route path="/status" element={<Status />} />
+        <Route path="/return" element={<Return />} />
         <Route path="/equipment/:typeId" element={<EquipmentListByType />} />
         <Route path="/allEquipment" element={<AllEquipment />} />
         <Route path="/showborrow" element={<Showborrow />} />
