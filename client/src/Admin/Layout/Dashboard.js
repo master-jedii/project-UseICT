@@ -239,7 +239,12 @@ const Dashboard = () => {
                 <ul className="equipment-list-dashboard-admin">
                   {users.map((user) => (
                     <li key={user.UserID} className="equipment-item-dashboard">
-                      <strong>{user.firstname} {user.lastname}</strong> ({user.email})
+                      <div>
+                        <strong>
+                          {user.firstname} {user.lastname}
+                        </strong>
+                      </div>
+                      <div>({user.email})</div>
                       <button
                         className="dashboard-button"
                         onClick={() => handleUserClick(user.UserID)}
@@ -251,6 +256,7 @@ const Dashboard = () => {
                 </ul>
               )}
             </div>
+
           </div>
 
           {isModalOpen && (
