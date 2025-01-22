@@ -11,6 +11,7 @@ import { fileURLToPath } from "url";
 import { Server } from "socket.io";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 app.use(cors());
 // CORS
@@ -1188,6 +1189,147 @@ app.delete('/api/borrow/:borrowId', (req, res) => {
     }
 
     res.status(200).json({ message: 'Record deleted successfully' });
+  });
+});
+//ประวัติการยืม
+app.get('/api/user-borrow-history/:userId', (req, res) => {
+  const { userId } = req.params;
+
+  const query = `
+    SELECT 
+      b.borrow_id,
+      b.borrow_date,
+      b.return_date,
+      b.status,
+      e.name AS equipment_name
+    FROM borrow b
+    JOIN equipment e ON b.equipment_id = e.equipment_id
+    WHERE b.UserID = ?
+    ORDER BY b.borrow_date DESC;
+  `;
+
+  db.query(query, [userId], (err, results) => {
+    if (err) {
+      console.error('Error fetching user borrow history:', err);
+      return res.status(500).json({ message: 'Error fetching user borrow history' });
+    }
+
+    res.status(200).json(results);
+  });
+});
+
+// ดึงข้อมูลผู้ใช้งานทั้งหมด
+app.get('/api/manage-users', (req, res) => {
+  const query = 'SELECT UserID, firstname, lastname, email, phone_number, role FROM users';
+  db.query(query, (err, results) => {
+    if (err) {
+      console.error('Error fetching user data:', err);
+      return res.status(500).json({ message: 'Error fetching user data' });
+    }
+    res.status(200).json(results);
+  });
+});
+
+//แก้ไข role
+app.put('/users/role/:id', (req, res) => {
+  const { id } = req.params;
+  const { role } = req.body;
+
+  const query = 'UPDATE users SET role = ? WHERE UserID = ?';
+
+  db.query(query, [role, id], (err, result) => {
+    if (err) {
+      console.error('Error updating role:', err);
+      return res.status(500).json({ message: 'Error updating role' });
+    }
+
+    res.status(200).json({ message: 'Role updated successfully' });
+  });
+});
+
+//ผู้ใช้งาน
+app.delete('/api/users/:userId', (req, res) => {
+  const { userId } = req.params;
+
+  const query = `
+    DELETE FROM users 
+    WHERE UserID = ?;
+  `;
+
+  db.query(query, [userId], (err, result) => {
+    if (err) {
+      console.error('Error deleting user:', err);
+      return res.status(500).json({ message: 'Error deleting user' });
+    }
+
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    res.status(200).json({ message: 'User deleted successfully' });
+  });
+});
+
+//addnewuser
+app.post('/api/users/add', async (req, res) => {
+  const { firstname, lastname, email, phone_number, role, password } = req.body;
+
+  // ตรวจสอบว่ามีการกรอกข้อมูลครบถ้วน
+  if (!firstname || !lastname || !email || !phone_number || !role || !password) {
+    return res.status(400).json({ message: 'กรุณากรอกข้อมูลให้ครบถ้วน' });
+  }
+
+  try {
+    // แฮชรหัสผ่าน
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    // เพิ่มผู้ใช้งานใหม่ในฐานข้อมูล
+    const query = `
+      INSERT INTO users (firstname, lastname, email, phone_number, role, password)
+      VALUES (?, ?, ?, ?, ?, ?)
+    `;
+
+    db.query(
+      query,
+      [firstname, lastname, email, phone_number, role, hashedPassword],
+      (err, result) => {
+        if (err) {
+          console.error('Error adding user:', err);
+          return res.status(500).json({ message: 'เกิดข้อผิดพลาดในการเพิ่มผู้ใช้งาน' });
+        }
+        res.status(201).json({ message: 'เพิ่มผู้ใช้งานสำเร็จ!' });
+      }
+    );
+  } catch (err) {
+    console.error('Error hashing password:', err);
+    res.status(500).json({ message: 'เกิดข้อผิดพลาดในการแฮชรหัสผ่าน' });
+  }
+});
+
+// บล็อคหรือปลดบล็อคผู้ใช้งาน
+app.put('/api/users/block/:userId', (req, res) => {
+  const { userId } = req.params;
+  const { isBlocked } = req.body;
+
+  // ตรวจสอบว่าค่าที่ส่งมาถูกต้อง
+  if (typeof isBlocked === 'undefined') {
+    return res.status(400).json({ message: 'Missing isBlocked value' });
+  }
+
+  const query = 'UPDATE users SET isBlocked = ? WHERE UserID = ?';
+
+  db.query(query, [isBlocked, userId], (err, result) => {
+    if (err) {
+      console.error('Error updating block status:', err);
+      return res.status(500).json({ message: 'Error updating block status' });
+    }
+
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    const statusMessage = isBlocked ? 'blocked' : 'unblocked';
+    res.status(200).json({ message: `User successfully ${statusMessage}` });
   });
 });
 

@@ -36,7 +36,7 @@ const NavbarAdmin = () => {
               รายการอุปกรณ์
             </div>
             <ul className="submenu">
-            <li className="submenu-item">
+              <li className="submenu-item">
                 <NavLink to="/admin/equipment/code" className="submenu-link">
                   รหัสอุปกรณ์
                 </NavLink>
@@ -64,6 +64,15 @@ const NavbarAdmin = () => {
               className={({ isActive }) => (isActive ? 'menu-item active' : 'menu-item')}
             >
               กำหนดการคืน
+            </NavLink>
+          </li>
+          <li className="menu-item">
+            <i className="fas fa-users"></i>
+            <NavLink
+              to="/ManageUser"
+              className={({ isActive }) => (isActive ? 'menu-item active' : 'menu-item')}
+            >
+              จัดการผู้ใช้
             </NavLink>
           </li>
         </ul>

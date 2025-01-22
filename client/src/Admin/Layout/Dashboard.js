@@ -28,6 +28,10 @@ const Dashboard = () => {
   const [equipmentStatusStats, setEquipmentStatusStats] = useState([]);
   const [topBorrowedEquipment, setTopBorrowedEquipment] = useState([]);
   const [dailyBorrowStats, setDailyBorrowStats] = useState([]);
+  const [topBorrowers, setTopBorrowers] = useState([]);
+  const [userBorrowHistory, setUserBorrowHistory] = useState([]);
+  const [selectedUserId, setSelectedUserId] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
     const fetchEquipmentStats = async () => {
@@ -115,6 +119,15 @@ const Dashboard = () => {
       }
     };
 
+    const fetchTopBorrowers = async () => {
+      try {
+        const response = await axios.get('http://localhost:3333/api/top-borrowers');
+        setTopBorrowers(response.data);
+      } catch (error) {
+        console.error('Error fetching top borrowers:', error);
+      }
+    };
+
     fetchEquipmentStats();
     fetchUsers();
     fetchBorrowRequests();
@@ -122,7 +135,25 @@ const Dashboard = () => {
     fetchEquipmentStatusStats();
     fetchTopBorrowedEquipment();
     fetchDailyBorrowStats();
+    fetchTopBorrowers();
   }, []);
+
+  const handleUserClick = async (userId) => {
+    try {
+      const response = await axios.get(`http://localhost:3333/api/user-borrow-history/${userId}`);
+      setUserBorrowHistory(response.data);
+      setSelectedUserId(userId);
+      setIsModalOpen(true);
+    } catch (error) {
+      console.error('Error fetching user borrow history:', error);
+    }
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+    setSelectedUserId(null);
+    setUserBorrowHistory([]);
+  };
 
   const totalEquipment = equipmentStats
     ? Object.values(equipmentStats).reduce((total, count) => total + count, 0)
@@ -164,6 +195,7 @@ const Dashboard = () => {
                 <p>{error || 'กำลังโหลดข้อมูล...'}</p>
               )}
             </div>
+
             <div className="dashboard-card">
               <h2>คำร้องขอยืมอุปกรณ์ทั้งหมด</h2>
               <p>คำร้องขอที่รอดำเนินการ: {borrowRequests.length}</p>
@@ -192,6 +224,7 @@ const Dashboard = () => {
                 <p>ไม่มีคำร้องขอการยืมในขณะนี้</p>
               )}
             </div>
+
             <div className="dashboard-card">
               <h2>ผู้ใช้งานทั้งหมด</h2>
               <p>จำนวนผู้ใช้งานทั้งหมด: {users.length}</p>
@@ -206,12 +239,55 @@ const Dashboard = () => {
                   {users.map((user) => (
                     <li key={user.UserID} className="equipment-item-dashboard">
                       <strong>{user.firstname} {user.lastname}</strong> ({user.email})
+                      <button
+                        className="dashboard-button"
+                        onClick={() => handleUserClick(user.UserID)}
+                      >
+                        ดูประวัติการยืม
+                      </button>
                     </li>
                   ))}
                 </ul>
               )}
             </div>
           </div>
+
+          {isModalOpen && (
+            <div className="modal-overlay">
+              <div className="modal-content">
+                <div className="modal-header">
+                  <h2>ประวัติการยืมของผู้ใช้</h2>
+                  <button className="close-modal" onClick={closeModal}>&times;</button>
+                </div>
+                <div className="modal-body">
+                  {userBorrowHistory.length > 0 ? (
+                    <table className="borrow-history-table">
+                      <thead>
+                        <tr>
+                          <th style={{ padding: '10px', textAlign: 'left' }}>ชื่ออุปกรณ์</th>
+                          <th style={{ padding: '10px', textAlign: 'left' }}>วันที่ยืม</th>
+                          <th style={{ padding: '10px', textAlign: 'left' }}>วันที่คืน</th>
+                          <th style={{ padding: '10px', textAlign: 'left' }}>สถานะ</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {userBorrowHistory.map((history) => (
+                          <tr key={history.borrow_id}>
+                            <td style={{ padding: '10px' }}>{history.equipment_name}</td>
+                            <td style={{ padding: '10px' }}>{new Date(history.borrow_date).toLocaleDateString('th-TH')}</td>
+                            <td style={{ padding: '10px' }}>{new Date(history.return_date).toLocaleDateString('th-TH')}</td>
+                            <td style={{ padding: '10px' }}>{history.status}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  ) : (
+                    <p>ไม่มีประวัติการยืม</p>
+                  )}
+                </div>
+              </div>
+            </div>
+          )}
 
           <div className="dashboard-graphs-wrapper">
             <div className="graphs-header">

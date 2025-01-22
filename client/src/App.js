@@ -21,6 +21,7 @@ import OfferBorrow from './Admin/Layout/offerBorrow.js';
 import UpdateTypeId from './Admin/Layout/UpdataTypeid.js';
 import ReturnSchedule from './Admin/Layout/ReturnSchedule.js';
 import Return from './components/return.js';
+import ManageUser from './Admin/Layout/ManageUser.js';
 
 const MainLayout = ({ children }) => (
   <>
@@ -73,6 +74,7 @@ const App = () => {
         <Route path="/offerborrow" element={<PrivateRoute element={<OfferBorrow />}/>} />
         <Route path="/admin/equipment/code" element={<PrivateRoute element={<UpdateTypeId />}/>} />
         <Route path="return-schedule" element={<PrivateRoute element={<ReturnSchedule />}/>} />
+        <Route path="ManageUser" element={<PrivateRoute element={<ManageUser/>}/>} />
         <Route path="/allEquipment" element={<AllEquipment />} />
       </Routes>
     </Router>
