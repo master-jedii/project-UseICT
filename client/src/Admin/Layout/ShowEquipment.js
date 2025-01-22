@@ -186,7 +186,7 @@ const ShowEquipment = () => {
 
               <label>รายละเอียด:</label>
               <textarea name="description" value={formData.description} onChange={handleFormChange} required />
-
+              
               <label>หมวดหมู่:</label>
               <select name="category" value={formData.category} onChange={handleFormChange} required>
                 <option value="">เลือกหมวดหมู่</option>

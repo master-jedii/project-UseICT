@@ -46,7 +46,7 @@
   .equipment-image-1 img {
     width: 300px; /* ความกว้างรูปภาพเท่ากับความสูงของกล่อง */
     height: 300px; /* ความสูงตามขนาดกล่อง */
-    object-fit: cover;
+    object-fit: cover; /* ปรับขนาดรูปภาพให้เต็มกล่อง */
     border-right: 1px solid #ddd;
   }
   
@@ -107,3 +107,4 @@
 .equipment-details-1 span{
   font-family: 'Prompt', sans-serif;
 }
+

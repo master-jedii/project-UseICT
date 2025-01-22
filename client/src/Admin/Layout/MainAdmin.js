@@ -202,7 +202,7 @@ const MainAdmin = () => {
                                         />
                                         {equipment.imagePreview && (
                                             <div className="image-preview">
-                                                <img src={equipment.imagePreview} alt="Preview" width="200" height="200" />
+                                                <img src={equipment.imagePreview} alt="Preview" width="200px" height="200px" />
                                             </div>
                                         )}
                                         <button type="button" className="btn-danger" onClick={() => removeEquipmentField(index)}>
