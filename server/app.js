@@ -321,8 +321,6 @@ app.post('/api/borrow', (req, res) => {
 
 
 
-
-
 // API แสดงรายการอุปกรณ์ทั้งหมดหรือกรองตามหมวดหมู่
 app.get('/showequipment', (req, res) => {
   const { category } = req.query; // รับค่าหมวดหมู่จาก query string
