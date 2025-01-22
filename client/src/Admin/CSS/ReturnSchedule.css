@@ -9,7 +9,7 @@
 }
 
 .admin-header {
-    background-color: #00796b; /* เขียวเข้มที่ดูสงบ */
+    background-color: #009688; /* เขียวเข้มที่ดูสงบ */
     padding: 15px 25px;
     border-radius: 8px;
     color: #ffffff; /* ข้อความสีขาว */
@@ -58,7 +58,7 @@
 }
 
 .schedule-item p strong {
-    color: #00796b; /* สีตัวหนาสำหรับเน้นข้อความ */
+    color: #009688; /* สีตัวหนาสำหรับเน้นข้อความ */
 }
 
 .error-message {
@@ -109,7 +109,7 @@
   
   .navbar .button {
     padding: 8px 15px;
-    background-color: #004d40; /* สีเขียวเข้มอีกเฉด */
+    background-color: #009688; /* สีเขียวเข้มอีกเฉด */
     border: none;
     border-radius: 5px;
     color: #ffffff; /* ข้อความสีขาว */
@@ -147,7 +147,7 @@
   
   .filter-container button {
     padding: 10px 20px;
-    background-color: #00796b; /* สีเขียวเข้ม */
+    background-color: #009688; /* สีเขียวเข้ม */
     color: #fff; /* ข้อความสีขาว */
     border: none;
     border-radius: 8px;
@@ -206,7 +206,7 @@
   }
   
   .filter-input:focus {
-    border-color: #00796b;
+    border-color: #009688;
     box-shadow: 0 4px 8px rgba(0, 121, 107, 0.2);
     outline: none;
   }

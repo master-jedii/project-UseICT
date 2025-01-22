@@ -173,7 +173,7 @@ const NavbarMain = ({ userData, onLogout }) => {
                       {isLatest && (
                         <span className="notification-icon">
                           <FontAwesomeIcon icon={faBell} style={{ marginRight: '8px', color: '#FF5722' }} />
-                          <strong>แจ้งเตือนใหม่!!</strong>
+                          <strong>แจ้งเตือนใหม่</strong>
                         </span>
                       )}
                       <p>สถานะ: {notification.status}</p>

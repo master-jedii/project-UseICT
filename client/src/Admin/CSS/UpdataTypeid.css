@@ -144,20 +144,19 @@ td button {
 }
 
 .admin-header-info-typeid {
-    display: flex;
-    justify-content: flex-start;
-    align-items: center;
-    height: 58.5px;
-    background-color: #009688;
-    border-radius: 0px 0px 5px 5px;
-    position: relative;
-    right: 15px;
+    background-color: #009688; /* เขียวเข้มที่ดูสงบ */
+    padding: 15px 25px;
+    border-radius: 8px;
+    color: #ffffff; /* ข้อความสีขาว */
+    margin-bottom: 25px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* เงา */
 }
 
 .admin-header-info-typeid h1{
-    color: #fff;
-    font-size: 24px;
-    margin-left: 20px;
+    margin: 0;
+    font-size: 26px;
+    font-weight: bold;
+    color: #ffffff; /* ข้อความสีขาว */
 }
 
 .equipment-type-id p {

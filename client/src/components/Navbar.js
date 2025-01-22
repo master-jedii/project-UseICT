@@ -74,7 +74,8 @@ const Navbar = () => {
       
       
     return (
-        <nav className="navbar navbar-light bg-white px-5" >
+        <nav className="navbar navbar-light bg-white px-5" style={{ fontFamily: "'Prompt', sans-serif" }} 
+        >
             <div className="d-flex align-items-center">
                 <a className="navbar-brand" href="/">
                     <img src={logo} alt="Logo" style={{ height: '70px' }} />
@@ -85,7 +86,7 @@ const Navbar = () => {
                     <li className="nav-item mx-4">
                         <button
                             className="nav-link btn btn-link"
-                            style={{ fontSize: '18px', textDecoration: 'none' }}
+                            style={{ fontSize: '18px', textDecoration: 'none' , fontFamily: " 'Prompt', sans-serif;" }}
                             onClick={() => scrollToSection('type')}
                         >
                             หมวดหมู่อุปกรณ์
@@ -112,7 +113,7 @@ const Navbar = () => {
                     <li className="nav-item mx-4">
                         <button
                             className="nav-link btn btn-link"
-                            style={{ fontSize: '18px', textDecoration: 'none' }}
+                            style={{ fontSize: '18px', textDecoration: 'none', fontFamily: "'Prompt', sans-serif" }}
                             onClick={() => scrollToSection('Footer')}
                         >
                             ติดต่อเรา

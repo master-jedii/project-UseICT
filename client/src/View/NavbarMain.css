@@ -213,7 +213,7 @@ background-color: #004d4d;
   position: absolute;
   top: -15px;
   right: -10px;
-  background-color: red; /* สีแดงสำหรับแจ้งเตือนใหม่ */
+  background-color: #ff7878; /* สีแดงสำหรับแจ้งเตือนใหม่ */
   color: white; /* สีข้อความ */
   border-radius: 50%; /* ให้เป็นวงกลม */
   padding: 5px 10px; /* ขนาดภายใน */
