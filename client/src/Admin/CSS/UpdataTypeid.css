@@ -157,6 +157,7 @@ td button {
     font-size: 26px;
     font-weight: bold;
     color: #ffffff; /* ข้อความสีขาว */
+    margin-right: 1400px;
 }
 
 .equipment-type-id p {

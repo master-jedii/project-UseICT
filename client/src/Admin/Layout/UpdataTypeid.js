@@ -120,7 +120,7 @@ const UpdateTypeId = () => {
             <div className="admin-dashboard-typeid">
                 <header className="admin-header-info-typeid" style={{display:'flex' , alignItems : 'center' , gap :'10px'}}>
                     <i className="fas fa-tools" style={{fontSize : '20px'}}></i>
-                    <h1 style={{ textAlign: 'left' }}>รหัสอุปกรณ์</h1>
+                    <h1 style={{ textAlign: 'right' }}>รหัสอุปกรณ์</h1>
                 </header>
 
                 <button className=" admin-save-type-id" onClick={toggleSerialModal}>
