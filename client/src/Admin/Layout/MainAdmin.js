@@ -108,7 +108,8 @@ const MainAdmin = () => {
             <NavbarAdmin />
             <div className="main-content">
                 <header className="admin-header">
-                    <div className="admin-header-info">
+                    <div className="admin-header-info" style={{display:'flex' , alignItems : 'center' , gap :'10px'}}>
+                        <i className="fas fa-tools" style={{fontSize : '20px'}}></i>
                         <h1>รายการอุปกรณ์</h1>
                     </div>
                 </header>

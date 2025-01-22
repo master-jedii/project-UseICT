@@ -118,7 +118,8 @@ const UpdateTypeId = () => {
             <NavbarAdmin />
 
             <div className="admin-dashboard-typeid">
-                <header className="admin-header-info-typeid">
+                <header className="admin-header-info-typeid" style={{display:'flex' , alignItems : 'center' , gap :'10px'}}>
+                    <i className="fas fa-tools" style={{fontSize : '20px'}}></i>
                     <h1 style={{ textAlign: 'left' }}>รหัสอุปกรณ์</h1>
                 </header>
 

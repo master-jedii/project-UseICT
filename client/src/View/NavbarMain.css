@@ -213,7 +213,7 @@ background-color: #004d4d;
   position: absolute;
   top: -15px;
   right: -10px;
-  background-color: red; /* สีแดงสำหรับแจ้งเตือนใหม่ */
+  background-color: #ff7878; /* สีแดงสำหรับแจ้งเตือนใหม่ */
   color: white; /* สีข้อความ */
   border-radius: 50%; /* ให้เป็นวงกลม */
   padding: 5px 10px; /* ขนาดภายใน */
@@ -325,4 +325,17 @@ background-color: #004d4d;
   color: #FF5722;  /* สีของข้อความ "ใหม่!" */
   font-size: 0.9em;
   font-weight: bold;
+}
+.delete-notification-button {
+  background-color: #f44336;
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-top: 5px;
+}
+
+.delete-notification-button:hover {
+  background-color: #d32f2f;
 }

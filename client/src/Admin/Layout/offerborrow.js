@@ -199,8 +199,9 @@ const AdminBorrowStatus = () => {
         <NavbarAdmin />
         <div className="admin-dashboard-typeid">
           <header className="admin-header-info-typeid">
-            <div className="admin-header-info">
-              <h1>รายการยืมทั้งหมด</h1>
+            <div className="admin-header-info"  style={{display:'flex' , alignItems : 'center' , gap :'10px'}}>
+              <i className="fas fa-handshake" style={{fontSize : '20px'}}></i>
+              <h1 style={{ textAlign: 'left' }}>รายการยืมทั้งหมด</h1>
             </div>
           </header>
           {/* ช่องกรอกค้นหาตาม UserID */}

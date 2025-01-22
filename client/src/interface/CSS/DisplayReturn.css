@@ -1,0 +1,87 @@
+/* Overall Container */
+.DisplayReturn-container {
+    max-width: 1200px;
+    margin: 20px auto;
+    padding: 20px;
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  }
+  
+  /* Title */
+  .DisplayReturn-title {
+    text-align: center;
+    font-size: 28px;
+    font-weight: bold;
+    margin-bottom: 20px;
+    color: #333;
+  }
+  
+  /* Summary Section */
+  .DisplayReturn-summary {
+    display: flex;
+    justify-content: space-around;
+    padding: 10px;
+    background: #f0f0f0;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    font-size: 16px;
+    color: #333;
+  }
+  
+  /* Legend Section */
+  .DisplayReturn-legend {
+    display: flex;
+    justify-content: space-around;
+    margin-bottom: 20px;
+  }
+  
+  .legend-item {
+    display: inline-block;
+    padding: 5px 10px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: bold;
+    color: #fff;
+  }
+  
+  .legend-item.green { background: #4caf50; }
+  .legend-item.yellow { background: #ffc107; }
+  .legend-item.red { background: #f44336; }
+  
+  /* Controls */
+  .DisplayReturn-controls {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+  }
+  
+  .DisplayReturn-controls input,
+  .DisplayReturn-controls select {
+    width: 30%;
+    padding: 10px;
+    font-size: 16px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+  }
+  
+  /* Grid */
+  .DisplayReturn-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
+  }
+  
+  /* Card */
+  .DisplayReturn-card {
+    padding: 20px;
+    border-radius: 10px;
+    background: #fff;
+    border: 1px solid #ddd;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  .DisplayReturn-card.กำลังใช้งาน { background: #e8f5e9; }
+  .DisplayReturn-card.ใกล้ครบกำหนด { background: #fff8e1; }
+  .DisplayReturn-card.ครบกำหนดแล้ว { background: #ffebee; }
+  

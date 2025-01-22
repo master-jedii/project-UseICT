@@ -167,7 +167,8 @@ const Dashboard = () => {
       <div className="main-content">
         <div className="dashboard-container">
           <header className="admin-header">
-            <div className="admin-header-info">
+            <div className="admin-header-info " style={{display : 'flex' , alignItems : 'center', gap : '10px'}}>
+              <i className="fa-solid fa-chart-simple" style={{fontSize:'20px' }} ></i>
               <h1>Dashboard</h1>
             </div>
           </header>

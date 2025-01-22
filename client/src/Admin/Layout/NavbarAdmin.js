@@ -54,7 +54,7 @@ const NavbarAdmin = () => {
               to="/offerBorrow"
               className={({ isActive }) => (isActive ? 'menu-item active' : 'menu-item')}
             >
-              ข้อเสนอการยืม-คืน
+              ข้อเสนอการยืม
             </NavLink>
           </li>
           <li className="menu-item">

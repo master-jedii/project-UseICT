@@ -8,6 +8,7 @@
     color: white;
     padding: 20px;
     gap: 100px;  /* ลดระยะห่างระหว่างส่วนต่างๆ */
+    font-family: 'Prompt', sans-serif;
   }
   
 .textfooter{
