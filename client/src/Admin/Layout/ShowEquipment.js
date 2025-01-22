@@ -125,6 +125,7 @@ const ShowEquipment = () => {
   return (
     <div className="equipment-containerAdmin">
       <h1>รายการอุปกรณ์ทั้งหมด</h1>
+      
 
       {/* Search bar */}
       <div className="search-bar-custom">

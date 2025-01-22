@@ -48,14 +48,14 @@ const Status = () => {
     const token = localStorage.getItem("token");
     if (token) {
       Swal.fire({
-        title: "คุณแน่ใจหรือไม่?",
-        text: "คุณต้องการยกเลิกคำร้องขอนี้ใช่หรือไม่?",
+        title: "ยกเลิกคำร้อง?",
+        text: "ต้องการยกเลิกคำร้องขอนี้",
         icon: "warning",
         showCancelButton: true,
-        confirmButtonColor: "#3085d6",
-        cancelButtonColor: "#d33",
-        confirmButtonText: "ใช่, ยกเลิกเลย!",
-        cancelButtonText: "ไม่, ยกเลิก",
+        confirmButtonColor: "#009498",
+        cancelButtonColor: "#ff5858",
+        confirmButtonText: "ตกลง",
+        cancelButtonText: " ยกเลิก",
       }).then((result) => {
         if (result.isConfirmed) {
           Axios.delete(`http://localhost:3333/api/borrow-status/${borrowId}`, {
@@ -269,6 +269,7 @@ const Status = () => {
               <th>เวลาส่งคำร้อง</th>
               <th>สถานะ</th>
               <th>การดำเนินการ</th>
+              
             </tr>
           </thead>
           <tbody>

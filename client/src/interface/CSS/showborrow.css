@@ -19,3 +19,10 @@
     background-color: #007f76;
   }
   
+  /* Custom z-index for SweetAlert2 */
+.swal2-modal-custom {
+  z-index: 1050 !important; /* ปรับ z-index ให้อยู่เหนือ Modal */
+}
+.swal2-backdrop-show {
+  z-index: 1040 !important; /* ปรับ z-index ของ Backdrop */
+}

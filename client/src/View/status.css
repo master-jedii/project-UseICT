@@ -106,10 +106,11 @@
   }
   
   .print-button-status{
-    background-color: #F8F9FA;
+    background-color: #009498;
     position: relative;
     bottom: 7px;
-    color: #009498;
+    color: #F8F9FA;
+    
   }
 
   .print-button-status:hover {

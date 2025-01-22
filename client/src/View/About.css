@@ -3,6 +3,7 @@
   justify-content: space-between; /* จัดระยะห่างระหว่างสองบล็อก */
   gap: 10px;
   padding: 50px 120px; /* ระยะห่างจากขอบทั้งสองฝั่ง */
+  font-family: 'Prompt', sans-serif;
 }
 
 .faq-block1,

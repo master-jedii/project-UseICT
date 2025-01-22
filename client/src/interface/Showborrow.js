@@ -1,8 +1,11 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import "../interface/CSS/showborrow.css";
 import "../interface/CSS/Modal.css";
 import api from "../service/axios";
+import Swal from "sweetalert2";
+
 
 const Showborrow = ({ equipmentId, equipmentName }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -91,7 +94,9 @@ const Modal = ({
     returnDate,
     name: equipmentName,
   });
-  
+
+  const navigate = useNavigate(); // ใช้สำหรับเปลี่ยนหน้า
+
 
   useEffect(() => {
     if (UserID) {
@@ -127,17 +132,28 @@ const Modal = ({
       objective: formData.objective, // เพิ่มฟิลด์นี้
       borrow_d: borrowDate,
       return_d: returnDate,
-      
+
     };
-    
+
 
     try {
       const response = await axios.post("http://localhost:3333/api/borrow", dataToSend);
-      alert(response.data.message || "บันทึกข้อมูลสำเร็จ");
       onClose();
+      Swal.fire({
+        title: "สำเร็จ!",
+        text: "ยืมอุปกรณ์สำเร็จ",
+        icon: "success",
+        confirmButtonText: "ตกลง",
+        customClass: {
+          popup: "swal2-modal-custom",
+        },
+      }).then(() => {
+        navigate("/status"); // เปลี่ยนหน้าไปยัง /status หลังจากคลิกปุ่ม
+      });
     } catch (error) {
       if (error.response) {
         // แสดงข้อผิดพลาดจากการตอบกลับของเซิร์ฟเวอร์
+        console.error("Response error:", error.response);
         console.error("Response error:", error.response);
         alert(error.response.data.message || "เกิดข้อผิดพลาดในการบันทึกข้อมูล");
       } else {
@@ -146,7 +162,7 @@ const Modal = ({
         alert("เกิดข้อผิดพลาดในการเชื่อมต่อกับเซิร์ฟเวอร์");
       }
     }
-    
+
   };
 
 

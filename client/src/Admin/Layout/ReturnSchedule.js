@@ -96,7 +96,8 @@ const ReturnSchedule = () => {
       <NavbarAdmin />
       <div className="main-content">
         <header className="admin-header">
-          <div className="admin-header-info">
+          <div className="admin-header-info" style={{display:'flex' , alignItems : 'center' , gap :'10px'}}>
+            <i className="fas fa-history" style={{fontSize : '20px'}}></i>
             <h1>กำหนดการคืนอุปกรณ์</h1>
           </div>
         </header>
@@ -166,6 +167,7 @@ const ReturnSchedule = () => {
                       ? 'ครบกำหนดวันนี้'
                       : `เกินกำหนด ${Math.abs(item.days_left)} วัน`}
                   </p>
+                  
                   <p>
                     <strong>สถานะ:</strong> {item.status === 'คืนแล้ว' ? 'คืนแล้ว' : 'ยังไม่คืน'}
                   </p>
