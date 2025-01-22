@@ -15,7 +15,7 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 app.use(cors());
 // CORS
 app.use(cors({
-  origin: 'http://localhost:3001', // ให้ frontend ที่รันที่ localhost:3000 สามารถเข้าถึงได้
+  origin: 'http://localhost:3000', // ให้ frontend ที่รันที่ localhost:3000 สามารถเข้าถึงได้
   methods: 'GET,POST',
 }));
 
@@ -26,7 +26,7 @@ app.use(express.json());
 //socket
 const io = new Server(5000, {
   cors: {
-    origin: "http://localhost:3001", // URL ของ Client
+    origin: "http://localhost:3000", // URL ของ Client
     methods: ["GET", "POST"],
   },
 });
