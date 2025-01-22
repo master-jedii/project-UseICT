@@ -6,6 +6,7 @@ import '../View/NavbarMain.css'; // ใช้ไฟล์ CSS แยก
 import { jwtDecode } from 'jwt-decode';
 import { io } from "socket.io-client";
 import axios from '../service/axios';
+import Swal from 'sweetalert2';
 
 const NavbarMain = ({ userData, onLogout }) => {
   const navigate = useNavigate();
@@ -20,13 +21,13 @@ const NavbarMain = ({ userData, onLogout }) => {
     setIsPopupOpen(prevState => !prevState);
     if (!isPopupOpen) {
       try {
-        const response = await axios.get('http://localhost:3333/api/notifications', { 
+        const response = await axios.get('http://localhost:3333/api/notifications', {
           params: { userId: userData.id }
         });
         // เรียงลำดับการแจ้งเตือนจากใหม่สุดไปเก่าสุด
         const sortedNotifications = response.data.sort((a, b) => new Date(b.updated_at) - new Date(a.updated_at));
         setNotifications(sortedNotifications);
-        setNewNotificationsCount(0); 
+        setNewNotificationsCount(0);
       } catch (error) {
         console.error("Error fetching notifications:", error);
       }
@@ -35,7 +36,7 @@ const NavbarMain = ({ userData, onLogout }) => {
 
   useEffect(() => {
     const socket = io("http://localhost:5000", { query: { userId: userData?.id } });
-  
+
     socket.on("borrowApproved", (data) => {
       if (data.userId === userData.id) {
         setNotifications(prevNotifications => {
@@ -77,7 +78,7 @@ const NavbarMain = ({ userData, onLogout }) => {
         setTimeout(() => setIsAlertVisible(false), 5000);
       }
     });
-  
+
     return () => {
       socket.disconnect();
     };
@@ -103,6 +104,43 @@ const NavbarMain = ({ userData, onLogout }) => {
     console.error("Token Decode Error:", error);
   }
 
+  const handleDeleteNotification = async (borrowId) => {
+    const confirmResult = await Swal.fire({
+      title: 'คุณแน่ใจหรือไม่?',
+      text: "การแจ้งเตือนนี้จะถูกลบถาวร!",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'ใช่, ลบเลย!',
+      cancelButtonText: 'ยกเลิก',
+    });
+  
+    if (confirmResult.isConfirmed) {
+      try {
+        // ลบการแจ้งเตือน
+        await axios.delete(`http://localhost:3333/api/notifications/${borrowId}`);
+        setNotifications(prevNotifications =>
+          prevNotifications.filter(notification => notification.borrow_id !== borrowId)
+        );
+        setNewNotificationsCount(prevCount => prevCount - 1);
+  
+        Swal.fire(
+          'ลบสำเร็จ!',
+          'การแจ้งเตือนถูกลบเรียบร้อย.',
+          'success'
+        );
+      } catch (error) {
+        console.error("Error deleting notification:", error);
+        Swal.fire(
+          'เกิดข้อผิดพลาด!',
+          'ไม่สามารถลบการแจ้งเตือนได้.',
+          'error'
+        );
+      }
+    }
+  };
+  
   return (
     <nav className="navbar_main">
       <div className="navbar-left">
@@ -134,11 +172,11 @@ const NavbarMain = ({ userData, onLogout }) => {
             </div>
           )}
 
-          <div className="notification-icon" style={{ position: 'relative',left: '5px' ,top:'5px'}}>
-            <FontAwesomeIcon 
-              icon={faBell} 
-              style={{ cursor: 'pointer', fontSize: '24px' }} 
-              onClick={togglePopup} 
+          <div className="notification-icon" style={{ position: 'relative', left: '5px', top: '5px' }}>
+            <FontAwesomeIcon
+              icon={faBell}
+              style={{ cursor: 'pointer', fontSize: '24px' }}
+              onClick={togglePopup}
             />
             {newNotificationsCount > 0 && (
               <div className="notification-count">{newNotificationsCount}</div>
@@ -173,14 +211,21 @@ const NavbarMain = ({ userData, onLogout }) => {
                       {isLatest && (
                         <span className="notification-icon">
                           <FontAwesomeIcon icon={faBell} style={{ marginRight: '8px', color: '#FF5722' }} />
-                          <strong>แจ้งเตือนใหม่!!</strong>
+                          <strong>แจ้งเตือนใหม่</strong>
                         </span>
                       )}
                       <p>สถานะ: {notification.status}</p>
                       <p>ชื่ออุปกรณ์: {notification.equipment_name}</p>
                       <p>รหัสอุปกรณ์: {notification.equipment_id}</p>
                       <p>อัพเดตเมื่อ: {new Date(notification.updated_at).toLocaleString('th-TH', { hour12: false })}</p>
+                      <button
+                        className="delete-notification-button"
+                        onClick={() => handleDeleteNotification(notification.borrow_id)}
+                      >
+                        ลบ
+                      </button>
                     </li>
+
                   );
                 })
               ) : (

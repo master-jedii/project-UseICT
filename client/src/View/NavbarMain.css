@@ -326,3 +326,16 @@ background-color: #004d4d;
   font-size: 0.9em;
   font-weight: bold;
 }
+.delete-notification-button {
+  background-color: #f44336;
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-top: 5px;
+}
+
+.delete-notification-button:hover {
+  background-color: #d32f2f;
+}

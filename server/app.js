@@ -486,6 +486,34 @@ app.get('/api/notifications', (req, res) => {
 });
 
 
+app.delete('/api/notifications/:borrowId', (req, res) => {
+  const { borrowId } = req.params;
+
+  if (!borrowId) {
+    return res.status(400).json({ message: 'Borrow ID is required' });
+  }
+
+  const query = 'DELETE FROM notifications WHERE borrow_id = ?';
+
+  db.query(query, [borrowId], (err, result) => {
+    if (err) {
+      console.error('Error deleting notification:', err);
+      return res.status(500).json({ message: 'Error deleting notification', error: err });
+    }
+
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ message: 'Notification not found' });
+    }
+
+    res.status(200).json({ message: 'Notification deleted successfully' });
+  });
+});
+
+
+
+
+
+
 
 
 
