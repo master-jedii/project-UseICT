@@ -1,6 +1,4 @@
-.admin-dashboard {
-    display: flex;
-  }
+
   
   .admin-dashboard-typeid {
     flex-grow: 1;
@@ -10,9 +8,8 @@
   
   .admin-header-info-typeid {
     display: flex;
-    justify-content: space-between;
     align-items: center;
-    background-color: #00796b;
+    background-color: #009688;
     padding: 15px;
     color: white;
     border-radius: 5px;
@@ -42,7 +39,7 @@
   }
   
   .search-button {
-    background-color: #00796b;
+    background-color: #009688;
     color: white;
   }
   
@@ -73,7 +70,7 @@
   }
   
   .user-table th {
-    background-color: #00796b;
+    background-color: #009688;
     color: white;
   }
   
@@ -143,7 +140,7 @@
   }
   
   .add-user-btn {
-    background-color: #00796b;
+    background-color: #009688;
     color: white;
     padding: 10px 20px;
     border: none;

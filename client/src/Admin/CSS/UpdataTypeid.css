@@ -8,10 +8,7 @@
     height: 1600px;
 }
 
-.admin-dashboard-typeid h1 {
-    text-align: center;
-    color: #333;
-}
+
 
 /* ตารางข้อมูล */
 .table-typeid {
@@ -143,21 +140,15 @@ td button {
     height: 90%;
 }
 
-.admin-header-info-typeid {
-    background-color: #009688; /* เขียวเข้มที่ดูสงบ */
-    padding: 15px 25px;
-    border-radius: 8px;
-    color: #ffffff; /* ข้อความสีขาว */
-    margin-bottom: 25px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* เงา */
-}
+
 
 .admin-header-info-typeid h1{
-    margin: 0;
+
     font-size: 26px;
     font-weight: bold;
     color: #ffffff; /* ข้อความสีขาว */
-    margin-right: 1400px;
+    text-align: left;
+    
 }
 
 .equipment-type-id p {
