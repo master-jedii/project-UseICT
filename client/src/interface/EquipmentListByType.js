@@ -118,7 +118,8 @@ const EquipmentListByType = () => {
                 </div>
                 <div className="equipment-details-2">
                   <h4>{item.name}</h4>
-                  <p>{item.description}</p>
+                  <p>รหัสอุปกรณ์ : {item.equipment_id}</p>
+                  <p>รายละเอัยด : {item.description} </p>
                   <div className="showborrow-2">
                     <Showborrow equipmentId={item.equipment_id} equipmentName={item.name} />
                   </div>

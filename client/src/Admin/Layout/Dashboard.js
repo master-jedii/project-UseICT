@@ -367,7 +367,7 @@ const Dashboard = () => {
                 </div>
                 <div className="graph-item">
                   <h3>Top 5 อุปกรณ์ที่ถูกยืมมากที่สุด</h3>
-                  <ResponsiveContainer width="100%" height={300}>
+                  <ResponsiveContainer width="100%" height={400}>
                     <BarChart
                       data={topBorrowedEquipment}
                       layout="vertical"

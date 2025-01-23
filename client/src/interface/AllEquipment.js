@@ -3,7 +3,6 @@ import Axios from "axios";
 import { useLocation, useNavigate } from "react-router-dom";
 import "../interface/CSS/AllEquipment.css"; // ไฟล์ CSS
 import NavbarMain from "../components/NavbarMain.js";
-import Showborrow from "./showborrow.js";
 
 const AllEquipment = () => {
   const [equipment, setEquipment] = useState([]);
@@ -20,9 +19,23 @@ const AllEquipment = () => {
   const fetchEquipment = () => {
     Axios.get(`http://localhost:3333/showequipment?category=${category}`)
       .then((response) => {
-        // กรองเฉพาะอุปกรณ์ที่มี status เป็น "พร้อมใช้งาน"
+        // กรองข้อมูลที่มี status เป็น "พร้อมใช้งาน"
         const availableEquipment = response.data.filter(item => item.status === "พร้อมใช้งาน");
-        setEquipment(availableEquipment);
+
+        // จัดกลุ่มข้อมูลที่ได้โดยใช้ type_id
+        const groupedEquipment = availableEquipment.reduce((acc, item) => {
+          if (!acc[item.type_id]) {
+            acc[item.type_id] = {
+              ...item,
+              totalQuantity: 0, // ตัวแปรนับจำนวน
+            };
+          }
+          acc[item.type_id].totalQuantity += 1; // เพิ่มจำนวนอุปกรณ์ที่มี type_id เดียวกัน
+          return acc;
+        }, {});
+
+        // แปลง Object ให้เป็น Array และตั้งค่า state
+        setEquipment(Object.values(groupedEquipment));
       })
       .catch((err) => console.error("Error fetching equipment:", err));
   };
@@ -72,6 +85,11 @@ const AllEquipment = () => {
     navigate('/');
   };
 
+  const handleViewAllClick = (typeId) => {
+    // ใช้ navigate เพื่อไปยังหน้าที่กรองข้อมูลโดยใช้ type_id
+    navigate(`/equipment/${typeId}`);
+  };
+
   return (
     <div>
       <NavbarMain userData={user} onLogout={handleLogout} />
@@ -80,37 +98,43 @@ const AllEquipment = () => {
       </div>
       {/* เพิ่ม input ค้นหา */}
       <div className='search-cata-bar1'>
-          <div className="input-container1">
-            <i className="fa fa-search search-icon" aria-hidden="true"></i>
-            <input
-              placeholder={ "ค้นหา...."}
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-            />
-          </div>
+        <div className="input-container1">
+          <i className="fa fa-search search-icon" aria-hidden="true"></i>
+          <input
+            placeholder={"ค้นหา...."}
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
         </div>
+      </div>
+
       <div className="equipment-list-1">
         {equipment.length > 0 ? (
           equipment.map((item, idx) => (
             <div className="equipment-item-1" key={idx}>
-                <div className="equipment-image-1">
-                  <img
-                    src={`http://localhost:3333/uploads/${item.image}`}
-                    alt={item.name}
-                  />
-                </div>
-                <div className="equipment-details-1">
-                  <h4>{item.name}</h4>
-                  <p>{item.description}</p>
-                  <span>จำนวน: {item.quantity}</span>
-                  <div className='showborrow-1'>
-                    <Showborrow equipmentId={item.equipment_id} equipmentName={item.name} />
-                  </div>
+              <div className="equipment-image-1">
+                <img
+                  src={`http://localhost:3333/uploads/${item.image}`}
+                  alt={item.name}
+                />
+              </div>
+              <div className="equipment-details-1">
+                <h4>{item.name}</h4>
+                <p>รายละเอียด: {item.description}</p>
+                <span className="number-eq">จำนวน: {item.totalQuantity}</span>
+                <div style={{ textAlign: "center", marginBottom: "20px" }}>
+                  <button
+                    className="all-eq-button"
+                    onClick={() => handleViewAllClick(item.type_id)}
+                  >
+                    ยืมอุปกรณ์
+                  </button>
                 </div>
               </div>
+            </div>
           ))
         ) : (
-          <p style={{ textAlign: "center" }}>ไม่มีข้อมูลในหมวดหมู่ "{category}"</p>
+          <p style={{ textAlign: "center" }}>ไม่มีข้อมูลในหมวดหมู่ "{category}" หรือ ไม่มีอุปกรณ์ที่พร้อมใช้งาน</p>
         )}
       </div>
     </div>

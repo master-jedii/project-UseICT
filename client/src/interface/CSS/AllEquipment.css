@@ -40,12 +40,12 @@
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
     margin: 20px auto; /* จัดให้อยู่ตรงกลาง */
     width: 1600px; /* กำหนดความกว้าง */
-    height: 300px; /* กำหนดความสูง */
+    height: 350px; /* กำหนดความสูง */
   }
   
   .equipment-image-1 img {
-    width: 300px; /* ความกว้างรูปภาพเท่ากับความสูงของกล่อง */
-    height: 300px; /* ความสูงตามขนาดกล่อง */
+    width: 350px; /* ความกว้างรูปภาพเท่ากับความสูงของกล่อง */
+    height: 350px; /* ความสูงตามขนาดกล่อง */
     object-fit: cover; /* ปรับขนาดรูปภาพให้เต็มกล่อง */
     border-right: 1px solid #ddd;
   }
@@ -65,8 +65,7 @@
     margin: 0 0 10px;
     font-size: 1.2rem;
     color: #555;
-    max-height: 100px; /* จำกัดความสูง */
-    overflow-y: auto; /* เพิ่ม scroll หากข้อมูลเกิน */
+    max-height: 200px; /* จำกัดความสูง */
     padding-right: 10px; /* เพิ่มพื้นที่สำหรับ scroll bar */
   }
   
@@ -104,7 +103,13 @@
     color: #009498;
   }
   
-.equipment-details-1 span{
+.equipment-details-1 .number-eq{
   font-family: 'Prompt', sans-serif;
 }
 
+.all-eq-button{
+  background-color: #009498;;
+  position: relative;
+  right: 45%;
+  font-family: 'Prompt', sans-serif;
+}
