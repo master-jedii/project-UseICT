@@ -75,7 +75,6 @@ const App = () => {
         <Route path="/admin/equipment/code" element={<PrivateRoute element={<UpdateTypeId />}/>} />
         <Route path="return-schedule" element={<PrivateRoute element={<ReturnSchedule />}/>} />
         <Route path="ManageUser" element={<PrivateRoute element={<ManageUser/>}/>} />
-        <Route path="/allEquipment" element={<AllEquipment />} />
       </Routes>
     </Router>
   );

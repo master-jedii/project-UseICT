@@ -64,7 +64,7 @@
   
   .user-table th,
   .user-table td {
-    text-align: left;
+    text-align: center;
     padding: 10px;
     border-bottom: 1px solid #ddd;
   }
@@ -254,4 +254,7 @@
     font-size: 16px;
   }
   
+  .modal-actions-manager button{
+    margin-right: 10px;
+  }
   

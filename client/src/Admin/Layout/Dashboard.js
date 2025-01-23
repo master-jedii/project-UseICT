@@ -261,8 +261,8 @@ const Dashboard = () => {
 
           {isModalOpen && (
             <div className="modal-overlay">
-              <div className="modal-content">
-                <div className="modal-header">
+              <div className="modal-content-dashboard">
+                <div className="modal-header-dashboard">
                   <h2>ประวัติการยืมของผู้ใช้</h2>
                   <button className="close-modal" onClick={closeModal}>&times;</button>
                 </div>

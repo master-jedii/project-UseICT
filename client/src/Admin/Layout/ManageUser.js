@@ -317,11 +317,11 @@ const ManageUser = () => {
                     <option value="user">User</option>
                     <option value="admin">Admin</option>
                   </select>
-                  <div className="modal-actions">
+                  <div className="modal-actions-manager">
                     <button type="button" onClick={handleAddUser}>
                       บันทึก
                     </button>
-                    <button type="button" onClick={() => setIsModalOpen(false)}>
+                    <button type="button" onClick={() => setIsModalOpen(false)} style={{backgroundColor : "#dc3545"}}>
                       ยกเลิก
                     </button>
                   </div>
