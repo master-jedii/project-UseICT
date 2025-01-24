@@ -61,69 +61,98 @@ const AdminBorrowStatus = () => {
       setError('Token not found. Please log in again.');
       return;
     }
-
+  
+    // เปิด SweetAlert2 พร้อมช่องกรอกเหตุผล
     Swal.fire({
       title: 'คุณต้องการปฏิเสธคำขอนี้หรือไม่?',
-      text: "คำขอนี้จะถูกปฏิเสธทันที",
-      icon: 'warning',
+      input: 'textarea', // ใช้ textarea เพื่อให้กรอกข้อความ
+      inputPlaceholder: 'กรุณากรอกเหตุผลที่ปฏิเสธ...',
+      inputAttributes: {
+        'aria-label': 'เหตุผลในการปฏิเสธ', // เพิ่ม Accessibility
+      },
       showCancelButton: true,
       confirmButtonText: 'ปฏิเสธ',
       cancelButtonText: 'ยกเลิก',
+      preConfirm: (reason) => {
+        if (!reason || reason.trim() === '') {
+          // ถ้าไม่ได้กรอกเหตุผล จะแสดงข้อความเตือน
+          Swal.showValidationMessage('กรุณากรอกเหตุผลในการปฏิเสธ');
+          return false;
+        }
+        return reason; // ส่งค่าเหตุผลกลับมา
+      },
     }).then((result) => {
       if (result.isConfirmed) {
+        // ถ้ามีการยืนยัน ส่งคำขอไปยัง API พร้อมเหตุผล
         Axios.put(
           `http://localhost:3333/api/borrow/reject/${borrowId}`,
-          {},
+          { reason: result.value }, // ส่งเหตุผลใน body
           { headers: { Authorization: `Bearer ${token}` } }
         )
           .then(() => {
             Swal.fire({
-              icon: 'error',
+              icon: 'success',
               title: 'คำขอถูกปฏิเสธ',
-              text: 'คำขอการยืมถูกปฏิเสธแล้ว',
+              text: 'คำขอการยืมถูกปฏิเสธพร้อมเหตุผล',
             });
-            fetchAllBorrowData();
+            fetchAllBorrowData(); // อัปเดตข้อมูลหลังการปฏิเสธ
           })
           .catch(() => setError('Error rejecting borrow request.'));
       }
     });
   };
 
-  // ฟังก์ชันสำหรับการลบคำขอออกจากระบบ
+
   const deleteBorrowRequest = (borrowId) => {
     const token = sessionStorage.getItem("authToken");
     if (!token) {
       setError('Token not found. Please log in again.');
       return;
     }
-
+  
+    // เปิด SweetAlert2 พร้อมช่องกรอกเหตุผล
     Swal.fire({
       title: 'คุณแน่ใจหรือไม่?',
-      text: "คุณต้องการเปลี่ยนสถานะคำขอนี้เป็น 'ข้อเสนอถูกลบ' หรือไม่?",
-      icon: 'warning',
+      text: "คุณต้องการลบคำขอนี้หรือไม่? กรุณากรอกเหตุผล",
+      input: 'textarea', // ใช้ textarea เพื่อให้กรอกข้อความ
+      inputPlaceholder: 'กรุณากรอกเหตุผลในการลบ...',
+      inputAttributes: {
+        'aria-label': 'เหตุผลในการลบคำขอ',
+      },
       showCancelButton: true,
-      confirmButtonText: 'ยืนยัน',
+      confirmButtonText: 'ลบคำขอ',
       cancelButtonText: 'ยกเลิก',
+      preConfirm: (reason) => {
+        if (!reason || reason.trim() === '') {
+          // ถ้าไม่ได้กรอกเหตุผล จะแสดงข้อความเตือน
+          Swal.showValidationMessage('กรุณากรอกเหตุผลในการลบคำขอ');
+          return false;
+        }
+        return reason; // ส่งค่าเหตุผลกลับมา
+      },
     }).then((result) => {
       if (result.isConfirmed) {
+        // ถ้ามีการยืนยัน ส่งคำขอไปยัง API พร้อมเหตุผล
         Axios.put(
           `http://localhost:3333/api/borrow/delete/${borrowId}`,
-          {},
+          { deleteReason: result.value }, // ส่งเหตุผลในการลบคำขอ
           { headers: { Authorization: `Bearer ${token}` } }
         )
           .then(() => {
             Swal.fire({
               icon: 'success',
-              title: 'สถานะคำขอถูกเปลี่ยนแล้ว',
-              text: 'คำขอได้รับการเปลี่ยนสถานะเป็น "ข้อเสนอถูกลบ"',
+              title: 'คำขอถูกลบ',
+              text: 'คำขอการยืมถูกลบพร้อมเหตุผล',
             });
-            fetchAllBorrowData();
+            fetchAllBorrowData(); // อัปเดตข้อมูลหลังการลบคำขอ
           })
-          .catch(() => setError('Error updating borrow request status.'));
+          .catch(() => setError('Error deleting borrow request.'));
       }
     });
   };
-
+  
+  
+  
   // ฟังก์ชันดึงข้อมูลการยืมทั้งหมด
   const fetchAllBorrowData = () => {
     const token = sessionStorage.getItem("authToken");

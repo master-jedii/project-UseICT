@@ -87,8 +87,7 @@
   margin: 0 0 10px;
   font-size: 1.2rem;
   color: #555;
-  max-height: 100px; /* จำกัดความสูง */
-  overflow-y: auto; /* เพิ่ม scroll หากข้อมูลเกิน */
+  max-height: 200px; /* จำกัดความสูง */
   padding-right: 10px; /* เพิ่มพื้นที่สำหรับ scroll bar */
 }
 

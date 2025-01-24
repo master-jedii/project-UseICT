@@ -1029,15 +1029,20 @@ app.put('/api/borrow/approve/:borrowId', (req, res) => {
 
 app.put('/api/borrow/reject/:borrowId', (req, res) => {
   const borrowId = req.params.borrowId;
+  const { reason } = req.body; // รับเหตุผลจาก request body
+
+  if (!reason || reason.trim() === '') {
+    return res.status(400).json({ message: 'กรุณาระบุเหตุผลในการปฏิเสธ' });
+  }
 
   const query = `
     UPDATE borrow b
     JOIN equipment e ON b.equipment_id = e.equipment_id
-    SET b.status = 'ปฏิเสธ', e.status = 'พร้อมใช้งาน'
+    SET b.status = 'ปฏิเสธ', e.status = 'พร้อมใช้งาน', b.reject_reason = ?
     WHERE b.borrow_id = ?;
   `;
 
-  db.execute(query, [borrowId], (err, result) => {
+  db.execute(query, [reason, borrowId], (err, result) => {
     if (err) {
       console.error('Error rejecting borrow request:', err);
       return res.status(500).json({ message: 'เกิดข้อผิดพลาดในการปฏิเสธคำขอ' });
@@ -1061,29 +1066,21 @@ app.put('/api/borrow/reject/:borrowId', (req, res) => {
         return res.status(404).json({ message: 'Borrow details not found' });
       }
 
-      const borrowInfo = borrowDetails[0]; // ข้อมูลการยืมที่คิวรีมา
-      const message = `การยืมอุปกรณ์ "${borrowInfo.equipment_name}" ถูกปฏิเสธ.`; // ข้อความแจ้งเตือน
+      const borrowInfo = borrowDetails[0];
 
-      // ส่งข้อมูลผ่าน WebSocket
-      io.emit('borrowRejected', {
-        borrowDetails: borrowInfo,
-        userId: borrowInfo.UserID,
-        message: message
-      });
-
-      // ส่งอีเมลแจ้งเตือน
+      // ส่งอีเมลแจ้งเตือนพร้อมเหตุผล
       const transporter = nodemailer.createTransport({
         service: 'gmail',
         auth: {
-          user: 'nusev007x@gmail.com', // อีเมลที่ใช้ส่ง
-          pass: 'wfal rddv aweq gnkg', // รหัสผ่านจาก App Password
+          user: 'nusev007x@gmail.com',
+          pass: 'wfal rddv aweq gnkg',
         },
       });
 
       const mailOptions = {
         from: 'nusev007x@gmail.com',
-        to: borrowInfo.user_email,   // อีเมลผู้รับ
-        subject: 'การปฏิเสธการยืมอุปกรณ์', // หัวข้ออีเมล
+        to: borrowInfo.user_email,
+        subject: 'การปฏิเสธการยืมอุปกรณ์',
         html: `
           <html>
             <head>
@@ -1110,7 +1107,7 @@ app.put('/api/borrow/reject/:borrowId', (req, res) => {
                   border-radius: 8px 8px 0 0;
                 }
                 .header img {
-                  width: 100px; /* กำหนดขนาดโลโก้ */
+                  width: 100px;
                   margin-bottom: 10px;
                 }
                 .content {
@@ -1133,6 +1130,12 @@ app.put('/api/borrow/reject/:borrowId', (req, res) => {
                   border-radius: 4px;
                   margin-top: 20px;
                 }
+                blockquote {
+                  border-left: 5px solid #d9534f;
+                  padding-left: 10px;
+                  color: #d9534f;
+                  font-style: italic;
+                }
               </style>
             </head>
             <body>
@@ -1141,15 +1144,16 @@ app.put('/api/borrow/reject/:borrowId', (req, res) => {
                   <h2>การปฏิเสธการยืมอุปกรณ์</h2>
                 </div>
                 <div class="content">
-                  <p>สวัสดี,</p>
-                  <p>การยืมอุปกรณ์ <strong>"${borrowInfo.equipment_name}"</strong> ของคุณถูกปฏิเสธ.</p>
+                  <p>เรียนผู้ใช้งาน,</p>
+                  <p>คำขอยืมอุปกรณ์ <strong>${borrowInfo.equipment_name}</strong> ถูกปฏิเสธด้วยเหตุผลดังนี้:</p>
+                  <blockquote>${reason}</blockquote>
                   <p>รายละเอียดการยืม:</p>
                   <ul>
                     <li><strong>รหัสการยืม:</strong> ${borrowInfo.borrow_id}</li>
                     <li><strong>วันที่ยืม:</strong> ${new Date(borrowInfo.borrow_date).toLocaleDateString('th-TH', { timeZone: 'Asia/Bangkok' })}</li>
                     <li><strong>วันที่คืน:</strong> ${new Date(borrowInfo.return_date).toLocaleDateString('th-TH', { timeZone: 'Asia/Bangkok' })}</li>
                   </ul>
-                  <p>ขอบคุณที่ใช้บริการของเรา!</p>
+                  <p>หากมีข้อสงสัยโปรดติดต่อฝ่ายสนับสนุน.</p>
                   <a href="http://localhost:3000/" class="button">เยี่ยมชมเว็บไซต์ของเรา</a>
                 </div>
                 <div class="footer">
@@ -1160,6 +1164,7 @@ app.put('/api/borrow/reject/:borrowId', (req, res) => {
           </html>
         `,
       };
+      
 
       transporter.sendMail(mailOptions, (err, info) => {
         if (err) {
@@ -1168,10 +1173,8 @@ app.put('/api/borrow/reject/:borrowId', (req, res) => {
         }
 
         console.log("Email sent successfully:", info.response);
-
-        // ส่ง response กลับไปยัง client
         return res.status(200).json({
-          message: 'คำขอถูกปฏิเสธและสถานะอุปกรณ์ถูกตั้งเป็น "พร้อมใช้งาน"',
+          message: 'คำขอถูกปฏิเสธและอีเมลแจ้งเตือนถูกส่งแล้ว',
           borrowDetails: borrowInfo,
         });
       });
@@ -1179,25 +1182,32 @@ app.put('/api/borrow/reject/:borrowId', (req, res) => {
   });
 });
 
+
+
 // ฟังก์ชันสำหรับการลบคำขอ
 app.put('/api/borrow/delete/:borrowId', (req, res) => {
   const borrowId = req.params.borrowId;
+  const { deleteReason } = req.body;  // รับเหตุผลจาก client
+
+  if (!deleteReason) {
+    return res.status(400).json({ message: 'กรุณากรอกเหตุผลในการลบคำขอ' });
+  }
 
   const query = `
     UPDATE borrow b
     JOIN equipment e ON b.equipment_id = e.equipment_id
-    SET b.status = 'ข้อเสนอถูกลบ', e.status = 'พร้อมใช้งาน'
+    SET b.status = 'ข้อเสนอถูกลบ', e.status = 'พร้อมใช้งาน', b.reject_reason = ?
     WHERE b.borrow_id = ?;
   `;
 
-  db.execute(query, [borrowId], (err, result) => {
+  db.execute(query, [deleteReason, borrowId], (err, result) => {
     if (err) {
       console.error('Error deleting borrow request:', err);
       return res.status(500).json({ message: 'เกิดข้อผิดพลาดในการลบคำขอ' });
     }
 
     const fetchBorrowDetails = `
-      SELECT b.borrow_id, b.status, b.borrow_date, b.return_date, b.UserID, e.name as equipment_name, e.equipment_id, u.email as user_email
+      SELECT b.borrow_id, b.status, b.borrow_date, b.return_date, b.UserID, e.name as equipment_name, e.equipment_id, u.email as user_email, b.reject_reason
       FROM borrow b
       JOIN equipment e ON b.equipment_id = e.equipment_id
       JOIN users u ON b.UserID = u.UserID
@@ -1215,7 +1225,7 @@ app.put('/api/borrow/delete/:borrowId', (req, res) => {
       }
 
       const borrowInfo = borrowDetails[0]; // ข้อมูลการยืมที่คิวรีมา
-      const message = `การยืมอุปกรณ์ "${borrowInfo.equipment_name}" ข้อเสนอถูกลบ.`; // ข้อความแจ้งเตือน
+      const message = `การยืมอุปกรณ์ "${borrowInfo.equipment_name}" ข้อเสนอถูกลบ.`;
 
       // ส่งข้อมูลผ่าน WebSocket
       io.emit('borrowDeleted', {
@@ -1236,7 +1246,7 @@ app.put('/api/borrow/delete/:borrowId', (req, res) => {
       const mailOptions = {
         from: 'nusev007x@gmail.com',
         to: borrowInfo.user_email,   // อีเมลผู้รับ
-        subject: 'ข้อเสนอถูกลบคำขอ', // หัวข้ออีเมล
+        subject: 'ข้อเสนอถูกลบคำขอ',
         html: `
           <html>
             <head>
@@ -1263,7 +1273,7 @@ app.put('/api/borrow/delete/:borrowId', (req, res) => {
                   border-radius: 8px 8px 0 0;
                 }
                 .header img {
-                  width: 100px; /* กำหนดขนาดโลโก้ */
+                  width: 100px;
                   margin-bottom: 10px;
                 }
                 .content {
@@ -1331,6 +1341,7 @@ app.put('/api/borrow/delete/:borrowId', (req, res) => {
     });
   });
 });
+
 
 
 
