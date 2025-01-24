@@ -20,6 +20,10 @@ const ShowEquipment = () => {
     imagePreview: null,
   });
 
+  // Pagination states
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
+
   useEffect(() => {
     axios.get(`http://localhost:3333/showequipment?category=${selectedCategory}`)
       .then((response) => {
@@ -122,10 +126,19 @@ const ShowEquipment = () => {
       });
   };
 
+  // Pagination logic
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentEquipments = filteredEquipments.slice(indexOfFirstItem, indexOfLastItem);
+  const totalPages = Math.ceil(filteredEquipments.length / itemsPerPage);
+
+  const handlePageChange = (pageNumber) => {
+    setCurrentPage(pageNumber);
+  };
+
   return (
     <div className="equipment-containerAdmin">
       <h1>รายการอุปกรณ์ทั้งหมด</h1>
-      
 
       {/* Search bar */}
       <div className="search-bar-custom">
@@ -141,7 +154,6 @@ const ShowEquipment = () => {
         </div>
       </div>
 
-
       <div className="category-buttons">
         {['ทั้งหมด', 'กล้อง', 'เลนส์', 'ขาตั้งกล้อง', 'ไฟสำหรับถ่ายทำ', 'อุปกรณ์ด้านเสียง', 'อุปกรณ์จัดแสง', 'อุปกรณ์อื่นๆ'].map((category) => (
           <button
@@ -155,7 +167,7 @@ const ShowEquipment = () => {
       </div>
 
       <ul className="equipment-listAdmin">
-        {filteredEquipments.map((item) => (
+        {currentEquipments.map((item) => (
           <li key={item.equipment_id} className="equipment-item">
             <img
               src={`http://localhost:3333/uploads/${item.image}`}
@@ -175,6 +187,19 @@ const ShowEquipment = () => {
           </li>
         ))}
       </ul>
+
+      {/* Pagination buttons */}
+      <div className="pagination">
+        {[...Array(totalPages).keys()].map((number) => (
+          <button
+            key={number + 1}
+            onClick={() => handlePageChange(number + 1)}
+            className={currentPage === number + 1 ? 'active' : ''}
+          >
+            {number + 1}
+          </button>
+        ))}
+      </div>
 
       {isModalOpen && (
         <div className="modal">
