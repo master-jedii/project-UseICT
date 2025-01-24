@@ -11,7 +11,10 @@
 
 
 .pagination button {
-  margin: 0 -130px 0 150px; /* เพิ่มระยะห่างระหว่างปุ่ม */
+  justify-content: center;
+  align-items: center;
+  margin: 0 auto;
+  
 }
 
 .equipment-containerAdmin h1 {
