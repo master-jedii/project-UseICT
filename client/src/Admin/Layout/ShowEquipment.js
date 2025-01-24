@@ -178,7 +178,7 @@ const ShowEquipment = () => {
               <h2>{item.name}</h2>
               <p><span>รายละเอียด:</span> {item.description}</p>
               <p><span>สถานะ:</span> {item.status}</p>
-              <p><span>รหัสประจำอุปกรณ์:</span> {getSerialTypeName(item.type_id)}</p>
+              <p><span>รหัสรุ่นอุปกรณ์:</span> {getSerialTypeName(item.type_id)}</p>
             </div>
             <div className="equipment-actions">
               <button onClick={() => handleUpdateClick(item)} className="update-btn">Update</button>

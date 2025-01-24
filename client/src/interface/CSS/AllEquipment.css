@@ -8,16 +8,19 @@
   .pagination-allEquipment {
     display: flex;
     margin-top: 12px;
+    justify-content: center;
+    align-items: center;
+    margin: -10px 0 20px 0;
   }
   .pagination-allEquipment button {
     background-color: #f1f1f1;
     border: 1px solid #ddd;
     width: 50px;
     height: 50px;
-    padding: 8px 12px;
+    padding: 10px 12px;
     cursor: pointer;
     transition: background-color 0.3s ease;
-    margin: 0 -130px 0 150px; /* เพิ่มระยะห่างระหว่างปุ่ม */
+    
   }
   
   .pagination-allEquipment button:hover {
@@ -53,6 +56,7 @@
   
   .header-equipment-list-1 h1{
     font-size: 32px;
+    font-family: 'Prompt', sans-serif;
   }
   
   .equipment-item-1 {

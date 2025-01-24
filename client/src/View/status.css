@@ -12,8 +12,9 @@
 
 .pagination-status {
     display: flex;
-    margin-top: 25px;
-    margin-left: -1200px;
+    justify-content: center;
+    align-items: center;
+    margin: 25px 0 20px 0;
   }
   .pagination-status button {
     background-color: #f1f1f1;
