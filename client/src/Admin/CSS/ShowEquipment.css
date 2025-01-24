@@ -8,10 +8,11 @@
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
-.pagination button {
-  margin: 0 5px; /* เพิ่มระยะห่างระหว่างปุ่ม */
-}
 
+
+.pagination button {
+  margin: 0 -130px 0 150px; /* เพิ่มระยะห่างระหว่างปุ่ม */
+}
 
 .equipment-containerAdmin h1 {
   text-align: left;
