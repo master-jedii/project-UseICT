@@ -14,7 +14,9 @@
   border-radius: 8px;
   
 }
-
+.pagination-container button {
+  margin: 25px 5px 0px 0px ; /* เพิ่มระยะห่างระหว่างปุ่ม */
+}
 
 /* Title styling */
 .admin-status-title {
