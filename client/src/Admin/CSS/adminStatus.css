@@ -26,8 +26,6 @@
   font-weight: bold;
   margin-bottom: 20px;
   margin-right: 170px;
-  
-  
 }
 
 /* Table Styling */
@@ -207,3 +205,7 @@
 .filter-button-status:active {
   background-color: #bbb;
 }
+
+
+
+

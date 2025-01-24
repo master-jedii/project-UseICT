@@ -136,7 +136,7 @@ const EquipmentListByType = () => {
         </div>
 
         {/* Pagination */}
-        <div className="pagination">
+        <div className="pagination-type">
           {[...Array(totalPages)].map((_, index) => (
             <button
               key={index + 1}

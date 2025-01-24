@@ -12,6 +12,10 @@ const Status = () => {
   const navigate = useNavigate();
   const [borrowStatus, setBorrowStatus] = useState([]);
 
+  const [currentPage, setCurrentPage] = useState(1); // หน้าเริ่มต้นคือ 1
+  const [itemsPerPage] = useState(5); // จำนวนรายการที่แสดงในแต่ละหน้า
+  const [totalItems, setTotalItems] = useState(0); // จำนวนรายการทั้งหมด
+
   // ดึงข้อมูลผู้ใช้
   const fetchUser = () => {
     const token = localStorage.getItem("token");
@@ -37,6 +41,7 @@ const Status = () => {
       })
         .then((response) => {
           setBorrowStatus(response.data); // เก็บข้อมูล borrow status
+          setTotalItems(response.data.length); // เก็บจำนวนรายการทั้งหมด
         })
         .catch((err) => {
           console.error("Error fetching borrow status:", err);
@@ -234,13 +239,6 @@ const Status = () => {
     }, 1000);
   };
 
-
-
-
-
-
-
-
   useEffect(() => {
     fetchUser(); // ดึงข้อมูลผู้ใช้
     fetchBorrowStatus(); // ดึงข้อมูลสถานะการยืม
@@ -253,6 +251,12 @@ const Status = () => {
     navigate('/');
   };
 
+  const indexOfLastEquipment = currentPage * itemsPerPage;
+  const indexOfFirstEquipment = indexOfLastEquipment - itemsPerPage;
+
+  // คำนวณจำนวนหน้าที่ต้องแสดง
+  const totalPages = Math.ceil(totalItems / itemsPerPage);
+
   return (
     <div>
       <NavbarMain userData={user} onLogout={handleLogout} />
@@ -263,21 +267,21 @@ const Status = () => {
             <tr>
               <th>ลำดับ</th>
               <th>อุปกรณ์</th>
-              <th>รหัสอุปกรณ์</th> {/* เพิ่มคอลัมน์รหัสอุปกรณ์ */}
+              <th>รหัสอุปกรณ์</th>
               <th>วันที่ยืม</th>
               <th>วันที่คืน</th>
               <th>เวลาส่งคำร้อง</th>
               <th>สถานะ</th>
               <th>การดำเนินการ</th>
-              
             </tr>
           </thead>
           <tbody>
-            {borrowStatus.map((borrow, index) => (
+            {borrowStatus.slice(indexOfFirstEquipment, indexOfLastEquipment).map((borrow, index) => (
               <tr key={borrow.borrow_id}>
-                <td>{index + 1}</td>
+                {/* ลำดับที่จะนับต่อจากหน้าก่อนหน้า */}
+                <td>{(currentPage - 1) * itemsPerPage + index + 1}</td>
                 <td>{borrow.equipment_name}</td>
-                <td>{borrow.equipment_id}</td> {/* แสดงรหัสอุปกรณ์ */}
+                <td>{borrow.equipment_id}</td>
                 <td>{new Date(borrow.borrow_date).toLocaleDateString("th-TH")}</td>
                 <td>{new Date(borrow.return_date).toLocaleDateString("th-TH")}</td>
                 <td>{new Date(borrow.created_at).toLocaleString("th-TH", {
@@ -322,14 +326,23 @@ const Status = () => {
                       ปริ้นเอกสาร
                     </button>
                   )}
-
-
                 </td>
-
               </tr>
             ))}
           </tbody>
         </table>
+        <div className="pagination-status">
+          {/* Display the page numbers */}
+          {[...Array(totalPages)].map((_, index) => (
+            <button
+              key={index + 1}
+              onClick={() => setCurrentPage(index + 1)}
+              className={currentPage === index + 1 ? "active" : ""}
+            >
+              {index + 1}
+            </button>
+          ))}
+        </div>
       </div>
     </div>
   );

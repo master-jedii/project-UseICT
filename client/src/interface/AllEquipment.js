@@ -153,18 +153,18 @@ const AllEquipment = () => {
         )}
       </div>
 
-      {/* Pagination */}
-      <div className="pagination">
-          {[...Array(totalPages)].map((_, index) => (
-            <button
-              key={index + 1}
-              onClick={() => setCurrentPage(index + 1)}
-              className={currentPage === index + 1 ? "active" : ""}
-            >
-              {index + 1}
-            </button>
-          ))}
-        </div>
+      <div className="pagination-allEquipment">
+        {/* Display the page numbers */}
+        {[...Array(totalPages)].map((_, index) => (
+          <button
+            key={index + 1}
+            onClick={() => setCurrentPage(index + 1)}
+            className={currentPage === index + 1 ? "active" : ""}
+          >
+            {index + 1}
+          </button>
+        ))}
+      </div>
     </div>
   );
 };

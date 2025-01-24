@@ -5,9 +5,31 @@
   font-family: 'Prompt', sans-serif;
 }
 
-.pagination button {
+.pagination-type {
+  display: flex;
+}
+.pagination-type button {
+  background-color: #f1f1f1;
+  border: 1px solid #ddd;
+  width: 50px;
+  height: 50px;
+  padding: 8px 12px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
   margin: 0 -130px 0 150px; /* เพิ่มระยะห่างระหว่างปุ่ม */
 }
+
+.pagination-type button:hover {
+  background-color: #ddd;
+}
+.pagination-type button.active {
+  background-color: #009498;
+  color: white;
+}
+.pagination-type button:focus {
+  outline: none;
+}
+
 
 .header-equipment-list-2{
   width: 1600px;
@@ -19,7 +41,6 @@
   justify-content: center;
   margin: 40px 0px 40px 150px ;
   font-family: 'Prompt', sans-serif;
-
 }
 
 .header-equipment-list-2 h1{

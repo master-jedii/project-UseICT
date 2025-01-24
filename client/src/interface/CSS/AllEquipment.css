@@ -5,10 +5,32 @@
     
     
   }
-  
-  .pagination button {
+  .pagination-allEquipment {
+    display: flex;
+    margin-top: 12px;
+  }
+  .pagination-allEquipment button {
+    background-color: #f1f1f1;
+    border: 1px solid #ddd;
+    width: 50px;
+    height: 50px;
+    padding: 8px 12px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
     margin: 0 -130px 0 150px; /* เพิ่มระยะห่างระหว่างปุ่ม */
   }
+  
+  .pagination-allEquipment button:hover {
+    background-color: #ddd;
+  }
+  .pagination-allEquipment button.active {
+    background-color: #009498;
+    color: white;
+  }
+  .pagination-allEquipment button:focus {
+    outline: none;
+  }
+  
 
   .equipment-list-1 {
     display: flex;

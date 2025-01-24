@@ -9,7 +9,33 @@
     align-items: center; /* จัดให้อยู่ตรงกลางแนวนอน */
     justify-content: center; /* จัดให้อยู่ตรงกลางแนวตั้ง */
 }
-  
+
+.pagination-status {
+    display: flex;
+    margin-top: 25px;
+    margin-left: -1200px;
+  }
+  .pagination-status button {
+    background-color: #f1f1f1;
+    border: 1px solid #ddd;
+    width: 50px;
+    height: 50px;
+    padding: 8px 12px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    margin: 0 0 0 20px; /* เพิ่มระยะห่างระหว่างปุ่ม */
+  }
+  .pagination-status button:hover {
+    background-color: #ddd;
+  }
+  .pagination-status button.active {
+    background-color: #009498;
+    color: white;
+  }
+  .pagination-status button:focus {
+    outline: none;
+  }
+
 .status-title-1 {
     font-size: 28px;
     font-weight: bold;
@@ -117,3 +143,6 @@
     transform: scale(1.1); /* ขยายขนาดขึ้น 10% */
     transition: transform 0.2s ease, ;
   }
+
+  
+
