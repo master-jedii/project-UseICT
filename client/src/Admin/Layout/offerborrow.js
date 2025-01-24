@@ -6,10 +6,18 @@ import Swal from 'sweetalert2'; // นำเข้า SweetAlert2
 
 const AdminBorrowStatus = () => {
   const [borrowData, setBorrowData] = useState([]);
-  const [filteredData, setFilteredData] = useState([]);  // เก็บข้อมูลที่กรองแล้ว
-  const [loading, setLoading] = useState(true);  // สถานะการโหลด
-  const [error, setError] = useState(null);  // เก็บข้อผิดพลาด
+  const [filteredData, setFilteredData] = useState([]); // เก็บข้อมูลที่กรองแล้ว
+  const [loading, setLoading] = useState(true); // สถานะการโหลด
+  const [error, setError] = useState(null); // เก็บข้อผิดพลาด
   const [searchUserID, setSearchUserID] = useState(""); // เก็บค่าที่กรอกเพื่อค้นหา UserID
+
+  // Pagination
+  const [currentPage, setCurrentPage] = useState(1); // หน้าปัจจุบัน
+  const itemsPerPage = 10; // จำนวนรายการต่อหน้า
+
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentItems = filteredData.slice(indexOfFirstItem, indexOfLastItem);
 
   // ฟังก์ชันสำหรับการอนุมัติคำขอ
   const approveBorrowRequest = (borrowId) => {
@@ -19,7 +27,6 @@ const AdminBorrowStatus = () => {
       return;
     }
 
-    // ใช้ SweetAlert2 ให้ยืนยันการอนุมัติ
     Swal.fire({
       title: 'คุณต้องการอนุมัติคำขอนี้หรือไม่?',
       text: "เมื่อคุณอนุมัติแล้วจะไม่สามารถย้อนกลับได้",
@@ -34,20 +41,15 @@ const AdminBorrowStatus = () => {
           {},
           { headers: { Authorization: `Bearer ${token}` } }
         )
-          .then((response) => {
+          .then(() => {
             Swal.fire({
               icon: 'success',
               title: 'คำขอได้รับการอนุมัติแล้ว!',
               text: 'คำขอนี้ได้รับการอนุมัติแล้ว',
             });
-
-            // รีเฟรชข้อมูลหลังการอนุมัติ
-            fetchAllBorrowData();  // ดึงข้อมูลใหม่จากเซิร์ฟเวอร์
+            fetchAllBorrowData();
           })
-          .catch((err) => {
-            console.error("Error approving borrow request:", err);
-            setError('Error approving borrow request.');
-          });
+          .catch(() => setError('Error approving borrow request.'));
       }
     });
   };
@@ -60,7 +62,6 @@ const AdminBorrowStatus = () => {
       return;
     }
 
-    // ใช้ SweetAlert2 ให้ยืนยันการปฏิเสธ
     Swal.fire({
       title: 'คุณต้องการปฏิเสธคำขอนี้หรือไม่?',
       text: "คำขอนี้จะถูกปฏิเสธทันที",
@@ -75,20 +76,15 @@ const AdminBorrowStatus = () => {
           {},
           { headers: { Authorization: `Bearer ${token}` } }
         )
-          .then((response) => {
+          .then(() => {
             Swal.fire({
               icon: 'error',
               title: 'คำขอถูกปฏิเสธ',
               text: 'คำขอการยืมถูกปฏิเสธแล้ว',
             });
-
-            // รีเฟรชข้อมูลหลังการปฏิเสธ
-            fetchAllBorrowData();  // ดึงข้อมูลใหม่จากเซิร์ฟเวอร์
+            fetchAllBorrowData();
           })
-          .catch((err) => {
-            console.error("Error rejecting borrow request:", err);
-            setError('Error rejecting borrow request.');
-          });
+          .catch(() => setError('Error rejecting borrow request.'));
       }
     });
   };
@@ -101,7 +97,6 @@ const AdminBorrowStatus = () => {
       return;
     }
 
-    // ใช้ SweetAlert2 ยืนยันการลบ
     Swal.fire({
       title: 'คุณแน่ใจหรือไม่?',
       text: "คุณต้องการเปลี่ยนสถานะคำขอนี้เป็น 'ข้อเสนอถูกลบ' หรือไม่?",
@@ -116,20 +111,15 @@ const AdminBorrowStatus = () => {
           {},
           { headers: { Authorization: `Bearer ${token}` } }
         )
-          .then((response) => {
+          .then(() => {
             Swal.fire({
               icon: 'success',
               title: 'สถานะคำขอถูกเปลี่ยนแล้ว',
               text: 'คำขอได้รับการเปลี่ยนสถานะเป็น "ข้อเสนอถูกลบ"',
             });
-
-            // รีเฟรชข้อมูลหลังการลบ
-            fetchAllBorrowData();  // ดึงข้อมูลใหม่จากเซิร์ฟเวอร์
+            fetchAllBorrowData();
           })
-          .catch((err) => {
-            console.error("Error deleting borrow request:", err);
-            setError('Error updating borrow request status.');
-          });
+          .catch(() => setError('Error updating borrow request status.'));
       }
     });
   };
@@ -148,50 +138,71 @@ const AdminBorrowStatus = () => {
     })
       .then((response) => {
         setBorrowData(response.data);
-        setFilteredData(response.data);  // เริ่มต้นแสดงข้อมูลทั้งหมด
+        setFilteredData(response.data);
         setLoading(false);
       })
-      .catch((err) => {
-        console.error("Error fetching all borrow data:", err);
+      .catch(() => {
         setError('Error fetching borrow data.');
         setLoading(false);
       });
   };
 
-  // ฟังก์ชันสำหรับค้นหาข้อมูลตาม UserID
+  // ฟังก์ชันค้นหาด้วย UserID
   const handleSearch = () => {
     if (isNaN(searchUserID) || searchUserID.trim() === "") {
       setError('กรุณากรอกหมายเลข UserID ที่ถูกต้อง');
-      setFilteredData(borrowData);  // คืนค่ากลับเป็นข้อมูลทั้งหมด
+      setFilteredData(borrowData);
       return;
     }
-
     const filtered = borrowData.filter(borrow => borrow.UserID.toString().includes(searchUserID));
     setFilteredData(filtered);
-    setError(null);  // เคลียร์ข้อผิดพลาด
+    setError(null);
   };
 
-  // ฟังก์ชันสำหรับเคลียร์การค้นหา
   const handleClearSearch = () => {
-    setSearchUserID(""); // เคลียร์ช่องค้นหา
-    setFilteredData(borrowData); // แสดงข้อมูลทั้งหมด
-    setError(null);  // เคลียร์ข้อผิดพลาด
+    setSearchUserID("");
+    setFilteredData(borrowData);
+    setError(null);
   };
 
-  useEffect(() => {
-    fetchAllBorrowData();
-  }, []);
-
-  // ฟังก์ชันสำหรับการกรองตามสถานะ
   const handleFilterStatus = (status) => {
     if (status === "ทั้งหมด") {
-      setFilteredData(borrowData); // คืนค่าข้อมูลทั้งหมด
+      setFilteredData(borrowData);
     } else {
       const filtered = borrowData.filter(borrow => borrow.status === status);
       setFilteredData(filtered);
     }
   };
 
+  const handlePageChange = (pageNumber) => {
+    setCurrentPage(pageNumber);
+  };
+
+  const renderPagination = () => {
+    const totalPages = Math.ceil(filteredData.length / itemsPerPage);
+    const pageNumbers = [];
+    for (let i = 1; i <= totalPages; i++) {
+      pageNumbers.push(i);
+    }
+
+    return (
+      <div className="pagination-container">
+        {pageNumbers.map((number) => (
+          <button
+            key={number}
+            className={`pagination-button ${currentPage === number ? "active" : ""}`}
+            onClick={() => handlePageChange(number)}
+          >
+            {number}
+          </button>
+        ))}
+      </div>
+    );
+  };
+
+  useEffect(() => {
+    fetchAllBorrowData();
+  }, []);
 
   return (
     <div>
@@ -199,25 +210,22 @@ const AdminBorrowStatus = () => {
         <NavbarAdmin />
         <div className="admin-dashboard-typeid">
           <header className="admin-header-info-typeid">
-            <div className="admin-header-info"  style={{display:'flex' , alignItems : 'center' , gap :'10px'}}>
-              <i className="fas fa-handshake" style={{fontSize : '20px'}}></i>
+            <div className="admin-header-info" style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+              <i className="fas fa-handshake" style={{ fontSize: '20px' }}></i>
               <h1 style={{ textAlign: 'left' }}>รายการยืมทั้งหมด</h1>
             </div>
           </header>
-          {/* ช่องกรอกค้นหาตาม UserID */}
           <div className="search-container">
             <input
               className="Search-admin-2"
               type="number"
               value={searchUserID}
-              onChange={(e) => setSearchUserID(e.target.value)} // เก็บค่าที่กรอก
+              onChange={(e) => setSearchUserID(e.target.value)}
               placeholder="ค้นหาด้วยรหัสนักศึกษา"
             />
             <button className="Search-admin-1" onClick={handleSearch}>ค้นหา</button>
             <button onClick={handleClearSearch}>เคลียร์</button>
           </div>
-
-        
           <div className="filter-buttons-container-status">
             <button onClick={() => handleFilterStatus("ทั้งหมด")} className="filter-button-status">
               ทั้งหมด
@@ -232,7 +240,6 @@ const AdminBorrowStatus = () => {
               ปฏิเสธ
             </button>
           </div>
-
 
           {loading && <div>กำลังโหลดข้อมูล...</div>}
           {error && <div style={{ color: 'red' }}>{error}</div>}
@@ -253,7 +260,7 @@ const AdminBorrowStatus = () => {
                 </tr>
               </thead>
               <tbody>
-                {filteredData.map((borrow) => (
+                {currentItems.map((borrow) => (
                   <tr key={borrow.borrow_id}>
                     <td>{borrow.borrow_id}</td>
                     <td>{borrow.UserID}</td>
@@ -303,6 +310,8 @@ const AdminBorrowStatus = () => {
               </tbody>
             </table>
           )}
+
+          {!loading && !error && renderPagination()}
         </div>
       </div>
     </div>
