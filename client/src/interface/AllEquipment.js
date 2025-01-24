@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react"; 
 import Axios from "axios";
 import { useLocation, useNavigate } from "react-router-dom";
 import "../interface/CSS/AllEquipment.css"; // ไฟล์ CSS
@@ -10,6 +10,11 @@ const AllEquipment = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState(''); // เพิ่ม state สำหรับคำค้นหา
+
+  // เพิ่ม state สำหรับ pagination
+  const [currentPage, setCurrentPage] = useState(1); // หน้าเริ่มต้นคือ 1
+  const [itemsPerPage] = useState(10); // จำนวนรายการที่แสดงในแต่ละหน้า
+  const [totalItems, setTotalItems] = useState(0); // จำนวนรายการทั้งหมด
 
   // ดึงค่าหมวดหมู่จาก query string
   const queryParams = new URLSearchParams(location.search);
@@ -35,7 +40,9 @@ const AllEquipment = () => {
         }, {});
 
         // แปลง Object ให้เป็น Array และตั้งค่า state
-        setEquipment(Object.values(groupedEquipment));
+        const equipmentArray = Object.values(groupedEquipment);
+        setTotalItems(equipmentArray.length); // ตั้งค่าจำนวนรายการทั้งหมด
+        setEquipment(equipmentArray); // เก็บข้อมูลอุปกรณ์ที่กรองแล้ว
       })
       .catch((err) => console.error("Error fetching equipment:", err));
   };
@@ -90,6 +97,14 @@ const AllEquipment = () => {
     navigate(`/equipment/${typeId}`);
   };
 
+  // คำนวณข้อมูลที่จะต้องแสดงในหน้าปัจจุบัน
+  const indexOfLastEquipment = currentPage * itemsPerPage;
+  const indexOfFirstEquipment = indexOfLastEquipment - itemsPerPage;
+  const currentEquipment = equipment.slice(indexOfFirstEquipment, indexOfLastEquipment);
+
+  // คำนวณจำนวนหน้าที่ต้องแสดง
+  const totalPages = Math.ceil(totalItems / itemsPerPage);
+
   return (
     <div>
       <NavbarMain userData={user} onLogout={handleLogout} />
@@ -109,8 +124,8 @@ const AllEquipment = () => {
       </div>
 
       <div className="equipment-list-1">
-        {equipment.length > 0 ? (
-          equipment.map((item, idx) => (
+        {currentEquipment.length > 0 ? (
+          currentEquipment.map((item, idx) => (
             <div className="equipment-item-1" key={idx}>
               <div className="equipment-image-1">
                 <img
@@ -137,6 +152,19 @@ const AllEquipment = () => {
           <p style={{ textAlign: "center" }}>ไม่มีข้อมูลในหมวดหมู่ "{category}" หรือ ไม่มีอุปกรณ์ที่พร้อมใช้งาน</p>
         )}
       </div>
+
+      {/* Pagination */}
+      <div className="pagination">
+          {[...Array(totalPages)].map((_, index) => (
+            <button
+              key={index + 1}
+              onClick={() => setCurrentPage(index + 1)}
+              className={currentPage === index + 1 ? "active" : ""}
+            >
+              {index + 1}
+            </button>
+          ))}
+        </div>
     </div>
   );
 };

@@ -4,6 +4,9 @@
   gap: 20px;
   font-family: 'Prompt', sans-serif;
 }
+.pagination button {
+  margin: 0 -130px 0 150px; /* เพิ่มระยะห่างระหว่างปุ่ม */
+}
 
 .header-equipment-list-2{
   width: 1600px;
