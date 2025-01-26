@@ -11,6 +11,7 @@
   align-items: center;
   margin: -10px 0 20px 0;
 }
+
 .pagination-type button {
   background-color: #f1f1f1;
   border: 1px solid #ddd;
@@ -19,6 +20,7 @@
   padding: 8px 12px;
   cursor: pointer;
   transition: background-color 0.3s ease;
+  margin: 0 10px;
   
 }
 
