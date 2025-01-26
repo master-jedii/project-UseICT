@@ -45,7 +45,6 @@ const notifications = {}; // เก็บการแจ้งเตือนต
 
 io.on("connection", (socket) => {
   const userId = socket.handshake.query.userId;  // ดึง userId จาก query string หรือจาก session
-
   // ฟัง event 'borrowApproved'
   socket.on("borrowApproved", (notification) => {
     console.log("Borrow approved notification for user:", userId);
@@ -59,7 +58,6 @@ io.on("connection", (socket) => {
     // ส่งการแจ้งเตือนให้ผู้ใช้
     io.to(socket.id).emit("borrowApproved", notification);
   });
-
   // เมื่อ socket disconnect, ลบการแจ้งเตือนของผู้ใช้
   socket.on("disconnect", () => {
     delete notifications[userId];
@@ -1027,12 +1025,13 @@ app.put('/api/borrow/approve/:borrowId', (req, res) => {
 
 
 
+// ฟังก์ชันสำหรับการปฏิเสธคำขอ (Reject)
 app.put('/api/borrow/reject/:borrowId', (req, res) => {
   const borrowId = req.params.borrowId;
-  const { reason } = req.body; // รับเหตุผลจาก request body
+  const { reason } = req.body;  // รับเหตุผลจาก client
 
-  if (!reason || reason.trim() === '') {
-    return res.status(400).json({ message: 'กรุณาระบุเหตุผลในการปฏิเสธ' });
+  if (!reason) {
+    return res.status(400).json({ message: 'กรุณากรอกเหตุผลในการปฏิเสธคำขอ' });
   }
 
   const query = `
@@ -1049,7 +1048,7 @@ app.put('/api/borrow/reject/:borrowId', (req, res) => {
     }
 
     const fetchBorrowDetails = `
-      SELECT b.borrow_id, b.status, b.borrow_date, b.return_date, b.UserID, e.name as equipment_name, e.equipment_id, u.email as user_email
+      SELECT b.borrow_id, b.status, b.borrow_date, b.return_date, b.UserID, e.name as equipment_name, e.equipment_id, u.email as user_email, b.reject_reason
       FROM borrow b
       JOIN equipment e ON b.equipment_id = e.equipment_id
       JOIN users u ON b.UserID = u.UserID
@@ -1066,20 +1065,28 @@ app.put('/api/borrow/reject/:borrowId', (req, res) => {
         return res.status(404).json({ message: 'Borrow details not found' });
       }
 
-      const borrowInfo = borrowDetails[0];
+      const borrowInfo = borrowDetails[0]; // ข้อมูลการยืมที่คิวรีมา
+      const message = `การยืมอุปกรณ์ "${borrowInfo.equipment_name}" ถูกปฏิเสธ.`; // ข้อความแจ้งเตือน
 
-      // ส่งอีเมลแจ้งเตือนพร้อมเหตุผล
+      // ส่งข้อมูลผ่าน WebSocket
+      io.emit('borrowRejected', {
+        borrowDetails: borrowInfo,
+        userId: borrowInfo.UserID,
+        message: message
+      });
+
+      // ส่งอีเมลแจ้งเตือน
       const transporter = nodemailer.createTransport({
         service: 'gmail',
         auth: {
-          user: 'nusev007x@gmail.com',
-          pass: 'wfal rddv aweq gnkg',
+          user: 'nusev007x@gmail.com', // อีเมลที่ใช้ส่ง
+          pass: 'wfal rddv aweq gnkg', // รหัสผ่านจาก App Password
         },
       });
 
       const mailOptions = {
         from: 'nusev007x@gmail.com',
-        to: borrowInfo.user_email,
+        to: borrowInfo.user_email,   // อีเมลผู้รับ
         subject: 'การปฏิเสธการยืมอุปกรณ์',
         html: `
           <html>
@@ -1164,7 +1171,6 @@ app.put('/api/borrow/reject/:borrowId', (req, res) => {
           </html>
         `,
       };
-      
 
       transporter.sendMail(mailOptions, (err, info) => {
         if (err) {
@@ -1173,6 +1179,8 @@ app.put('/api/borrow/reject/:borrowId', (req, res) => {
         }
 
         console.log("Email sent successfully:", info.response);
+
+        // ส่ง response กลับไปยัง client
         return res.status(200).json({
           message: 'คำขอถูกปฏิเสธและอีเมลแจ้งเตือนถูกส่งแล้ว',
           borrowDetails: borrowInfo,

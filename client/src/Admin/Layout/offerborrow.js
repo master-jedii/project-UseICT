@@ -101,15 +101,12 @@ const AdminBorrowStatus = () => {
       }
     });
   };
-
-
   const deleteBorrowRequest = (borrowId) => {
     const token = sessionStorage.getItem("authToken");
     if (!token) {
       setError('Token not found. Please log in again.');
       return;
     }
-  
     // เปิด SweetAlert2 พร้อมช่องกรอกเหตุผล
     Swal.fire({
       title: 'คุณแน่ใจหรือไม่?',
