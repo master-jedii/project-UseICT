@@ -1087,7 +1087,6 @@ app.put('/api/borrow/reject/:borrowId', (req, res) => {
       const mailOptions = {
         from: 'nusev007x@gmail.com',
         to: borrowInfo.user_email,   // อีเมลผู้รับ
->>>>>>>>> Temporary merge branch 2
         subject: 'การปฏิเสธการยืมอุปกรณ์',
         html: `
           <html>
