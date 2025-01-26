@@ -175,5 +175,8 @@ form .btn {
   font-size: 20px;
 }
 
+.image-preview img{
+  object-fit: cover;
+}
 
 
