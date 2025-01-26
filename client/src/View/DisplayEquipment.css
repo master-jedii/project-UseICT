@@ -34,7 +34,7 @@ body {
 .equipment-list {
     padding: 20px;
     min-height: 600vh;
-    background-color: #E3E6E6;
+    background-color: #ffffff;
     min-height: 790vh;
     font-family: 'Prompt', sans-serif;
   }
@@ -152,8 +152,8 @@ body {
 
   .btn-secondary {
     font-family: 'Prompt', sans-serif;
-    background-color: white;
-    color: #009498;
+    background-color: #009498;
+    color: #ffffff;
     border: none;
     font-size: 18px;
     font-weight: bold;
@@ -166,10 +166,7 @@ body {
 }
 
 
-  .category-icons{
-    display: flex;
-    cursor: pointer;
-  }
+ 
   
 
   .search-cata-bar {
@@ -205,6 +202,18 @@ body {
   }
   
 
-  
+  .equipment-container p{
+    color: #b7b8b9;
+  }
+
+  .category{
+    background-color: #ffffff;
+    
+  }
+  .category-icons{
+    display: flex;
+    cursor: pointer;
+    
+  }
 
 
