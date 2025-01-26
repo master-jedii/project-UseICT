@@ -12,5 +12,5 @@ Install
 -npm install jwt-decode
 -npm install socket.io
 -npm install socket.io-client
--npm install nodemailer
+-npm install nodemailer (server)
 
