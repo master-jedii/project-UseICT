@@ -1028,6 +1028,11 @@ app.put('/api/borrow/approve/:borrowId', (req, res) => {
 // ฟังก์ชันสำหรับการปฏิเสธคำขอ (Reject)
 app.put('/api/borrow/reject/:borrowId', (req, res) => {
   const borrowId = req.params.borrowId;
+  const { reason } = req.body;  // รับเหตุผลจาก client
+
+  if (!reason) {
+    return res.status(400).json({ message: 'กรุณากรอกเหตุผลในการปฏิเสธคำขอ' });
+  }
 
   const query = `
     UPDATE borrow b
@@ -1060,21 +1065,30 @@ app.put('/api/borrow/reject/:borrowId', (req, res) => {
         return res.status(404).json({ message: 'Borrow details not found' });
       }
 
-      const borrowInfo = borrowDetails[0];
+      const borrowInfo = borrowDetails[0]; // ข้อมูลการยืมที่คิวรีมา
+      const message = `การยืมอุปกรณ์ "${borrowInfo.equipment_name}" ถูกปฏิเสธ.`; // ข้อความแจ้งเตือน
 
-      // ส่งอีเมลแจ้งเตือนพร้อมเหตุผล
+      // ส่งข้อมูลผ่าน WebSocket
+      io.emit('borrowRejected', {
+        borrowDetails: borrowInfo,
+        userId: borrowInfo.UserID,
+        message: message
+      });
+
+      // ส่งอีเมลแจ้งเตือน
       const transporter = nodemailer.createTransport({
         service: 'gmail',
         auth: {
-          user: 'nusev007x@gmail.com',
-          pass: 'wfal rddv aweq gnkg',
+          user: 'nusev007x@gmail.com', // อีเมลที่ใช้ส่ง
+          pass: 'wfal rddv aweq gnkg', // รหัสผ่านจาก App Password
         },
       });
 
       const mailOptions = {
         from: 'nusev007x@gmail.com',
         to: borrowInfo.user_email,   // อีเมลผู้รับ
-        subject: 'การปฏิเสธการยืมอุปกรณ์', // หัวข้ออีเมล
+>>>>>>>>> Temporary merge branch 2
+        subject: 'การปฏิเสธการยืมอุปกรณ์',
         html: `
           <html>
             <head>
@@ -1158,7 +1172,6 @@ app.put('/api/borrow/reject/:borrowId', (req, res) => {
           </html>
         `,
       };
-      
 
       transporter.sendMail(mailOptions, (err, info) => {
         if (err) {
@@ -1167,6 +1180,8 @@ app.put('/api/borrow/reject/:borrowId', (req, res) => {
         }
 
         console.log("Email sent successfully:", info.response);
+
+        // ส่ง response กลับไปยัง client
         return res.status(200).json({
           message: 'คำขอถูกปฏิเสธและอีเมลแจ้งเตือนถูกส่งแล้ว',
           borrowDetails: borrowInfo,
