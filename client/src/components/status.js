@@ -5,6 +5,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import '../View/status.css';
 import logo from '../assets/LOGO.png';
 import Swal from "sweetalert2";
+import Showborrow from '../interface/showborrow';
 
 const Status = () => {
   const [user, setUser] = useState(null);
@@ -32,7 +33,7 @@ const Status = () => {
         });
     }
   };
-
+  
   const fetchBorrowStatus = () => {
     const token = localStorage.getItem("token");
     if (token) {
@@ -326,6 +327,11 @@ const Status = () => {
                       ปริ้นเอกสาร
                     </button>
                   )}
+
+                  {borrow.status === "คืนแล้ว" && (
+                    <Showborrow equipmentId={borrow.equipmentId} equipmentName={borrow.name} />
+                  )}
+
                 </td>
               </tr>
             ))}

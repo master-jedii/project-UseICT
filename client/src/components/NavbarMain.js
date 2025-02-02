@@ -79,6 +79,31 @@ const NavbarMain = ({ userData, onLogout }) => {
       }
     });
 
+    socket.on("borrowReturned", (data) => {
+      // ตรวจสอบว่า userId ที่ได้รับจากข้อมูลตรงกับ user ที่กำลังใช้งาน
+      if (data.userId === userData.id) {
+        // เพิ่มการแจ้งเตือนใหม่ใน state
+        setNotifications(prevNotifications => {
+          const updatedNotifications = [...prevNotifications, { ...data.borrowDetails, message: data.message }];
+          return updatedNotifications.sort((a, b) => new Date(b.updated_at) - new Date(a.updated_at));
+        });
+    
+        // เพิ่มจำนวนการแจ้งเตือนใหม่
+        setNewNotificationsCount(prevCount => prevCount + 1);
+    
+        // ตั้งค่าข้อความแจ้งเตือน
+        setAlertMessage(data.message);
+        setAlertClass('success');  // กำหนดประเภทการแจ้งเตือนเป็น success (การคืนอุปกรณ์สำเร็จ)
+        
+        // แสดง alert
+        setIsAlertVisible(true);
+    
+        // ซ่อน alert หลังจาก 5 วินาที
+        setTimeout(() => setIsAlertVisible(false), 5000);
+      }
+    });
+    
+
     return () => {
       socket.disconnect();
     };
