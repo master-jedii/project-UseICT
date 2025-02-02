@@ -5,7 +5,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import '../View/status.css';
 import logo from '../assets/LOGO.png';
 import Swal from "sweetalert2";
-import Showborrow from '../interface/showborrow';
+import ButtonReturnDorrow from '../interface/ButtonReturnDorrow';
 
 const Status = () => {
   const [user, setUser] = useState(null);
@@ -302,7 +302,12 @@ const Status = () => {
                           ? "status-rejected"
                           : borrow.status === "ข้อเสนอถูกลบ"
                             ? "status-deleted"
+                            : borrow.status === "คืนแล้ว"
+                            ? "status-return"
                             : ""
+                            
+                              
+                            
                   }
                 >
                   {borrow.status}
@@ -329,7 +334,7 @@ const Status = () => {
                   )}
 
                   {borrow.status === "คืนแล้ว" && (
-                    <Showborrow equipmentId={borrow.equipmentId} equipmentName={borrow.name} />
+                    <ButtonReturnDorrow  equipmentId={borrow.equipment_id} equipmentName={borrow.equipment_name}/>
                   )}
 
                 </td>

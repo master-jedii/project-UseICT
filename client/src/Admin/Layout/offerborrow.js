@@ -302,6 +302,8 @@ const AdminBorrowStatus = () => {
                           ? "status-pending"
                           : borrow.status === "ปฏิเสธ"
                             ? "status-rejected"
+                            : borrow.status === "คืนแล้ว"
+                            ? "status-return"
                             : ""
                     }>
                       {borrow.status}
