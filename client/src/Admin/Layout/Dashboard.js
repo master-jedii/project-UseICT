@@ -24,14 +24,24 @@ const Dashboard = () => {
   const [showUserDetails, setShowUserDetails] = useState(false);
   const [borrowRequests, setBorrowRequests] = useState([]);
   const [showBorrowDetails, setShowBorrowDetails] = useState(false);
-  const [borrowStats, setBorrowStats] = useState([]);
-  const [equipmentStatusStats, setEquipmentStatusStats] = useState([]);
-  const [topBorrowedEquipment, setTopBorrowedEquipment] = useState([]);
-  const [dailyBorrowStats, setDailyBorrowStats] = useState([]);
   const [topBorrowers, setTopBorrowers] = useState([]);
   const [userBorrowHistory, setUserBorrowHistory] = useState([]);
   const [selectedUserId, setSelectedUserId] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [borrowStats, setBorrowStats] = useState([]);
+  const [dailyBorrowStats, setDailyBorrowStats] = useState([]);
+  const [selectedView, setSelectedView] = useState('monthly');
+  const [equipmentStatusStats, setEquipmentStatusStats] = useState([]);
+  const [topBorrowedEquipment, setTopBorrowedEquipment] = useState([]);
+  const [branchBorrowStats, setBranchBorrowStats] = useState([]);
+  const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth() + 1);
+  
+  
+  const handleMonthChange = (event) => {
+    setSelectedMonth(event.target.value);
+  };
+
+  
 
   useEffect(() => {
     const fetchEquipmentStats = async () => {
@@ -69,29 +79,35 @@ const Dashboard = () => {
     const fetchBorrowStats = async () => {
       try {
         const response = await axios.get('http://localhost:3333/api/borrow/stats');
-        const formattedData = response.data.map((item) => ({
-          month: new Date(2025, item.month - 1).toLocaleString('th-TH', { month: 'short' }),
+        setBorrowStats(response.data.map(item => ({
+          period: `เดือน ${new Date(2025, item.month - 1).toLocaleString('th-TH', { month: 'long' })}`,
           total: item.total,
-        }));
-        setBorrowStats(formattedData);
+        })));
       } catch (error) {
         console.error('Error fetching borrow stats:', error);
       }
     };
+    
+    
 
     const fetchEquipmentStatusStats = async () => {
       try {
         const response = await axios.get('http://localhost:3333/api/equipment/status');
+        const total = response.data.reduce((sum, item) => sum + item.count, 0); // หาผลรวมอุปกรณ์ทั้งหมด
+    
         const formattedData = response.data.map((item) => ({
           status: item.status,
           value: item.count,
+          percentage: ((item.count / total) * 100).toFixed(2), // คำนวณเปอร์เซ็นต์
           equipmentDetails: item.equipment_details ? item.equipment_details.split(',') : [],
         }));
+    
         setEquipmentStatusStats(formattedData);
       } catch (error) {
         console.error('Error fetching equipment status stats:', error);
       }
     };
+    
 
     const fetchTopBorrowedEquipment = async () => {
       try {
@@ -109,11 +125,10 @@ const Dashboard = () => {
     const fetchDailyBorrowStats = async () => {
       try {
         const response = await axios.get('http://localhost:3333/api/borrow/daily-stats');
-        const formattedData = response.data.map((item) => ({
-          date: new Date(item.date).toLocaleDateString('th-TH'),
+        setDailyBorrowStats(response.data.map(item => ({
+          period: new Date(item.date).toLocaleDateString('th-TH'),
           total: item.total,
-        }));
-        setDailyBorrowStats(formattedData);
+        })));
       } catch (error) {
         console.error('Error fetching daily borrow stats:', error);
       }
@@ -127,6 +142,24 @@ const Dashboard = () => {
         console.error('Error fetching top borrowers:', error);
       }
     };
+    const fetchBranchBorrowStats = async (viewType) => {
+      try {
+        const response = await axios.get(`http://localhost:3333/api/borrow/branch-stats?type=${viewType}`);
+        console.log("Fetched branch borrow stats:", response.data); // Debugging API response
+        setBranchBorrowStats(response.data.map(item => ({
+          branch: item.branch || 'ไม่ระบุ',
+          borrowCount: item.borrow_count || 0
+        })));
+      } catch (error) {
+        console.error('Error fetching branch borrow stats:', error);
+      }
+    };
+  
+  
+  
+  
+ 
+    
 
     fetchEquipmentStats();
     fetchUsers();
@@ -136,7 +169,11 @@ const Dashboard = () => {
     fetchTopBorrowedEquipment();
     fetchDailyBorrowStats();
     fetchTopBorrowers();
-  }, []);
+    fetchBranchBorrowStats(); 
+    fetchBranchBorrowStats(selectedView);  // ✅ โหลดข้อมูลใหม่ตามตัวเลือก
+  }, [selectedView]);
+
+  
 
   const handleUserClick = async (userId) => {
     try {
@@ -296,41 +333,36 @@ const Dashboard = () => {
             </div>
           )}
 
-          <div className="dashboard-graphs-wrapper">
-            <div className="graphs-header">
-              <h2>การวิเคราะห์ข้อมูลการยืมและอุปกรณ์</h2>
-            </div>
+<div className="dashboard-graphs-wrapper">
+<div className="graphs-header">
+            <h2>การวิเคราะห์ข้อมูลการยืม</h2>
+            <select value={selectedView} onChange={(e) => setSelectedView(e.target.value)}>
+              <option value="monthly">สถิติรายเดือน</option>
+              <option value="daily">สถิติรายวัน</option>
+            </select>
+          </div>
             <div className="graph-item">
-              <h3>สถิติการยืมอุปกรณ์รายเดือน</h3>
               <ResponsiveContainer width="100%" height={300}>
-                <BarChart
-                  data={borrowStats}
-                  margin={{ top: 10, right: 30, left: 0, bottom: 0 }}
-                >
+                <BarChart data={selectedView === 'monthly' ? borrowStats : dailyBorrowStats}>
                   <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="month" />
-                  <YAxis />
+                  <XAxis dataKey="period" label={{ value: selectedView === 'monthly' ? 'เดือน' : 'วัน', position: 'insideBottom', offset: -5 }} />
+                  <YAxis label={{ value: 'จำนวนการยืม', angle: -90, position: 'insideLeft' }} />
                   <Tooltip />
                   <Legend />
                   <Bar dataKey="total" fill="#82ca9d" />
                 </BarChart>
               </ResponsiveContainer>
-            </div>
-            <div className="graph-item">
-              <h3>สถิติการยืมอุปกรณ์รายวัน</h3>
-              <ResponsiveContainer width="100%" height={300}>
-                <BarChart
-                  data={dailyBorrowStats}
-                  margin={{ top: 10, right: 30, left: 0, bottom: 0 }}
-                >
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="date" />
-                  <YAxis />
-                  <Tooltip />
-                  <Legend />
-                  <Bar dataKey="total" fill="#82ca9d" />
-                </BarChart>
-              </ResponsiveContainer>
+              <h3>จำนวนการยืมอุปกรณ์แยกตามคณะ ({selectedView === 'monthly' ? 'รายเดือน' : '7 วันล่าสุด'})</h3>
+            <ResponsiveContainer width="100%" height={400}>
+              <BarChart data={branchBorrowStats} margin={{ top: 10, right: 30, left: 50, bottom: 0 }}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="branch" label={{ value: 'คณะ', position: 'insideBottom', offset: -5 }} />
+                <YAxis label={{ value: 'จำนวนการยืม', angle: -90, position: 'insideLeft' }} />
+                <Tooltip />
+                <Legend />
+                <Bar dataKey="borrowCount" fill="#8884d8" />
+              </BarChart>
+            </ResponsiveContainer>
             </div>
             <div className="graph-pair-wrapper">
               <div className="graph-pair">
@@ -338,16 +370,8 @@ const Dashboard = () => {
                   <h3>สถานะอุปกรณ์</h3>
                   <ResponsiveContainer width="100%" height={300}>
                     <PieChart>
-                      <Tooltip
-                        formatter={(value, name, props) => {
-                          const equipmentDetails = props.payload.equipmentDetails || [];
-                          return [
-                            `${value} ชิ้น (${equipmentDetails.join(', ')})`,
-                            name,
-                          ];
-                        }}
-                      />
-                      <Legend />
+                    <Tooltip formatter={(value, name, props) => [`${value} ชิ้น (${props.payload.percentage})`, name]} />
+                    <Legend />
                       <Pie
                         data={equipmentStatusStats}
                         dataKey="value"
@@ -356,8 +380,8 @@ const Dashboard = () => {
                         cy="50%"
                         outerRadius={120}
                         fill="#8884d8"
-                        labelLine = {false}
-                      >
+                        label={({ name, percentage }) => `${name} (${percentage})`}>
+                      
                         {equipmentStatusStats.map((entry, index) => (
                           <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                         ))}

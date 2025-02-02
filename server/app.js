@@ -772,13 +772,14 @@ app.get('/api/stats/borrow-return', (req, res) => {
 });
 
 // month dashboard
+// แก้ SQL Query ให้ใช้ borrow_date แทน created_at
 app.get('/api/borrow/stats', (req, res) => {
   const query = `
     SELECT 
-      MONTH(created_at) AS month, 
+      MONTH(borrow_date) AS month, 
       COUNT(*) AS total 
     FROM borrow 
-    GROUP BY MONTH(created_at)
+    GROUP BY MONTH(borrow_date)
   `;
 
   db.query(query, (err, result) => {
@@ -790,6 +791,7 @@ app.get('/api/borrow/stats', (req, res) => {
     res.status(200).json(result);
   });
 });
+
 
 app.get('/api/equipment/status', (req, res) => {
   const query = `
@@ -1694,8 +1696,39 @@ app.put('/api/borrow/mark-returned/:borrowId', (req, res) => {
   });
 });
 
+//คณะ
+app.get('/api/borrow/branch-stats', (req, res) => {
+  const { type } = req.query; // ดึงค่า type จาก query parameter
 
+  let dateCondition = '';
+  if (type === 'daily') {
+    // ✅ ใช้ช่วง 7 วันที่ผ่านมาแทนการใช้แค่วันนี้
+    dateCondition = 'AND b.borrow_date >= DATE_SUB(CURDATE(), INTERVAL 7 DAY)'; 
+  } else {
+    dateCondition = 'AND MONTH(b.borrow_date) = MONTH(CURDATE())'; // ดึงข้อมูลเดือนปัจจุบัน
+  }
 
+  const query = `
+    SELECT u.branch, COUNT(b.borrow_id) AS borrow_count
+    FROM borrow b
+    JOIN users u ON b.UserID = u.UserID
+    WHERE 1=1 ${dateCondition}
+    GROUP BY u.branch
+    ORDER BY borrow_count DESC;
+  `;
+
+  db.query(query, (err, results) => {
+    if (err) {
+      console.error('Error fetching branch borrow stats:', err);
+      return res.status(500).json({ message: 'Error fetching branch borrow stats' });
+    }
+
+    // ✅ Debug ดูข้อมูลจาก Database ว่ามีหรือไม่
+    console.log("Branch Borrow Stats:", results);
+
+    res.status(200).json(results);
+  });
+});
 
 
 // เริ่มเซิร์ฟเวอร์
