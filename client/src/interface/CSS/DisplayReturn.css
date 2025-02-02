@@ -1,89 +1,153 @@
-/* Overall Container */
-.DisplayReturn-container {
-    max-width: 1200px;
-    margin: 20px auto;
-    padding: 20px;
-    background: #fff;
-    border-radius: 10px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-  }
+/* Container */
+.container-return {
+  max-width: 1440px;
+  margin: auto;
+  padding: 20px;
+  background-color: #F5F8FA;
+  min-height: 100vh;
+  font-family: 'Prompt', sans-serif;
+  color: #000; /* สีตัวอักษรเป็นสีดำ */
+}
+
+/* หัวข้อ */
+.section-title {
+  font-size: 28px;
+  font-weight: bold;
+  margin-bottom: 30px;
+  position: relative;
+  right: 80px;
   
-  /* Title */
-  .DisplayReturn-title {
-    text-align: center;
-    font-size: 28px;
-    font-weight: bold;
-    margin-bottom: 20px;
-    color: #333;
-  }
   
-  /* Summary Section */
-  .DisplayReturn-summary {
-    display: flex;
-    justify-content: space-around;
-    padding: 10px;
-    background: #f0f0f0;
-    border-radius: 8px;
-    margin-bottom: 20px;
-    font-size: 16px;
-    color: #333;
-  }
-  
-  /* Legend Section */
-  .DisplayReturn-legend {
-    display: flex;
-    justify-content: space-around;
-    margin-bottom: 20px;
-  }
-  
-  .legend-item {
-    display: inline-block;
-    padding: 5px 10px;
-    border-radius: 8px;
-    font-size: 14px;
-    font-weight: bold;
-    color: #fff;
-  }
-  
-  .legend-item.green { background: #4caf50; }
-  .legend-item.yellow { background: #ffc107; }
-  .legend-item.red { background: #f44336; }
-  
-  /* Controls */
-  .DisplayReturn-controls {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 20px;
-  }
-  
-  .DisplayReturn-controls input,
-  .DisplayReturn-controls select {
-    width: 30%;
-    padding: 10px;
-    font-size: 16px;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-  }
-  
-  /* Grid */
-  .DisplayReturn-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-    gap: 20px;
-  }
-  
-  /* Card */
-  .DisplayReturn-card {
-    padding: 20px;
-    border-radius: 10px;
-    background: #fff;
-    border: 1px solid #ddd;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  }
-  
-  .DisplayReturn-card.กำลังใช้งาน { background: #e8f5e9; }
-  .DisplayReturn-card.ใกล้ครบกำหนด { background: #fff8e1; }
-  .DisplayReturn-card.ครบกำหนดแล้ว { background: #ffebee; }
-  
- 
-  
+}
+
+
+
+/* กล่องรายการ */
+.borrowed-item-return {
+  background-color: white;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  padding: 15px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+}
+
+/* หัวข้อของอุปกรณ์ */
+.borrowed-header-return {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* ชื่ออุปกรณ์ */
+.item-name-return {
+  font-size: 1.2rem;
+  font-weight: bold;
+}
+
+/* รายละเอียดการยืม */
+.borrowed-details-return {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 10px;
+  font-size: 1rem;
+  color: #333;
+  font-weight: normal;
+}
+
+.borrowed-details-return p {
+  color:  black;
+  font-size: 16px;
+}
+
+/* Progress Bar */
+.progress-bar {
+  width: 100%;
+  height: 12px;
+  background-color: #ddd;
+  border-radius: 6px;
+  overflow: hidden;
+  margin-top: 10px;
+}
+
+/* Progress Fill */
+.progress-fill {
+  height: 100%;
+  transition: width 0.5s ease-in-out;
+}
+
+
+
+/* --- ประวัติการยืม --- */
+.history-list {
+  margin-top: 20px;
+}
+
+.history-item {
+  background-color: white;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  padding: 12px;
+  border-radius: 8px;
+  margin-bottom: 15px;
+}
+
+.history-header {
+  display: flex;
+  justify-content: space-between;
+  font-weight: bold;
+}
+
+.history-name {
+  font-size: 1.1rem;
+}
+
+.history-date {
+  font-size: 0.9rem;
+  color: #666;
+}
+
+.history-status {
+  font-size: 0.9rem;
+  color: #27ae60; /* สีเขียว */
+  margin-top: 5px;
+}
+
+/* เพิ่มสไตล์สำหรับสถานะที่แสดงในมุมขวาบน */
+.status-label {
+  font-size: 0.9rem;
+  font-weight: bold;
+  color: #fff;
+  background-color: #3498db; /* สีฟ้า */
+  padding: 5px 10px;
+  border-radius: 12px;
+  text-transform: uppercase;
+}
+
+.status-label.ครบกำหนด {
+  background-color: #e74c3c; /* สีแดง */
+}
+
+.status-label.ใกล้ครบกำหนด {
+  background-color: #f1c40f; /* สีเหลือง */
+}
+
+.status-label.ปกติ {
+  background-color: #2ecc71; /* สีเขียว */
+}
+
+.progress-bar {
+  width: 100%;
+  background-color: #f0f0f0;
+  height: 10px;
+  border-radius: 5px;
+  margin-top: 10px;
+}
+
+.progress-fill {
+  height: 100%;
+  border-radius: 5px;
+}
+
+.progress-text {
+  margin-top: 5px;
+}
+

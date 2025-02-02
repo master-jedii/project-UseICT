@@ -1662,7 +1662,6 @@ app.put('/api/users/block/:userId', (req, res) => {
 
 
 
-// เพิ่มในไฟล์ server.js หรือไฟล์ API ของคุณ
 app.put('/api/borrow/mark-returned/:borrowId', (req, res) => {
   const { borrowId } = req.params;
 
@@ -1689,9 +1688,140 @@ app.put('/api/borrow/mark-returned/:borrowId', (req, res) => {
 
     console.log('Borrow status, return status, and equipment status updated successfully');
 
-    // ส่งการตอบกลับสำเร็จไปยัง Client
-    return res.status(200).json({
-      message: 'อัปเดตสถานะการคืนอุปกรณ์สำเร็จ',
+    // ดึงข้อมูลการยืมเพื่อส่งผ่าน WebSocket
+    const fetchBorrowDetails = `
+      SELECT b.borrow_id, b.status, b.borrow_date, b.return_date, b.UserID, e.name as equipment_name, e.equipment_id, u.email as user_email
+      FROM borrow b
+      JOIN equipment e ON b.equipment_id = e.equipment_id
+      JOIN users u ON b.UserID = u.UserID
+      WHERE b.borrow_id = ?;
+    `;
+
+    db.query(fetchBorrowDetails, [borrowId], (err, borrowDetails) => {
+      if (err) {
+        console.error('Error fetching borrow details:', err.message);
+        return res.status(500).json({ message: 'Error fetching borrow details', error: err.message });
+      }
+
+      if (borrowDetails.length === 0) {
+        return res.status(404).json({ message: 'ไม่พบข้อมูลการยืมนี้' });
+      }
+
+      const borrowInfo = borrowDetails[0];
+
+      // สร้างข้อความแจ้งเตือน
+      const message = `คุณได้คืนอุปกรณ์ "${borrowInfo.equipment_name}" แล้ว`;
+
+      // ส่งข้อมูลผ่าน WebSocket
+      io.emit('borrowReturned', {
+        borrowDetails: borrowInfo,
+        userId: borrowInfo.UserID,
+        message: message
+      });
+
+      // ส่งอีเมลแจ้งเตือน
+      const transporter = nodemailer.createTransport({
+        service: 'gmail',
+        auth: {
+          user: 'nusev007x@gmail.com',  // อีเมลที่ใช้ส่ง
+          pass: 'wfal rddv aweq gnkg',  // รหัสผ่านจาก App Password
+        },
+      });
+
+      const mailOptions = {
+        from: 'nusev007x@gmail.com',
+        to: borrowInfo.user_email,  // อีเมลผู้รับ
+        subject: 'คุณได้คืนอุปกรณ์แล้ว',
+        html: `
+          <html>
+            <head>
+              <style>
+                body {
+                  font-family: Arial, sans-serif;
+                  background-color: #f4f4f4;
+                  margin: 0;
+                  padding: 20px;
+                }
+                .container {
+                  max-width: 600px;
+                  margin: 0 auto;
+                  background-color: #fff;
+                  padding: 20px;
+                  border-radius: 8px;
+                  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+                }
+                .header {
+                  text-align: center;
+                  background-color: #009498;
+                  color: white;
+                  padding: 15px 0;
+                  border-radius: 8px 8px 0 0;
+                }
+                .header img {
+                  width: 100px;
+                  margin-bottom: 10px;
+                }
+                .content {
+                  padding: 20px;
+                  text-align: left;
+                  color: #333;
+                }
+                .footer {
+                  text-align: center;
+                  font-size: 12px;
+                  color: #777;
+                  margin-top: 20px;
+                }
+                .button {
+                  display: inline-block;
+                  background-color: #009498;
+                  color: white;
+                  padding: 12px 25px;
+                  text-decoration: none;
+                  border-radius: 4px;
+                  margin-top: 20px;
+                }
+              </style>
+            </head>
+            <body>
+              <div class="container">
+                <div class="header">
+                  <h2>คุณได้คืนอุปกรณ์แล้ว</h2>
+                </div>
+                <div class="content">
+                  <p>เรียนผู้ใช้งาน,</p>
+                  <p>คุณได้คืนอุปกรณ์ <strong>${borrowInfo.equipment_name}</strong> แล้วในวันที่ ${new Date().toLocaleDateString('th-TH', { timeZone: 'Asia/Bangkok' })}</p>
+                  <p>รายละเอียดการยืม:</p>
+                  <ul>
+                    <li><strong>รหัสการยืม:</strong> ${borrowInfo.borrow_id}</li>
+                    <li><strong>วันที่ยืม:</strong> ${new Date(borrowInfo.borrow_date).toLocaleDateString('th-TH', { timeZone: 'Asia/Bangkok' })}</li>
+                    <li><strong>วันที่คืน:</strong> ${new Date(borrowInfo.return_date).toLocaleDateString('th-TH', { timeZone: 'Asia/Bangkok' })}</li>
+                  </ul>
+                  <p>ขอบคุณที่ใช้บริการ.</p>
+                </div>
+                <div class="footer">
+                  <p>หากคุณมีคำถามเพิ่มเติม โปรดติดต่อเราที่ <a href="mailto:support@yourwebsite.com">support@yourwebsite.com</a></p>
+                </div>
+              </div>
+            </body>
+          </html>
+        `,
+      };
+
+      transporter.sendMail(mailOptions, (err, info) => {
+        if (err) {
+          console.error('Error sending email:', err.message);
+          return res.status(500).json({ message: 'Error sending email', error: err.message });
+        }
+
+        console.log("Email sent successfully:", info.response);
+
+        // ส่งการตอบกลับสำเร็จไปยัง Client
+        return res.status(200).json({
+          message: 'อัปเดตสถานะการคืนอุปกรณ์สำเร็จและอีเมลแจ้งเตือนถูกส่งแล้ว',
+          borrowDetails: borrowInfo,
+        });
+      });
     });
   });
 });
@@ -1729,7 +1859,6 @@ app.get('/api/borrow/branch-stats', (req, res) => {
     res.status(200).json(results);
   });
 });
-
 
 // เริ่มเซิร์ฟเวอร์
 app.listen(3333, () => {

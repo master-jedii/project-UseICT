@@ -56,7 +56,7 @@ const Return = () => {
     if (error) return <div>{error}</div>;
   
     return (
-      <div style={{ backgroundColor: "#E3E6E6" }}>
+      <div style={{ backgroundColor: "#F5F8FA" }}>
         {/* ตรวจสอบว่า data.user มีข้อมูลหรือไม่ */}
         {data && data.user ? (
           <>

@@ -2,6 +2,7 @@
 
 body {
   font-family: 'Prompt', sans-serif;
+  
     
 }
 
@@ -37,6 +38,7 @@ body {
     background-color: #ffffff;
     min-height: 790vh;
     font-family: 'Prompt', sans-serif;
+    
   }
   
   /* ส่วน header */

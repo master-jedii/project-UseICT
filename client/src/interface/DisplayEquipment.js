@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-// นำเข้าภาพไอคอนต่าง ๆ
 import cameraIcon from '../assets/Camera.png';
 import lensIcon from '../assets/Aperture.png';
 import tripodIcon from '../assets/Camera on Tripod.png';
@@ -15,50 +14,44 @@ import '../View/DisplayEquipment.css';
 const DisplayEquipment = () => {
   const [equipment, setEquipment] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState(null);
-  const [searchTerm, setSearchTerm] = useState(''); // เพิ่ม state สำหรับคำค้นหา
+  const [searchTerm, setSearchTerm] = useState('');
   const navigate = useNavigate();
 
   // ฟังก์ชันดึงข้อมูลอุปกรณ์
   const getEquipment = () => {
     Axios.get("http://localhost:3333/showequipment")
       .then((response) => {
-        // กรองอุปกรณ์ที่มี status "พร้อมใช้งาน" เท่านั้น
         const availableEquipment = response.data.filter(item => item.status === "พร้อมใช้งาน");
-        setEquipment(availableEquipment); // เก็บเฉพาะอุปกรณ์ที่พร้อมใช้งาน
+        setEquipment(availableEquipment);
       })
       .catch((err) => console.error(err));
   };
 
-  // ดึงข้อมูลเมื่อ component โหลด
   useEffect(() => {
     getEquipment();
   }, []);
 
-  // ฟังก์ชันจัดการการคลิกไอคอนหมวดหมู่
-  const handleIconClick = (category) => {
-    setSelectedCategory(category);
-  };
-
   useEffect(() => {
     if (!searchTerm) {
-      getEquipment(); // ดึงข้อมูลทั้งหมดหากไม่มีคำค้นหา
+      getEquipment();
     } else {
       const filteredEquipment = filterBySearch(equipment);
       setEquipment(filteredEquipment);
     }
-  }, [searchTerm]); // อัปเดตข้อมูลเมื่อคำค้นหาเปลี่ยนแปลง
+  }, [searchTerm]);
 
   // ฟังก์ชันกรองอุปกรณ์ตามคำค้นหา
   const filterBySearch = (items) => {
-    if (!searchTerm) return items; // ถ้าไม่มีคำค้นหาให้คืนค่าทั้งหมด
+    if (!searchTerm) return items;
     return items.filter((item) =>
       item.name.toLowerCase().includes(searchTerm.toLowerCase())
     );
   };
 
-  // กรองข้อมูลที่มีชื่อไม่ซ้ำจากหมวดหมู่ต่างๆ
+  // หมวดหมู่ต่าง ๆ
   const categories = ["กล้อง", "เลนส์", "ขาตั้งกล้อง", "ไฟสำหรับถ่ายทำ", "อุปกรณ์ด้านเสียง", "อุปกรณ์จัดแสง", "อุปกรณ์อื่นๆ"];
 
+  // กรองอุปกรณ์ตามหมวดหมู่และคำค้นหา
   const filteredEquipment = categories.map((category) => {
     return {
       category,
@@ -66,7 +59,7 @@ const DisplayEquipment = () => {
     };
   });
 
-  // กรองเฉพาะหมวดหมู่ที่เลือก
+  // กรองข้อมูลที่เลือก
   const selectedCategoryItems = selectedCategory
     ? filterBySearch(
       filteredEquipment.find((categoryData) => categoryData.category === selectedCategory)?.items || []
@@ -84,14 +77,12 @@ const DisplayEquipment = () => {
   };
 
   const handleViewAllClick = (typeId) => {
-    // ใช้ navigate เพื่อไปยังหน้าที่กรองข้อมูลโดยใช้ type_id
     navigate(`/equipment/${typeId}`);
   };
 
   return (
     <div className="equipment-list">
       <div className="header-category">
-        {/* เพิ่ม input ค้นหา */}
         <div className='search-cata-bar'>
           <div className="input-container">
             <i className="fa fa-search search-icon" aria-hidden="true"></i>
@@ -104,9 +95,8 @@ const DisplayEquipment = () => {
         </div>
 
         <div className="category-icons">
-          {/* หมวดหมู่ต่าง ๆ */}
           {categories.map((category, index) => (
-            <div className="category" key={index} onClick={() => handleIconClick(category)}>
+            <div className="category" key={index} onClick={() => setSelectedCategory(category)}>
               <div className={`image-box${index + 1}`}>
                 <img src={category === "กล้อง" ? cameraIcon :
                           category === "เลนส์" ? lensIcon :
@@ -127,9 +117,9 @@ const DisplayEquipment = () => {
           </div>
         </div>
 
-        {/* แสดงข้อมูลที่กรองแล้ว */}
+        {/* แสดงข้อมูลเฉพาะหมวดหมู่ที่มีอุปกรณ์ */}
         {selectedCategory ? (
-          <div>
+          <div >
             <h1 style={{ textAlign: "center", margin: "110px 0 0 0" }}>{selectedCategory}</h1>
             <div className="equipment-container">
               {getUniqueItems(selectedCategoryItems).length > 0 ? (
@@ -162,37 +152,40 @@ const DisplayEquipment = () => {
           </div>
         ) : (
           filteredEquipment.map((categoryData, index) => (
-            <div key={index}>
-              <h1>{categoryData.category}</h1>
-              <div className="equipment-container">
-                {getUniqueItems(categoryData.items).length > 0 ? (
-                  getUniqueItems(categoryData.items).slice(0, 8).map((item, idx) => (
-                    <div className="card" style={{ width: "290px", margin: "10px" }} key={idx}>
-                      <img
-                        src={`http://localhost:3333/uploads/${item.image}`}
-                        className="card-img-top"
-                        alt={item.name}
-                      />
-                      <div className="card-body">
-                        <h4 className="card-title">{item.name}</h4>
-                        <p className="card-text">{item.description}</p>
-                        <button onClick={() => handleViewAllClick(item.type_id)}>ยืมอุปกรณ์</button>
+            // แสดงเฉพาะหมวดหมู่ที่มีอุปกรณ์
+            categoryData.items.length > 0 && (
+              <div key={index}>
+                <h1>{categoryData.category}</h1>
+                <div className="equipment-container">
+                  {getUniqueItems(categoryData.items).length > 0 ? (
+                    getUniqueItems(categoryData.items).slice(0, 8).map((item, idx) => (
+                      <div className="card" style={{ width: "290px", margin: "10px" }} key={idx}>
+                        <img
+                          src={`http://localhost:3333/uploads/${item.image}`}
+                          className="card-img-top"
+                          alt={item.name}
+                        />
+                        <div className="card-body">
+                          <h4 className="card-title">{item.name}</h4>
+                          <p className="card-text">{item.description}</p>
+                          <button onClick={() => handleViewAllClick(item.type_id)}>ยืมอุปกรณ์</button>
+                        </div>
                       </div>
-                    </div>
-                  ))
-                ) : (
-                  <p>ไม่มีข้อมูลในหมวดหมู่ "{categoryData.category}"</p>
-                )}
+                    ))
+                  ) : (
+                    <p>ไม่มีข้อมูลในหมวดหมู่ "{categoryData.category}"</p>
+                  )}
+                </div>
+                <div style={{ textAlign: "center", marginTop: "20px" }}>
+                  <button
+                    className="btn btn-secondary"
+                    onClick={() => navigate(`/allEquipment?category=${categoryData.category}`)}
+                  >
+                    ดูทั้งหมด
+                  </button>
+                </div>
               </div>
-              <div style={{ textAlign: "center", marginTop: "20px" }}>
-                <button
-                  className="btn btn-secondary"
-                  onClick={() => navigate(`/allEquipment?category=${categoryData.category}`)}
-                >
-                  ดูทั้งหมด
-                </button>
-              </div>
-            </div>
+            )
           ))
         )}
       </div>
