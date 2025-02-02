@@ -257,66 +257,51 @@ app.post('/api/borrow', (req, res) => {
     return res.status(400).json({ message: 'กรุณากรอกข้อมูลให้ครบถ้วน' });
   }
 
-  // คำสั่ง SQL ที่จะตั้งค่า status เป็น 'รอดำเนินการ' และบันทึก timestamp
+  // SQL สำหรับเพิ่มข้อมูลใน borrow
   const query = `
     INSERT INTO borrow (UserID, subject, objective, place, borrow_date, return_date, equipment_id, status, created_at)
-    VALUES (?, ?, ?, ?, ?, ?, ?, 'รอดำเนินการ', CURRENT_TIMESTAMP)  -- ตั้งค่า created_at เป็นเวลาปัจจุบัน
+    VALUES (?, ?, ?, ?, ?, ?, ?, 'รอดำเนินการ', CURRENT_TIMESTAMP)
   `;
 
   db.execute(query, [UserID, subject, objective, place, borrow_d, return_d, equipmentId], (err, result) => {
     if (err) {
-      console.error('Error executing SQL query:', err);  // แสดงข้อผิดพลาด SQL
+      console.error('Error executing SQL query:', err);
       return res.status(500).json({ message: 'เกิดข้อผิดพลาดในการบันทึกข้อมูล' });
     }
 
-    const borrowId = result.insertId; // ใช้ borrowId ที่ได้จากการแทรกข้อมูลเข้าไปในตาราง borrow
+    const borrowId = result.insertId;
 
-    // คำสั่ง SQL สำหรับบันทึกข้อมูลการแจ้งเตือนในตาราง notifications
+    // SQL สำหรับเพิ่มข้อมูลใน notifications
     const notificationQuery = `
       INSERT INTO notifications (equipment_id, borrow_id, UserID, subject, objective, place, borrow_date, return_date, status, created_at, updated_at)
       VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'รอดำเนินการ', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
     `;
 
-    // เปลี่ยนจาก borrowId เป็น equipmentId ในการส่งค่า
-    db.execute(notificationQuery, [equipmentId, borrowId, UserID, subject, objective, place, borrow_d, return_d], (err, notificationResult) => {
+    db.execute(notificationQuery, [equipmentId, borrowId, UserID, subject, objective, place, borrow_d, return_d], (err) => {
       if (err) {
-        console.error('Error executing SQL query for notifications:', err);  // แสดงข้อผิดพลาด SQL สำหรับ notifications
+        console.error('Error executing SQL query for notifications:', err);
         return res.status(500).json({ message: 'เกิดข้อผิดพลาดในการบันทึกข้อมูลการแจ้งเตือน' });
       }
 
-      // การอัปเดตสถานะของ borrow และ notifications
-      const updateStatusQuery = `
-        UPDATE borrow
-        SET status = 'รอดำเนินการ'
-        WHERE borrow_id = ?
+      // SQL สำหรับเพิ่มข้อมูลใน return_status
+      const returnStatusQuery = `
+        INSERT INTO return_status (borrow_id, equipment_id, UserID, status, created_at)
+        VALUES (?, ?, ?, 'รอดำเนินการ', CURRENT_TIMESTAMP)
       `;
 
-      db.execute(updateStatusQuery, [borrowId], (err, updateResult) => {
+      db.execute(returnStatusQuery, [borrowId, equipmentId, UserID], (err) => {
         if (err) {
-          console.error('Error updating borrow status:', err);
-          return res.status(500).json({ message: 'เกิดข้อผิดพลาดในการอัปเดตสถานะของการยืม' });
+          console.error('Error executing SQL query for return_status:', err);
+          return res.status(500).json({ message: 'เกิดข้อผิดพลาดในการบันทึกข้อมูล return_status' });
         }
 
-        // อัปเดตสถานะของการแจ้งเตือนใน notifications
-        const updateNotificationQuery = `
-          UPDATE notifications
-          SET status = 'รอดำเนินการ'
-          WHERE borrow_id = ?
-        `;
-
-        db.execute(updateNotificationQuery, [borrowId], (err, notificationUpdateResult) => {
-          if (err) {
-            console.error('Error updating notification status:', err);
-            return res.status(500).json({ message: 'เกิดข้อผิดพลาดในการอัปเดตสถานะการแจ้งเตือน' });
-          }
-
-          // ส่ง response กลับไปที่ client
-          res.status(200).json({ message: 'บันทึกข้อมูลสำเร็จและการแจ้งเตือนถูกสร้าง' });
-        });
+        // ส่ง response กลับไปที่ client
+        res.status(200).json({ message: 'บันทึกข้อมูลสำเร็จและการแจ้งเตือนถูกสร้าง พร้อมบันทึกข้อมูล return_status' });
       });
     });
   });
 });
+
 
 
 
@@ -863,14 +848,18 @@ app.put('/api/borrow/approve/:borrowId', (req, res) => {
   const query = `
     UPDATE borrow b
     JOIN equipment e ON b.equipment_id = e.equipment_id
-    SET b.status = 'อนุมัติ', e.status = 'อยู่ในระหว่างการใช้งาน'
+    JOIN return_status rs ON b.borrow_id = rs.borrow_id
+    SET 
+      b.status = 'อนุมัติ', 
+      e.status = 'อยู่ในระหว่างการใช้งาน',
+      rs.status = 'กำลังใช้งาน'  -- อัปเดตสถานะของ return_status
     WHERE b.borrow_id = ?;
   `;
 
   db.query(query, [borrowId], (err, result) => {
     if (err) {
-      console.error("Error updating borrow status and equipment status:", err.message);
-      return res.status(500).json({ message: 'Error updating borrow status and equipment status', error: err.message });
+      console.error("Error updating borrow, equipment, and return_status:", err.message);
+      return res.status(500).json({ message: 'Error updating borrow, equipment, and return_status', error: err.message });
     }
 
     if (result.affectedRows === 0) {
@@ -878,7 +867,7 @@ app.put('/api/borrow/approve/:borrowId', (req, res) => {
       return res.status(404).json({ message: 'Borrow request not found' });
     }
 
-    console.log("Borrow request approved and equipment status updated successfully");
+    console.log("Borrow request approved, equipment status, and return_status updated successfully");
 
     const fetchBorrowDetails = `
       SELECT b.borrow_id, b.status, b.borrow_date, b.return_date, b.UserID, e.name as equipment_name, e.equipment_id, u.email as user_email
@@ -1004,7 +993,7 @@ app.put('/api/borrow/approve/:borrowId', (req, res) => {
           </html>
         `,
       };
-      
+
       transporter.sendMail(mailOptions, (err, info) => {
         if (err) {
           console.error("Error sending email:", err.message);
@@ -1015,13 +1004,15 @@ app.put('/api/borrow/approve/:borrowId', (req, res) => {
 
         // ส่ง response กลับไปยัง client
         return res.status(200).json({
-          message: 'Borrow request approved, equipment status updated, and email sent successfully',
+          message: 'Borrow request approved, equipment status updated, return status updated, and email sent successfully',
           borrowDetails: borrowInfo,
         });
       });
     });
   });
 });
+
+
 
 
 
@@ -1494,24 +1485,6 @@ app.get('/api/borrow/schedule', (req, res) => {
 });
 
 //Mark as Returned
-app.put('/api/borrow/mark-returned/:borrowId', (req, res) => {
-  const { borrowId } = req.params;
-  const query = `UPDATE borrow SET status = 'คืนแล้ว' WHERE borrow_id = ?`;
-
-  db.query(query, [borrowId], (err, result) => {
-    if (err) {
-      console.error('Error updating status:', err);
-      return res.status(500).send('Error updating status');
-    }
-
-    if (result.affectedRows === 0) {
-      return res.status(404).send('Borrow request not found');
-    }
-
-    res.status(200).json({ message: 'Status updated to "คืนแล้ว"' });
-  });
-});
-
 
 //Save Remark
 app.put('/api/borrow/save-remark/:borrowId', (req, res) => {
@@ -1684,6 +1657,45 @@ app.put('/api/users/block/:userId', (req, res) => {
     res.status(200).json({ message: `User successfully ${statusMessage}` });
   });
 });
+
+
+
+// เพิ่มในไฟล์ server.js หรือไฟล์ API ของคุณ
+app.put('/api/borrow/mark-returned/:borrowId', (req, res) => {
+  const { borrowId } = req.params;
+
+  // SQL query เพื่ออัปเดตสถานะในทั้งสามตาราง
+  const query = `
+    UPDATE borrow b
+    JOIN return_status rs ON b.borrow_id = rs.borrow_id
+    JOIN equipment e ON rs.equipment_id = e.equipment_id
+    SET b.status = 'คืนแล้ว',
+        rs.status = 'คืนแล้ว',
+        e.status = 'พร้อมใช้งาน'
+    WHERE b.borrow_id = ?;
+  `;
+
+  db.query(query, [borrowId], (err, result) => {
+    if (err) {
+      console.error('Error updating borrow, return_status, and equipment:', err.message);
+      return res.status(500).json({ message: 'ไม่สามารถอัปเดตข้อมูลได้', error: err.message });
+    }
+
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ message: 'ไม่พบข้อมูลการยืมนี้' });
+    }
+
+    console.log('Borrow status, return status, and equipment status updated successfully');
+
+    // ส่งการตอบกลับสำเร็จไปยัง Client
+    return res.status(200).json({
+      message: 'อัปเดตสถานะการคืนอุปกรณ์สำเร็จ',
+    });
+  });
+});
+
+
+
 
 
 // เริ่มเซิร์ฟเวอร์

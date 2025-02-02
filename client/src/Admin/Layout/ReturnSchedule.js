@@ -69,27 +69,29 @@ const ReturnSchedule = () => {
   };
 
   const markAsReturned = (borrowId) => {
-    if (window.confirm('คุณต้องการลบข้อมูลนี้ใช่หรือไม่?')) {
+    if (window.confirm('คุณต้องการทำเครื่องหมายว่าอุปกรณ์คืนแล้วใช่หรือไม่?')) {
       axios
-        .delete(`http://localhost:3333/api/borrow/${borrowId}`)
+        .put(`http://localhost:3333/api/borrow/mark-returned/${borrowId}`) // ส่ง PUT request ไปที่ API
         .then(() => {
-          // ลบข้อมูลใน state
+          // หลังจากอัปเดตสำเร็จแล้ว ให้ลบข้อมูลจาก state
           setSchedule((prevSchedule) =>
             prevSchedule.filter((item) => item.borrow_id !== borrowId)
           );
-
+  
           setFilteredSchedule((prevFiltered) =>
             prevFiltered.filter((item) => item.borrow_id !== borrowId)
           );
-
-          alert('ข้อมูลถูกลบสำเร็จ!');
+  
+          alert('ข้อมูลอัปเดตสำเร็จ!');
         })
         .catch((error) => {
-          console.error('Error deleting record:', error);
-          alert('ไม่สามารถลบข้อมูลได้');
+          console.error('Error updating record:', error);
+          alert('ไม่สามารถอัปเดตข้อมูลได้');
         });
     }
   };
+  
+  
 
   return (
     <div className="admin-dashboard">
