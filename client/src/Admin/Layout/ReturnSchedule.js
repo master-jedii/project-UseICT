@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import NavbarAdmin from './NavbarAdmin';
 import axios from 'axios';
 import '../CSS/ReturnSchedule.css';
+import Swal from 'sweetalert2';
 
 const ReturnSchedule = () => {
   const [schedule, setSchedule] = useState([]);
@@ -69,26 +70,34 @@ const ReturnSchedule = () => {
   };
 
   const markAsReturned = (borrowId) => {
-    if (window.confirm('คุณต้องการทำเครื่องหมายว่าอุปกรณ์คืนแล้วใช่หรือไม่?')) {
-      axios
-        .put(`http://localhost:3333/api/borrow/mark-returned/${borrowId}`) // ส่ง PUT request ไปที่ API
-        .then(() => {
-          // หลังจากอัปเดตสำเร็จแล้ว ให้ลบข้อมูลจาก state
-          setSchedule((prevSchedule) =>
-            prevSchedule.filter((item) => item.borrow_id !== borrowId)
-          );
-  
-          setFilteredSchedule((prevFiltered) =>
-            prevFiltered.filter((item) => item.borrow_id !== borrowId)
-          );
-  
-          alert('ข้อมูลอัปเดตสำเร็จ!');
-        })
-        .catch((error) => {
-          console.error('Error updating record:', error);
-          alert('ไม่สามารถอัปเดตข้อมูลได้');
-        });
-    }
+    Swal.fire({
+      title: 'คุณแน่ใจหรือไม่?',
+      text: 'คุณต้องการทำเครื่องหมายว่าอุปกรณ์คืนแล้วใช่หรือไม่?',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'ใช่, ทำเครื่องหมายว่าคืนแล้ว',
+      cancelButtonText: 'ยกเลิก',
+    }).then((result) => {
+      if (result.isConfirmed) {
+        axios
+          .put(`http://localhost:3333/api/borrow/mark-returned/${borrowId}`)
+          .then(() => {
+            setSchedule((prevSchedule) =>
+              prevSchedule.filter((item) => item.borrow_id !== borrowId)
+            );
+            setFilteredSchedule((prevFiltered) =>
+              prevFiltered.filter((item) => item.borrow_id !== borrowId)
+            );
+            Swal.fire('สำเร็จ!', 'ข้อมูลอัปเดตสำเร็จ', 'success');
+          })
+          .catch((error) => {
+            console.error('Error updating record:', error);
+            Swal.fire('ผิดพลาด!', 'ไม่สามารถอัปเดตข้อมูลได้', 'error');
+          });
+      }
+    });
   };
   
   
