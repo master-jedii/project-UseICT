@@ -49,30 +49,31 @@ const Navbar = () => {
 
     const scrollToSection = (id) => {
         if (location.pathname === '/') {
-          const section = document.getElementById(id);
-          if (section) {
-            const topPosition = section.offsetTop;
-            window.scrollTo({
-              top: topPosition,
-              behavior: 'smooth',
-            });
-          }
-        } else {
-          navigate('/'); // กลับไปหน้าแรก
-          setTimeout(() => {
             const section = document.getElementById(id);
             if (section) {
-              const topPosition = section.offsetTop;
-              window.scrollTo({
-                top: topPosition,
-                behavior: 'smooth',
-              });
+                const topPosition = section.offsetTop;
+                window.scrollTo({
+                    top: topPosition,
+                    behavior: 'smooth',
+                });
             }
-          }, 500); // รอให้หน้าโหลดก่อน
+            // ส่ง event ไปให้ Swiper เปลี่ยนสไลด์
+            window.dispatchEvent(new CustomEvent('changeSlide', { detail: id }));
+        } else {
+            navigate('/');
+            setTimeout(() => {
+                const section = document.getElementById(id);
+                if (section) {
+                    const topPosition = section.offsetTop;
+                    window.scrollTo({
+                        top: topPosition,
+                        behavior: 'smooth',
+                    });
+                }
+            }, 500);
         }
-      };
-      
-      
+    };
+
     return (
         <nav className="navbar navbar-light bg-white px-5" style={{ fontFamily: "'Prompt', sans-serif" }} 
         >

@@ -27,7 +27,8 @@
     "react-scripts": "^5.0.1",
     "recharts": "^2.15.0",
     "socket.io-client": "^4.8.1",
-    "sweetalert2": "^11.15.9"
+    "sweetalert2": "^11.15.9",
+    "swiper": "^11.2.2"
   },
   "scripts": {
     "start": "react-scripts start",

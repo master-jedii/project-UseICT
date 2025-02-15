@@ -1,6 +1,6 @@
 #containers {
     width: 100%;
-    height: 679px;
+    height: 600px;
     background-image: url(../assets/BGhowto.png);
     display: grid; /* ใช้ Grid */
     justify-items: center; /* จัดให้กล่องอยู่กลางแนวนอน */
@@ -14,7 +14,7 @@
     text-align: left; /* จัดข้อความให้อยู่ทางซ้าย */
     width: 80%; /* กำหนดความกว้างเพื่อจัดตำแหน่งภายใน */
     position: absolute; /* ใช้ absolute เพื่อแยกจาก Grid layout */
-    top: -2%; /* วางไว้ด้านบนของ containers */
+    top: -5%; /* วางไว้ด้านบนของ containers */
     left: 2%; /* ระยะห่างจากซ้าย */
 }
 
@@ -23,6 +23,8 @@
     height: 440px;
     background-color: rgba(255, 255, 255, 0.6); /* ใช้ rgba เพื่อปรับเฉพาะพื้นหลัง */
     box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1); /* เพิ่มเงาเพื่อแยกพื้นหลัง */
+    margin-top: 50px;
+    
 }
 
 .textboxcontent {
