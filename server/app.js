@@ -846,172 +846,191 @@ import nodemailer from 'nodemailer';
 app.put('/api/borrow/approve/:borrowId', (req, res) => {
   const { borrowId } = req.params;
 
-  const query = `
+  // STEP 1: อัปเดต borrow, equipment, return_status
+  const updateBorrowQuery = `
     UPDATE borrow b
     JOIN equipment e ON b.equipment_id = e.equipment_id
     JOIN return_status rs ON b.borrow_id = rs.borrow_id
     SET 
       b.status = 'อนุมัติ', 
       e.status = 'อยู่ในระหว่างการใช้งาน',
-      rs.status = 'กำลังใช้งาน'  -- อัปเดตสถานะของ return_status
+      rs.status = 'กำลังใช้งาน'
     WHERE b.borrow_id = ?;
   `;
 
-  db.query(query, [borrowId], (err, result) => {
+  db.query(updateBorrowQuery, [borrowId], (err, result) => {
     if (err) {
-      console.error("Error updating borrow, equipment, and return_status:", err.message);
+      console.error("❌ Error updating borrow, equipment, and return_status:", err.message);
       return res.status(500).json({ message: 'Error updating borrow, equipment, and return_status', error: err.message });
     }
 
     if (result.affectedRows === 0) {
-      console.log("No borrow request found for borrowId:", borrowId);
+      console.log("⚠️ No borrow request found for borrowId:", borrowId);
       return res.status(404).json({ message: 'Borrow request not found' });
     }
 
-    console.log("Borrow request approved, equipment status, and return_status updated successfully");
+    console.log("✅ Borrow request approved, equipment status updated, return_status updated");
 
-    const fetchBorrowDetails = `
-      SELECT b.borrow_id, b.status, b.borrow_date, b.return_date, b.UserID, e.name as equipment_name, e.equipment_id, u.email as user_email
-      FROM borrow b
-      JOIN equipment e ON b.equipment_id = e.equipment_id
-      JOIN users u ON b.UserID = u.UserID
-      WHERE b.borrow_id = ?;
+    // STEP 2: อัปเดต reject_reason ใน notifications แยกออกมา
+    const updateNotificationsQuery = `
+      UPDATE notifications 
+      SET reject_reason = 'ข้อมูลถูกต้อง' 
+      WHERE borrow_id = ?;
     `;
 
-    db.query(fetchBorrowDetails, [borrowId], (err, borrowDetails) => {
+    db.query(updateNotificationsQuery, [borrowId], (err, result) => {
       if (err) {
-        console.error("Error fetching borrow details:", err.message);
-        return res.status(500).json({ message: 'Error fetching borrow details', error: err.message });
+        console.error("❌ Error updating notifications reject_reason:", err.message);
+        return res.status(500).json({ message: 'Error updating notifications reject_reason', error: err.message });
       }
 
-      if (borrowDetails.length === 0) {
-        return res.status(404).json({ message: 'Borrow details not found' });
-      }
+      console.log("✅ Notifications reject_reason updated successfully");
 
-      const borrowInfo = borrowDetails[0];
+      // STEP 3: ดึงข้อมูล borrow มาใช้ส่ง WebSocket & Email
+      const fetchBorrowDetails = `
+        SELECT b.borrow_id, b.status, b.borrow_date, b.return_date, b.UserID, e.name as equipment_name, e.equipment_id, u.email as user_email
+        FROM borrow b
+        JOIN equipment e ON b.equipment_id = e.equipment_id
+        JOIN users u ON b.UserID = u.UserID
+        WHERE b.borrow_id = ?;
+      `;
 
-      // สร้างข้อความแจ้งเตือน
-      const message = `การยืมอุปกรณ์ "${borrowInfo.equipment_name}" ได้รับการอนุมัติแล้ว.`;
-
-      // ส่งข้อมูลผ่าน WebSocket
-      io.emit('borrowApproved', {
-        borrowDetails: borrowInfo,
-        userId: borrowInfo.UserID,
-        message: message,
-      });
-
-      // ส่งอีเมลแจ้งเตือน
-      const transporter = nodemailer.createTransport({
-        service: 'gmail',
-        auth: {
-          user: 'nusev007x@gmail.com', // อีเมลที่ใช้ส่ง
-          pass: 'wfal rddv aweq gnkg',   // รหัสผ่านจาก App Password
-        },
-      });
-
-      const mailOptions = {
-        from: 'nusev007x@gmail.com',
-        to: borrowInfo.user_email,   // อีเมลผู้รับ
-        subject: 'การอนุมัติการยืมอุปกรณ์', // หัวข้ออีเมล
-        html: `
-          <html>
-            <head>
-              <style>
-                body {
-                  font-family: Arial, sans-serif;
-                  background-color: #f4f4f4;
-                  margin: 0;
-                  padding: 20px;
-                }
-                .container {
-                  max-width: 600px;
-                  margin: 0 auto;
-                  background-color: #fff;
-                  padding: 20px;
-                  border-radius: 8px;
-                  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-                }
-                .header {
-                  text-align: center;
-                  background-color: #009498;
-                  color: white;
-                  padding: 15px 0;
-                  border-radius: 8px 8px 0 0;
-                }
-                .header img {
-                  width: 100px; /* กำหนดขนาดโลโก้ */
-                  margin-bottom: 10px;
-                }
-                .content {
-                  padding: 20px;
-                  text-align: left;
-                  color: #333;
-                }
-                .footer {
-                  text-align: center;
-                  font-size: 12px;
-                  color: #777;
-                  margin-top: 20px;
-                }
-                .button {
-                  display: inline-block;
-                  background-color: #009498;
-                  color: white;
-                  padding: 12px 25px;
-                  text-decoration: none;
-                  border-radius: 4px;
-                  margin-top: 20px;
-                }
-                .a {
-                  color: white;
-                  text-decoration: none;
-                }
-              </style>
-            </head>
-            <body>
-              <div class="container">
-                <div class="header">
-                  <h1>คณะเทคโนโลยีสารสนเทศและการสื่อสาร<br>มหาวิทยาลัยศิลปากร</h1>
-                  <p>สำนักงานคณะเทคโนโลยีสารสนเทศและการสื่อสาร | โทร: 09-1765-9890</p>
-                </div>
-                <div class="content">
-                  <p>สวัสดี,</p>
-                  <p>การยืมอุปกรณ์ <strong>"${borrowInfo.equipment_name}"</strong> ของคุณได้รับการอนุมัติแล้ว.</p>
-                  <p>รายละเอียดการยืม:</p>
-                  <ul>
-                    <li><strong>รหัสการยืม:</strong> ${borrowInfo.borrow_id}</li>
-                    <li><strong>วันที่ยืม:</strong> ${new Date(borrowInfo.borrow_date).toLocaleDateString('th-TH', { timeZone: 'Asia/Bangkok' })}</li>
-                    <li><strong>วันที่คืน:</strong> ${new Date(borrowInfo.return_date).toLocaleDateString('th-TH', { timeZone: 'Asia/Bangkok' })}</li>
-                  </ul>
-                  <p>ขอบคุณที่ใช้บริการของเรา!</p>
-                  <a href="http://localhost:3000/" class="button">เยี่ยมชมเว็บไซต์ของเรา</a>
-                </div>
-                <div class="footer">
-                  <p>หากคุณมีคำถามเพิ่มเติม โปรดติดต่อเราที่ <a href="mailto:support@yourwebsite.com">support@yourwebsite.com</a></p>
-                </div>
-              </div>
-            </body>
-          </html>
-        `,
-      };
-
-      transporter.sendMail(mailOptions, (err, info) => {
+      db.query(fetchBorrowDetails, [borrowId], (err, borrowDetails) => {
         if (err) {
-          console.error("Error sending email:", err.message);
-          return res.status(500).json({ message: 'Error sending email', error: err.message });
+          console.error("❌ Error fetching borrow details:", err.message);
+          return res.status(500).json({ message: 'Error fetching borrow details', error: err.message });
         }
 
-        console.log("Email sent successfully:", info.response);
+        if (borrowDetails.length === 0) {
+          return res.status(404).json({ message: 'Borrow details not found' });
+        }
 
-        // ส่ง response กลับไปยัง client
-        return res.status(200).json({
-          message: 'Borrow request approved, equipment status updated, return status updated, and email sent successfully',
+        const borrowInfo = borrowDetails[0];
+
+        // ✅ ส่ง WebSocket แจ้งเตือน
+        const message = `การยืมอุปกรณ์ "${borrowInfo.equipment_name}" ได้รับการอนุมัติแล้ว.`;
+        io.emit('borrowApproved', {
           borrowDetails: borrowInfo,
+          userId: borrowInfo.UserID,
+          message: message,
+        });
+
+        // ✅ ส่งอีเมลแจ้งเตือน
+        const transporter = nodemailer.createTransport({
+          service: 'gmail',
+          auth: {
+            user: 'nusev007x@gmail.com',
+            pass: 'wfal rddv aweq gnkg',
+          },
+        });
+
+        const mailOptions = {
+          from: 'nusev007x@gmail.com',
+          to: borrowInfo.user_email, // อีเมลผู้รับ
+          subject: 'การอนุมัติการยืมอุปกรณ์',
+          html: `
+            <html>
+              <head>
+                <style>
+                  body {
+                    font-family: Arial, sans-serif;
+                    background-color: #f4f4f4;
+                    margin: 0;
+                    padding: 20px;
+                  }
+                  .container {
+                    max-width: 600px;
+                    margin: 0 auto;
+                    background-color: #fff;
+                    padding: 20px;
+                    border-radius: 8px;
+                    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+                  }
+                  .header {
+                    text-align: center;
+                    background-color: #009498;
+                    color: white;
+                    padding: 15px 0;
+                    border-radius: 8px 8px 0 0;
+                  }
+                  .header img {
+                    width: 100px;
+                    margin-bottom: 10px;
+                  }
+                  .content {
+                    padding: 20px;
+                    text-align: left;
+                    color: #333;
+                  }
+                  .footer {
+                    text-align: center;
+                    font-size: 12px;
+                    color: #777;
+                    margin-top: 20px;
+                  }
+                  .button {
+                    display: inline-block;
+                    background-color: #009498;
+                    color: white;
+                    padding: 12px 25px;
+                    text-decoration: none;
+                    border-radius: 4px;
+                    margin-top: 20px;
+                  }
+                  blockquote {
+                    border-left: 5px solid #28a745;
+                    padding-left: 10px;
+                    color: #28a745;
+                    font-style: italic;
+                  }
+                </style>
+              </head>
+              <body>
+                <div class="container">
+                  <div class="header">
+                    <h2>การอนุมัติการยืมอุปกรณ์</h2>
+                  </div>
+                  <div class="content">
+                    <p>เรียนผู้ใช้งาน,</p>
+                    <p>คำขอยืมอุปกรณ์ <strong>${borrowInfo.equipment_name}</strong> ของคุณได้รับการ <strong style="color: #28a745;">อนุมัติ</strong> เรียบร้อยแล้ว 🎉</p>
+                    <blockquote>อุปกรณ์สามารถนำไปใช้งานได้ตามกำหนด กรุณาดูรายละเอียดด้านล่าง</blockquote>
+                    <p>รายละเอียดการยืม:</p>
+                    <ul>
+                      <li><strong>รหัสการยืม:</strong> ${borrowInfo.borrow_id}</li>
+                      <li><strong>วันที่ยืม:</strong> ${new Date(borrowInfo.borrow_date).toLocaleDateString('th-TH', { timeZone: 'Asia/Bangkok' })}</li>
+                      <li><strong>วันที่คืน:</strong> ${new Date(borrowInfo.return_date).toLocaleDateString('th-TH', { timeZone: 'Asia/Bangkok' })}</li>
+                    </ul>
+                    <p>หากมีข้อสงสัยโปรดติดต่อฝ่ายสนับสนุน.</p>
+                    <a href="http://localhost:3000/" class="button">เยี่ยมชมเว็บไซต์ของเรา</a>
+                  </div>
+                  <div class="footer">
+                    <p>หากคุณมีคำถามเพิ่มเติม โปรดติดต่อเราที่ <a href="mailto:support@yourwebsite.com">support@yourwebsite.com</a></p>
+                  </div>
+                </div>
+              </body>
+            </html>
+          `,
+        };
+        
+
+        transporter.sendMail(mailOptions, (err, info) => {
+          if (err) {
+            console.error("❌ Error sending email:", err.message);
+            return res.status(500).json({ message: 'Error sending email', error: err.message });
+          }
+
+          console.log("✅ Email sent successfully:", info.response);
+
+          return res.status(200).json({
+            message: 'Borrow request approved, notifications reject_reason updated, equipment status updated, return status updated, and email sent successfully',
+            borrowDetails: borrowInfo,
+          });
         });
       });
     });
   });
 });
+
 
 
 
@@ -1297,14 +1316,10 @@ app.put('/api/borrow/delete/:borrowId', (req, res) => {
                   }
                   .header {
                     text-align: center;
-                    background-color: #009498;
+                    background-color: #d9534f;
                     color: white;
                     padding: 15px 0;
                     border-radius: 8px 8px 0 0;
-                  }
-                  .header img {
-                    width: 100px;
-                    margin-bottom: 10px;
                   }
                   .content {
                     padding: 20px;
@@ -1326,6 +1341,12 @@ app.put('/api/borrow/delete/:borrowId', (req, res) => {
                     border-radius: 4px;
                     margin-top: 20px;
                   }
+                  blockquote {
+                    border-left: 5px solid #d9534f;
+                    padding-left: 10px;
+                    color: #d9534f;
+                    font-style: italic;
+                  }
                 </style>
               </head>
               <body>
@@ -1335,14 +1356,16 @@ app.put('/api/borrow/delete/:borrowId', (req, res) => {
                   </div>
                   <div class="content">
                     <p>สวัสดี,</p>
-                    <p>การยืมอุปกรณ์ <strong>"${borrowInfo.equipment_name}"</strong> ข้อเสนอถูกลบคำขอ.</p>
+                    <p>คำขอยืมอุปกรณ์ <strong>"${borrowInfo.equipment_name}"</strong> ของคุณถูกลบ.</p>
+                    <p>เหตุผลในการลบ:</p>
+                    <blockquote>${deleteReason}</blockquote>
                     <p>รายละเอียดการยืม:</p>
                     <ul>
                       <li><strong>รหัสการยืม:</strong> ${borrowInfo.borrow_id}</li>
                       <li><strong>วันที่ยืม:</strong> ${new Date(borrowInfo.borrow_date).toLocaleDateString('th-TH', { timeZone: 'Asia/Bangkok' })}</li>
                       <li><strong>วันที่คืน:</strong> ${new Date(borrowInfo.return_date).toLocaleDateString('th-TH', { timeZone: 'Asia/Bangkok' })}</li>
                     </ul>
-                    <p>ขอบคุณที่ใช้บริการของเรา!</p>
+                    <p>หากคุณมีข้อสงสัย กรุณาติดต่อฝ่ายสนับสนุน</p>
                     <a href="http://localhost:3000/" class="button">เยี่ยมชมเว็บไซต์ของเรา</a>
                   </div>
                   <div class="footer">
@@ -1353,7 +1376,7 @@ app.put('/api/borrow/delete/:borrowId', (req, res) => {
             </html>
           `,
         };
-
+        
         transporter.sendMail(mailOptions, (err, info) => {
           if (err) {
             console.error("Error sending email:", err.message);
