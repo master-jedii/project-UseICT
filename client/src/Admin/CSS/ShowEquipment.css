@@ -272,3 +272,43 @@ textarea {
   border-color: #009498;
   box-shadow: 0 2px 5px rgba(0, 148, 152, 0.2);
 }
+
+.defect-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+}
+
+.defect-table th, .defect-table td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: left;
+}
+
+.defect-table th {
+  background-color: #009688;
+  color: white;
+}
+
+.defect-images {
+  display: flex;
+  gap: 5px;
+}
+
+.defect-img {
+  width: 60px;
+  height: 60px;
+  object-fit: cover;
+  border-radius: 5px;
+}
+.defect-table img.defect-img {
+  width: 100px;  /* ปรับขนาดความกว้าง */
+  height: 100px; /* ปรับขนาดความสูง */
+  object-fit: cover; /* ครอบตัดรูปภาพให้พอดี */
+  border-radius: 5px;
+  transition: transform 0.2s ease-in-out;
+}
+
+.defect-table img.defect-img:hover {
+  transform: scale(1.5); /* ขยายภาพเมื่อเอาเมาส์ไปชี้ */
+}

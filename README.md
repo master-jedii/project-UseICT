@@ -13,4 +13,5 @@ Install
 -npm install socket.io (server)
 -npm install socket.io-client
 -npm install nodemailer (server)
-
+-npm install swiper (client)
+-npm install react-modal (client)
