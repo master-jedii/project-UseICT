@@ -132,7 +132,6 @@ const EquipmentListByType = () => {
                 <div className="showborrow-2">
                   <Showborrow equipmentId={item.equipment_id} equipmentName={item.name} />
                   <ButtonDetail defectId={item.equipment_id} />
-                  
                 </div>
               </div>
             </div>

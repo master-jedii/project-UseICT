@@ -1,61 +1,92 @@
 import React, { useState } from 'react';
-import Modal from 'react-modal';
+import '../interface/CSS/ButtonDetail.css';
 
 const ButtonDetail = ({ defectId }) => {
   const [defectDetails, setDefectDetails] = useState(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isHistoryModalOpen, setIsHistoryModalOpen] = useState(false);
+  const [historyData, setHistoryData] = useState([]);
 
   // ฟังก์ชันในการดึงข้อมูล defect จาก API
   const fetchDefectDetails = async () => {
     try {
-      const response = await fetch(`/api/defect-reports/${defectId}`);
+      const response = await fetch(`http://localhost:3333/api/defect-reports/${defectId}`);
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
       const data = await response.json();
-      setDefectDetails(data.length > 0 ? data[0] : null); // รับข้อมูล defect ตัวแรก
-      setIsModalOpen(true); // เปิด modal เมื่อดึงข้อมูลเสร็จ
+      console.log('Defect Data:', data);
+
+      setDefectDetails(data.length > 0 ? data[0] : null);
+      setHistoryData(data);
+      setIsHistoryModalOpen(true);
     } catch (error) {
       console.error('Error fetching defect details:', error);
     }
   };
 
-  // เมื่อกดปุ่มให้เรียกใช้ฟังก์ชัน fetchDefectDetails
   const handleClick = () => {
     fetchDefectDetails();
   };
 
-  // ฟังก์ชันในการปิด modal
   const closeModal = () => {
-    setIsModalOpen(false);
+    setIsHistoryModalOpen(false);
   };
 
   return (
     <div>
-      <button onClick={handleClick}>รายละเอียด</button>
+      <button onClick={handleClick} className="detail-btn">รายละเอียด</button>
+      {isHistoryModalOpen && (
+        <div className="modal-overlay">
+          <div className="modal-content">
+            <h2>ประวัติตำหนิอุปกรณ์</h2>
 
-      {/* Modal */}
-      <Modal isOpen={isModalOpen} onRequestClose={closeModal} contentLabel="Defect Details">
-        <h3>รายละเอียด defect</h3>
+            {/* ฟอร์มแสดงรายละเอียด */}
+            <form className="defect-form">
+              <label>ชื่ออุปกรณ์</label>
+              <h1>
+                type="text"
+                name="defect_details"
+                value={defectDetails?.defect_details || ''}
+                readOnly
+                className="form-input"
+              </h1>
 
-        {defectDetails ? (
-          <div>
-            <p><strong>อุปกรณ์ (ID):</strong> {defectDetails.equipment_id}</p>
-            <p><strong>รายละเอียด:</strong> {defectDetails.defect_details || 'ไม่มีตำหนิ'}</p>
-            <p><strong>วันที่สร้า:</strong> {new Date(defectDetails.created_at).toLocaleString()}</p>
-            <div>
-              <h4>รูปภาพ:</h4>
-              {defectDetails.image_paths.length > 0 ? (
-                defectDetails.image_paths.map((image, index) => (
-                  <img key={index} src={image} alt={`Defect image ${index + 1}`} style={{ maxWidth: '100%', height: 'auto', marginBottom: '10px' }} />
-                ))
+              <label>รูปภาพ:</label>
+              {defectDetails?.image_paths ? (
+                (() => {
+                  try {
+                    const imageArray = Array.isArray(defectDetails.image_paths)
+                      ? defectDetails.image_paths
+                      : JSON.parse(defectDetails.image_paths);
+
+                    return imageArray.length > 0 ? (
+                      imageArray.map((imagePath, index) => (
+                        <img
+                          key={index}
+                          src={`http://localhost:3333/${imagePath}`}
+                          alt={`Defect Image ${index + 1}`}
+                          className="defect-img"
+                        />
+                      ))
+                    ) : (
+                      <p>ไม่มีภาพ</p>
+                    );
+                  } catch (error) {
+                    console.error('Error parsing image_paths:', error);
+                    return <p>เกิดข้อผิดพลาดในการโหลดภาพ</p>;
+                  }
+                })()
               ) : (
-                <p>ไม่มีรูปภาพ</p>
+                <p>ไม่มีภาพ</p>
               )}
-            </div>
-            <button onClick={closeModal}>ปิด</button>
+
+              <button type="button" onClick={closeModal} className="close-btn">ปิด</button>
+            </form>
           </div>
-        ) : (
-          <p>กำลังโหลดข้อมูล...</p>
-        )}
-      </Modal>
+        </div>
+      )}
     </div>
   );
 };
