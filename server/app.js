@@ -11,6 +11,17 @@ import { fileURLToPath } from "url";
 import { Server } from "socket.io";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+const defectImagesStorage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, "defect_images/");
+  },
+  filename: function (req, file, cb) {
+    cb(null, Date.now() + path.extname(file.originalname)); // ตั้งชื่อไฟล์เป็น timestamp
+  },
+});
+const uploadDefectImage = multer({ storage: defectImagesStorage }).single("image");
+const defectImagesUpload = multer({ storage: defectImagesStorage }).array("defectImages", 4);
+app.use('/defect_images', express.static(path.join(__dirname, 'defect_images')));
 
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 app.use(cors());
@@ -1859,6 +1870,126 @@ app.get('/api/borrow/branch-stats', (req, res) => {
     res.status(200).json(results);
   });
 });
+
+//ดึงข้อมูลตำหนิ
+app.get('/api/defect-reports/:equipmentId', (req, res) => {
+  const equipmentId = req.params.equipmentId;
+
+  console.log(`📢 Fetching defect reports for equipment ID: ${equipmentId}`);
+
+  const query = `
+    SELECT report_id, defect_details, image_paths, created_at
+    FROM defect_reports
+    WHERE equipment_id = ?
+    ORDER BY created_at DESC;
+  `;
+
+  db.query(query, [equipmentId], (err, result) => {
+    if (err) {
+      console.error('❌ Error fetching defect reports:', err);
+      return res.status(500).json({ message: 'Error fetching defect reports' });
+    }
+
+    console.log('✅ Retrieved defect reports:', result);
+
+    // แปลง JSON String ของ `image_paths` เป็น Object จริง
+    const formattedResult = result.map(report => ({
+      ...report,
+      image_paths: JSON.parse(report.image_paths) // แปลง JSON string เป็น Array
+    }));
+
+    res.status(200).json(formattedResult.length > 0 ? formattedResult : []);
+  });
+});
+
+//update
+app.put('/api/defect-reports/:reportId', uploadDefectImage, (req, res) => {
+  const { reportId } = req.params;
+  const { defect_details } = req.body;
+  const imagePath = req.file ? `defect_images/${req.file.filename}` : null; // ✅ เก็บรูปใน defect_images/
+
+  const getOldImageQuery = "SELECT image_paths FROM defect_reports WHERE report_id = ?";
+
+  db.query(getOldImageQuery, [reportId], (err, result) => {
+    if (err) {
+      console.error("❌ Error fetching old image:", err);
+      return res.status(500).json({ message: "Error fetching old image" });
+    }
+
+    if (result.length === 0) {
+      return res.status(404).json({ message: "❌ Defect report not found" });
+    }
+
+    let updatedImages = result[0].image_paths ? JSON.parse(result[0].image_paths) : [];
+
+    if (imagePath) {
+      updatedImages = [imagePath]; // แทนที่รูปภาพเก่า
+    }
+
+    const updateQuery = `
+      UPDATE defect_reports 
+      SET defect_details = ?, image_paths = ?
+      WHERE report_id = ?;
+    `;
+
+    db.query(updateQuery, [defect_details, JSON.stringify(updatedImages), reportId], (err, updateResult) => {
+      if (err) {
+        console.error("❌ Error updating defect report:", err);
+        return res.status(500).json({ message: "Error updating defect report" });
+      }
+
+      res.status(200).json({ message: "✅ Defect report updated successfully" });
+    });
+  });
+});
+
+
+app.post('/api/defect-reports', uploadDefectImage, (req, res) => {
+  const { equipment_id, defect_details } = req.body;
+  const imagePath = req.file ? `defect_images/${req.file.filename}` : null; // ✅ ใช้ defect_images
+
+  if (!equipment_id || !defect_details) {
+    return res.status(400).json({ message: "❌ ข้อมูลไม่ครบถ้วน" });
+  }
+
+  const query = `
+    INSERT INTO defect_reports (equipment_id, defect_details, image_paths, created_at)
+    VALUES (?, ?, ?, NOW());
+  `;
+
+  db.query(query, [equipment_id, defect_details, JSON.stringify([imagePath])], (err, result) => {
+    if (err) {
+      console.error("❌ Error inserting defect report:", err);
+      return res.status(500).json({ message: "Error inserting defect report" });
+    }
+
+    res.status(201).json({ report_id: result.insertId, equipment_id, defect_details, image_paths: [imagePath] });
+  });
+});
+
+app.delete('/api/defect-reports/:reportId', (req, res) => {
+  const { reportId } = req.params;
+
+  const query = `
+    DELETE FROM defect_reports 
+    WHERE report_id = ?;
+  `;
+
+  db.query(query, [reportId], (err, result) => {
+    if (err) {
+      console.error('Error deleting defect report:', err);
+      return res.status(500).json({ message: 'Error deleting defect report' });
+    }
+
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ message: 'Defect report not found' });
+    }
+
+    res.status(200).json({ message: 'Defect report deleted successfully' });
+  });
+});
+
+
 
 // เริ่มเซิร์ฟเวอร์
 app.listen(3333, () => {
