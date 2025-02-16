@@ -5,6 +5,8 @@ import Showborrow from './showborrow';
 import NavbarMain from '../components/NavbarMain';
 import { useLocation, useNavigate } from "react-router-dom";
 import '../interface/CSS/EqListbyT.css';
+import ButtonDetail from '../interface/ButtonDetail'
+
 
 const EquipmentListByType = () => {
   const { typeId } = useParams(); // ดึง type_id จาก URL
@@ -129,6 +131,8 @@ const EquipmentListByType = () => {
                 <p>รายละเอียดย่อย : {item.description} </p>
                 <div className="showborrow-2">
                   <Showborrow equipmentId={item.equipment_id} equipmentName={item.name} />
+                  <ButtonDetail defectId={item.equipment_id} />
+                  
                 </div>
               </div>
             </div>

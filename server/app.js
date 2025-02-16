@@ -570,11 +570,13 @@ app.get('/checkRole', (req, res) => {
 
 // ตั้งค่าการเก็บไฟล์
 const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, "uploads/"); // เก็บไฟล์ในโฟลเดอร์ uploads
+  destination: (req, file, cb) => {
+      // ตรวจสอบประเภทไฟล์หรือเงื่อนไขที่ต้องการ
+      cb(null, 'uploads/'); // หากไม่มี defect_images ก็อัพโหลดไปยัง uploads/
   },
-  filename: function (req, file, cb) {
-    cb(null, Date.now() + path.extname(file.originalname)); // ตั้งชื่อไฟล์เป็น timestamp
+  filename: (req, file, cb) => {
+      // ตั้งชื่อไฟล์ให้ไม่ซ้ำกัน
+      cb(null, Date.now() + path.extname(file.originalname));
   },
 });
 
@@ -1859,6 +1861,91 @@ app.get('/api/borrow/branch-stats', (req, res) => {
     res.status(200).json(results);
   });
 });
+
+const defectImagesStorage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, 'defect_images/');  // อัพโหลดไฟล์ไปยัง defect_images
+  },
+  filename: function (req, file, cb) {
+    cb(null, Date.now() + path.extname(file.originalname));  // ตั้งชื่อไฟล์ด้วย timestamp
+  },
+});
+
+const defectImagesUpload = multer({ storage: defectImagesStorage }).array('defectImages', 4);
+
+
+app.post("/report-defect", defectImagesUpload, (req, res) => {
+  try {
+      const { equipmentId, defectDetails } = req.body;
+
+      // ตรวจสอบว่า equipmentId และ defectDetails ถูกส่งมาหรือไม่
+      if (!equipmentId || !defectDetails) {
+          return res.status(400).json({ error: "ต้องการข้อมูลอุปกรณ์และรายละเอียดตำหนิ" });
+      }
+
+      // ตรวจสอบว่าไฟล์ถูกอัพโหลดมาหรือไม่
+      if (!req.files || req.files.length === 0) {
+          return res.status(400).json({ error: "ต้องอัพโหลดรูปภาพอย่างน้อย 1 รูป" });
+      }
+
+      // สร้าง array ของไฟล์ที่อัพโหลดมา
+      const imagePaths = req.files.map(file => `defect_images/${file.filename}`);  // เก็บ path ของไฟล์ใน defect_images
+
+      // SQL Query สำหรับบันทึกข้อมูล
+      const query = "INSERT INTO defect_reports (equipment_id, defect_details, image_paths, created_at) VALUES (?, ?, ?, NOW())";
+      const values = [equipmentId, defectDetails, JSON.stringify(imagePaths)];
+
+      // บันทึกข้อมูลในฐานข้อมูล
+      db.query(query, values, (err, result) => {
+          if (err) {
+              console.error("Error inserting data into database:", err);
+              return res.status(500).json({ error: "เกิดข้อผิดพลาดในการบันทึกข้อมูล" });
+          }
+
+          res.status(200).json({ message: "แจ้งตำหนิสำเร็จ" });
+      });
+  } catch (error) {
+      console.error("Error processing defect report:", error);
+      res.status(500).json({ error: "เกิดข้อผิดพลาดที่เซิร์ฟเวอร์" });
+  }
+});
+
+
+
+router.get('/defect_reports/:id', async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const result = await db.query(
+      'SELECT * FROM defect_reports WHERE report_id = $1',
+      [id]
+    );
+
+    if (result.rows.length === 0) {
+      return res.status(404).send({ message: 'Defect report not found' });
+    }
+
+    // ส่งข้อมูล defect report ที่ได้
+    const defectReport = result.rows[0];
+    return res.json({
+      defect_details: defectReport.defect_details,
+      created_at: defectReport.created_at,
+      image_paths: defectReport.image_paths.split(','), // สมมติว่า image_paths ถูกบันทึกเป็น string แยกโดย comma
+    });
+  } catch (error) {
+    console.error('Error fetching defect report:', error);
+    res.status(500).send({ message: 'Error fetching defect report' });
+  }
+});
+
+
+
+
+
+
+
+
+
 
 // เริ่มเซิร์ฟเวอร์
 app.listen(3333, () => {
