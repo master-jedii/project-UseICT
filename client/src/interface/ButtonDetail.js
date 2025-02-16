@@ -46,37 +46,55 @@ const ButtonDetail = ({ defectId }) => {
             <form className="defect-form">
 
               <label></label>
-              <h2 className='modal-detail'>รูปภาพ : </h2>
-              {defectDetails?.image_paths ? (
-                (() => {
-                  try {
-                    const imageArray = Array.isArray(defectDetails.image_paths)
-                      ? defectDetails.image_paths
-                      : JSON.parse(defectDetails.image_paths);
+              <table className="defect-table">
+                <thead>
+                  <tr>
+                    <th>วันที่บันทึก</th>
+                    <th>รายละเอียดตำหนิ</th>
+                    <th>รูปภาพ</th>
+                    
+                  </tr>
+                </thead>
+                <tbody>
+                  {historyData.map((report) => (
+                    <tr key={report.report_id}>
+                      <td>{new Date(report.created_at).toLocaleDateString('th-TH')}</td>
+                      <td>{report.defect_details}</td>
+                      <td>
+                        {report.image_paths ? (
+                          (() => {
+                            try {
+                              // ตรวจสอบว่า image_paths เป็น string ที่มี JSON array หรือไม่
+                              const imageArray = Array.isArray(report.image_paths)
+                                ? report.image_paths // ถ้าเป็น array แล้ว ใช้ได้เลย
+                                : JSON.parse(report.image_paths); // ถ้าเป็น string ให้แปลงเป็น array
 
-                    return imageArray.length > 0 ? (
-                      imageArray.map((imagePath, index) => (
-                        <img
-                          key={index}
-                          src={`http://localhost:3333/${imagePath}`}
-                          alt={`Defect Image ${index + 1}`}
-                          className="defect-img"
-                        />
+                              const imagePath = imageArray.length > 0 ? imageArray[0] : null; // ดึงค่ารูปแรก
 
-                      ))
-                    ) : (
-                      <p>ไม่มีภาพ</p>
-                    );
-                  } catch (error) {
-                    console.error('Error parsing image_paths:', error);
-                    return <p>เกิดข้อผิดพลาดในการโหลดภาพ</p>;
-                  }
-                })()
-              ) : (
-                <p>ไม่มีภาพ</p>
-              )}
-              <h2 className='modal-detail'>การใช้งาน : </h2>
-              <h3 className='info-detail'>{defectDetails?.defect_details || 'ไม่มีข้อมูล'}</h3>
+                              return imagePath ? (
+                                <img
+                                  src={`http://localhost:3333/${imagePath}`}
+                                  alt="ตำหนิอุปกรณ์"
+                                  className="defect-img"
+                                />
+                              ) : (
+                                "ไม่มีภาพ"
+                              );
+                            } catch (error) {
+                              console.error("Error parsing image_paths:", error);
+                              return "เกิดข้อผิดพลาดในการโหลดภาพ";
+                            }
+                          })()
+                        ) : (
+                          "ไม่มีภาพ"
+                        )}
+                      </td>
+                      
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+             
 
 
 

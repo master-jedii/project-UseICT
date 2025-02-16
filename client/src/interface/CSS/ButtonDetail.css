@@ -108,7 +108,7 @@
     color: black;
 }
 .modal-detail-header{
-    text-align: center;
+    margin: 10px auto;
 }
 .info-detail{
     font-size: 20px;
