@@ -1946,7 +1946,6 @@ app.get('/api/defect-reports/:equipmentId', (req, res) => {
     }
 
     console.log('✅ Retrieved defect reports:', result);
-
     // แปลง JSON String ของ `image_paths` เป็น Object จริง
     const formattedResult = result.map(report => ({
       ...report,
