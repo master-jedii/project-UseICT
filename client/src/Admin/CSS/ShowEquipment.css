@@ -115,10 +115,10 @@
 
   display: flex;
   flex-direction: column;
-  gap: 15px; /* เพิ่มระยะห่างระหว่างปุ่ม */
+  gap: 10px; /* เพิ่มระยะห่างระหว่างปุ่ม */
   justify-content: center; /* จัดให้อยู่กลางในแนวตั้ง */
   margin-right: 20px; /* เพิ่มระยะจากขอบกล่อง */
-  margin-top: 40px
+  margin-top: 10px
 }
 
 .update-btn,

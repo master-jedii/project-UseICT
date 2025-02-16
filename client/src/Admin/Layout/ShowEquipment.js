@@ -283,12 +283,13 @@ const ShowEquipment = () => {
               <h2>{item.name}</h2>
               <p><span>รายละเอียด:</span> {item.description}</p>
               <p><span>สถานะ:</span> {item.status}</p>
+              <p><span>รหัส:</span> {item.equipment_id}</p>
               <p><span>รหัสรุ่นอุปกรณ์:</span> {getSerialTypeName(item.type_id)}</p>
             </div>
             <div className="equipment-actions">
               <button onClick={() => handleUpdateClick(item)} className="update-btn">Update</button>
               <button onClick={() => handleDeleteClick(item.equipment_id)} className="delete-btn">Delete</button>
-              <button onClick={() => fetchDefectReports(item.equipment_id)} className="history-btn">เช็คตำหนิ</button>
+              <button onClick={() => fetchDefectReports(item.equipment_id)} className="history-btn">แจ้งตำหนิ</button>
             </div>
           </li>
         ))}

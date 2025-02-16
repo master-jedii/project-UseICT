@@ -1,83 +1,116 @@
-/* Overlay เพื่อให้ส่วนที่ไม่เกี่ยวข้องมืดลง */
+/* เพิ่มสไตล์สำหรับปุ่ม */
+.detail-btn {
+  background-color: orange; /* สีเขียว */
+  color: white;
+  padding: 12px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.3s ease;
+  margin-left: 20px;
+}
+
+
+
+/* สไตล์สำหรับ modal */
 .modal-overlay {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
+  background-color: rgba(0, 0, 0, 0.5); /* สีพื้นหลังครึ่งโปร่งใส */
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 1000;
+  z-index: 9999;
 }
 
-/* เนื้อหาของ Modal */
 .modal-content {
-  background-color: white;
+  background-color: #fff;
   padding: 20px;
   border-radius: 8px;
-  max-width: 500px;
+  max-width: 1000px;
   width: 100%;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  transition: transform 0.3s ease-in-out;
+  overflow-y: auto;
 }
 
-.modal-content h2 {
-  text-align: center;
-  margin-bottom: 20px;
-}
-
+/* สไตล์สำหรับฟอร์ม defect */
 .defect-form {
   display: flex;
   flex-direction: column;
+  gap: 15px;
+}
+
+.defect-form h1 {
+  font-size: 24px;
+  font-weight: bold;
+  color: #333;
+  margin: 0;
 }
 
 .defect-form label {
-  margin: 10px 0 5px;
-  font-weight: bold;
+  font-size: 16px;
+  color: #555;
 }
 
-.form-input {
-  padding: 8px;
-  margin-bottom: 15px;
+.defect-form input {
+  padding: 10px;
+  font-size: 14px;
   border: 1px solid #ccc;
-  border-radius: 4px;
+  border-radius: 5px;
+  background-color: #f9f9f9;
 }
 
 .defect-img {
   max-width: 100%;
-  height: auto;
-  margin-top: 10px;
-  margin-bottom: 20px;
+  max-height: 300px;
+  object-fit: cover;
+  margin: 10px 0;
+  border: 1px solid #ddd;
+  border-radius: 5px;
 }
 
 .close-btn {
-  background-color: #f44336;
-  color: white;
-  padding: 8px 16px;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  align-self: center;
-  transition: background-color 0.3s ease;
-}
-
-.close-btn:hover {
-  background-color: #d32f2f;
-}
-
-.detail-btn {
-  background-color: #4CAF50;
+  background-color: #f44336; /* สีแดง */
   color: white;
   padding: 10px 20px;
   border: none;
-  border-radius: 4px;
+  border-radius: 5px;
   cursor: pointer;
   font-size: 16px;
   transition: background-color 0.3s ease;
+  align-self: flex-end;
 }
 
-.detail-btn:hover {
-  background-color: #45a049;
+.close-btn:hover {
+  background-color: #e53935; /* สีแดงเข้มเมื่อ hover */
+}
+
+.defect-img {
+  width: 100%; /* ใช้ 100% ของพื้นที่ที่กำหนด */
+  max-width: 500px; /* กำหนดขนาดสูงสุดเป็น 500px */
+  height: auto; /* ความสูงจะปรับอัตโนมัติให้เหมาะสม */
+  object-fit: cover; /* รูปจะถูกครอบให้เต็มกรอบ */
+  border-radius: 8px; /* เพิ่มมุมโค้งให้รูปภาพ */
+  margin-bottom: 15px; /* เพิ่มระยะห่างระหว่างรูป */
+}
+
+.close-btn-detail{
+    background-color: #e7413e;
+}
+.modal-detail{
+    font-size: 24px;
+    text-align: left;
+    position: relative;
+    right: 70px;
+    color: black;
+}
+.modal-detail-header{
+    text-align: center;
+}
+.info-detail{
+    font-size: 20px;
+    margin-left: 24px;
 }

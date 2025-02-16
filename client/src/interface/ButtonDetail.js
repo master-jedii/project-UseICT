@@ -40,20 +40,13 @@ const ButtonDetail = ({ defectId }) => {
       {isHistoryModalOpen && (
         <div className="modal-overlay">
           <div className="modal-content">
-            <h2>ประวัติตำหนิอุปกรณ์</h2>
+            <h2 className='modal-detail-header'>รายละเอียดอุปกรณ์  </h2>
 
             {/* ฟอร์มแสดงรายละเอียด */}
             <form className="defect-form">
-              <label>ชื่ออุปกรณ์</label>
-              <h1>
-                type="text"
-                name="defect_details"
-                value={defectDetails?.defect_details || ''}
-                readOnly
-                className="form-input"
-              </h1>
 
-              <label>รูปภาพ:</label>
+              <label></label>
+              <h2 className='modal-detail'>รูปภาพ : </h2>
               {defectDetails?.image_paths ? (
                 (() => {
                   try {
@@ -69,6 +62,7 @@ const ButtonDetail = ({ defectId }) => {
                           alt={`Defect Image ${index + 1}`}
                           className="defect-img"
                         />
+
                       ))
                     ) : (
                       <p>ไม่มีภาพ</p>
@@ -81,8 +75,12 @@ const ButtonDetail = ({ defectId }) => {
               ) : (
                 <p>ไม่มีภาพ</p>
               )}
+              <h2 className='modal-detail'>การใช้งาน : </h2>
+              <h3 className='info-detail'>{defectDetails?.defect_details || 'ไม่มีข้อมูล'}</h3>
 
-              <button type="button" onClick={closeModal} className="close-btn">ปิด</button>
+
+
+              <button type="button" onClick={closeModal} className="close-btn-detail">ปิด</button>
             </form>
           </div>
         </div>
