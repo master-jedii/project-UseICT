@@ -8,9 +8,9 @@ const ButtonDetail = ({ defectId }) => {
   // ฟังก์ชันในการดึงข้อมูล defect จาก API
   const fetchDefectDetails = async () => {
     try {
-      const response = await fetch(`/api/defect_reports/${defectId}`);
+      const response = await fetch(`/api/defect-reports/${defectId}`);
       const data = await response.json();
-      setDefectDetails(data);
+      setDefectDetails(data.length > 0 ? data[0] : null); // รับข้อมูล defect ตัวแรก
       setIsModalOpen(true); // เปิด modal เมื่อดึงข้อมูลเสร็จ
     } catch (error) {
       console.error('Error fetching defect details:', error);
@@ -39,7 +39,7 @@ const ButtonDetail = ({ defectId }) => {
           <div>
             <p><strong>อุปกรณ์ (ID):</strong> {defectDetails.equipment_id}</p>
             <p><strong>รายละเอียด:</strong> {defectDetails.defect_details || 'ไม่มีตำหนิ'}</p>
-            <p><strong>วันที่สร้าง:</strong> {new Date(defectDetails.created_at).toLocaleString()}</p>
+            <p><strong>วันที่สร้า:</strong> {new Date(defectDetails.created_at).toLocaleString()}</p>
             <div>
               <h4>รูปภาพ:</h4>
               {defectDetails.image_paths.length > 0 ? (
