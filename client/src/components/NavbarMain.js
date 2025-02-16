@@ -250,7 +250,7 @@ const NavbarMain = ({ userData, onLogout }) => {
                       <p>ชื่ออุปกรณ์: {notification.equipment_name}</p>
                       <p>รหัสอุปกรณ์: {notification.equipment_id}</p>
                       <p>อัพเดตเมื่อ: {new Date(notification.updated_at).toLocaleString('th-TH', { hour12: false })}</p>
-                      <p><strong>เหตุผล:</strong> {rejectReasonMessage}</p>  {/* แสดงเหตุผล ถ้า null ให้แสดงว่า รอดำเนินการ */}
+                      <p>เหตุผล: {rejectReasonMessage}</p>  {/* แสดงเหตุผล ถ้า null ให้แสดงว่า รอดำเนินการ */}
                       <button
                         className="delete-notification-button"
                         onClick={() => handleDeleteNotification(notification.borrow_id)}
