@@ -11,6 +11,7 @@ import { fileURLToPath } from "url";
 import { Server } from "socket.io";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+
 const defectImagesStorage = multer.diskStorage({
   destination: function (req, file, cb) {
     cb(null, "defect_images/");
@@ -19,6 +20,7 @@ const defectImagesStorage = multer.diskStorage({
     cb(null, Date.now() + path.extname(file.originalname)); // ตั้งชื่อไฟล์เป็น timestamp
   },
 });
+
 const uploadDefectImage = multer({ storage: defectImagesStorage }).single("image");
 const defectImagesUpload = multer({ storage: defectImagesStorage }).array("defectImages", 4);
 app.use('/defect_images', express.static(path.join(__dirname, 'defect_images')));

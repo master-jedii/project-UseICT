@@ -13,6 +13,7 @@ const ShowEquipment = () => {
   const [historyData, setHistoryData] = useState(null);
   const [isHistoryModalOpen, setIsHistoryModalOpen] = useState(false);
   const [selectedEquipmentId, setSelectedEquipmentId] = useState(null);
+  
   const [newDefect, setNewDefect] = useState({
     defect_details: '',
     image: null,
@@ -21,7 +22,7 @@ const ShowEquipment = () => {
   useEffect(() => {
     console.log("🔄 selectedEquipmentId updated:", selectedEquipmentId);
   }, [selectedEquipmentId]);
-  
+
 
   const [formData, setFormData] = useState({
     name: '',
@@ -37,7 +38,7 @@ const ShowEquipment = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
 
-  
+
   useEffect(() => {
     axios.get(`http://localhost:3333/showequipment?category=${selectedCategory}`)
       .then((response) => {
@@ -103,20 +104,20 @@ const ShowEquipment = () => {
 
   const handleFormSubmit = (e) => {
     e.preventDefault();
-    
+
     const updateData = new FormData();
     updateData.append('name', formData.name);
     updateData.append('description', formData.description);
     updateData.append('category', formData.category);
     updateData.append('status', formData.status);
     updateData.append('type_id', formData.type_id);
-  
+
     if (formData.image) {
       updateData.append('image', formData.image); // ต้องเพิ่มตรงนี้
     }
-  
+
     console.log("📤 ส่งข้อมูลไปอัปเดต:", [...updateData.entries()]); // ตรวจสอบข้อมูลที่ถูกส่ง
-  
+
     axios.put(`http://localhost:3333/api/equipments/${editingEquipment.equipment_id}`, updateData, {
       headers: { 'Content-Type': 'multipart/form-data' },
     })
@@ -128,7 +129,7 @@ const ShowEquipment = () => {
         console.error('❌ Error updating equipment:', error);
       });
   };
-  
+
 
   const handleDeleteClick = (id) => {
     axios.delete(`http://localhost:3333/api/equipments/${id}`)
@@ -141,13 +142,13 @@ const ShowEquipment = () => {
         alert('เกิดข้อผิดพลาดในการลบ');
       });
   };
-  
+
   const fetchDefectReports = (equipmentId) => {
     console.log(`📢 Fetching defect reports for equipment ID: ${equipmentId}`);
-  
+
     setSelectedEquipmentId(equipmentId); // ✅ กำหนดค่า ID อุปกรณ์ก่อน
     console.log(`✅ Set selectedEquipmentId: ${equipmentId}`);
-  
+
     setTimeout(() => { // ✅ ใช้ setTimeout เพื่อให้ state อัปเดตก่อนเรียก API
       axios.get(`http://localhost:3333/api/defect-reports/${equipmentId}`)
         .then((response) => {
@@ -162,10 +163,10 @@ const ShowEquipment = () => {
         });
     }, 50);
   };
-  
-  
-  
-  
+
+
+
+
   const handleDefectFormChange = (e) => {
     const { name, value, files } = e.target;
     if (name === 'image') {
@@ -182,19 +183,18 @@ const ShowEquipment = () => {
 
   const handleDefectSubmit = (e) => {
     e.preventDefault();
-  
     if (!selectedEquipmentId) {
       alert("❌ กรุณาเลือกอุปกรณ์ก่อนเพิ่มตำหนิ!");
       return;
     }
-  
+
     const defectData = new FormData();
     defectData.append("equipment_id", selectedEquipmentId);
     defectData.append("defect_details", newDefect.defect_details);
     if (newDefect.image) {
       defectData.append("image", newDefect.image); // ✅ ส่งไปยัง defect_images
     }
-  
+
     axios
       .post("http://localhost:3333/api/defect-reports", defectData, {
         headers: { "Content-Type": "multipart/form-data" },
@@ -207,21 +207,18 @@ const ShowEquipment = () => {
         console.error("❌ Error inserting defect report:", error);
       });
   };
-  
-  
-  
-  
-  
+
+
 
   const handleDeleteDefect = (reportId) => {
     console.log(`🗑️ ลบตำหนิที่ report_id: ${reportId}`); // Debugging
-  
+
     if (!window.confirm("⚠️ คุณแน่ใจหรือไม่ว่าต้องการลบตำหนินี้?")) return;
-  
+
     axios.delete(`http://localhost:3333/api/defect-reports/${reportId}`)
       .then((response) => {
         console.log(`✅ ลบสำเร็จ: ${response.data.message}`);
-  
+
         // อัปเดต state โดยการกรองเอาตำหนิที่ลบออก
         setHistoryData(prevHistory => prevHistory.filter((report) => report.report_id !== reportId));
       })
@@ -230,8 +227,8 @@ const ShowEquipment = () => {
         alert('❌ ไม่สามารถลบตำหนิได้');
       });
   };
-  
-  
+
+
 
   // Pagination logic
   const indexOfLastItem = currentPage * itemsPerPage;
@@ -242,6 +239,7 @@ const ShowEquipment = () => {
   const handlePageChange = (pageNumber) => {
     setCurrentPage(pageNumber);
   };
+
 
   return (
     <div className="equipment-containerAdmin">
@@ -314,45 +312,45 @@ const ShowEquipment = () => {
           <div className="modal-content">
             <h2>ปรับปรุงข้อมูลอุปกรณ์</h2>
             <form onSubmit={handleFormSubmit}>
-            <label>ชื่ออุปกรณ์:</label>
-  <input type="text" name="name" value={formData.name} onChange={handleFormChange} required />
+              <label>ชื่ออุปกรณ์:</label>
+              <input type="text" name="name" value={formData.name} onChange={handleFormChange} required />
 
-  <label>รายละเอียด:</label>
-  <textarea name="description" value={formData.description} onChange={handleFormChange} required />
+              <label>รายละเอียด:</label>
+              <textarea name="description" value={formData.description} onChange={handleFormChange} required />
 
-  <label>หมวดหมู่:</label>
-  <select name="category" value={formData.category} onChange={handleFormChange} required>
-    <option value="">เลือกหมวดหมู่</option>
-    <option value="กล้อง">กล้อง</option>
-    <option value="เลนส์">เลนส์</option>
-    <option value="ขาตั้งกล้อง">ขาตั้งกล้อง</option>
-    <option value="ไฟสำหรับถ่ายทำ">ไฟสำหรับถ่ายทำ</option>
-    <option value="อุปกรณ์ด้านเสียง">อุปกรณ์ด้านเสียง</option>
-    <option value="อุปกรณ์จัดแสง">อุปกรณ์จัดแสง</option>
-    <option value="อุปกรณ์อื่นๆ">อุปกรณ์อื่นๆ</option>
-  </select>
+              <label>หมวดหมู่:</label>
+              <select name="category" value={formData.category} onChange={handleFormChange} required>
+                <option value="">เลือกหมวดหมู่</option>
+                <option value="กล้อง">กล้อง</option>
+                <option value="เลนส์">เลนส์</option>
+                <option value="ขาตั้งกล้อง">ขาตั้งกล้อง</option>
+                <option value="ไฟสำหรับถ่ายทำ">ไฟสำหรับถ่ายทำ</option>
+                <option value="อุปกรณ์ด้านเสียง">อุปกรณ์ด้านเสียง</option>
+                <option value="อุปกรณ์จัดแสง">อุปกรณ์จัดแสง</option>
+                <option value="อุปกรณ์อื่นๆ">อุปกรณ์อื่นๆ</option>
+              </select>
 
-  {/* เพิ่มช่องอัปโหลดภาพ */}
-  <label>อัปโหลดภาพ:</label>
-  <input type="file" name="image" accept="image/*" onChange={handleFormChange} />
+              {/* เพิ่มช่องอัปโหลดภาพ */}
+              <label>อัปโหลดภาพ:</label>
+              <input type="file" name="image" accept="image/*" onChange={handleFormChange} />
 
-  {/* แสดงตัวอย่างรูปภาพที่อัปโหลด หรือรูปภาพเดิม */}
-  {formData.imagePreview ? (
-    <img src={formData.imagePreview} alt="Preview" className="image-preview" />
-  ) : (
-    editingEquipment?.image && (
-      <img src={`http://localhost:3333/uploads/${editingEquipment.image}`} alt="Existing" className="image-preview" />
-    )
-  )}
+              {/* แสดงตัวอย่างรูปภาพที่อัปโหลด หรือรูปภาพเดิม */}
+              {formData.imagePreview ? (
+                <img src={formData.imagePreview} alt="Preview" className="image-preview" />
+              ) : (
+                editingEquipment?.image && (
+                  <img src={`http://localhost:3333/uploads/${editingEquipment.image}`} alt="Existing" className="image-preview" />
+                )
+              )}
 
-  <button type="submit" className="save-btn">บันทึก</button>
-  <button type="button" onClick={() => setIsModalOpen(false)} className="cancel-btn">ยกเลิก</button>
-</form>
+              <button type="submit" className="save-btn">บันทึก</button>
+              <button type="button" onClick={() => setIsModalOpen(false)} className="cancel-btn">ยกเลิก</button>
+            </form>
           </div>
         </div>
       )}
-
-{isHistoryModalOpen && (
+      
+      {isHistoryModalOpen && (
         <div className="modal">
           <div className="modal-content">
             <h2>ประวัติตำหนิอุปกรณ์</h2>
@@ -386,9 +384,33 @@ const ShowEquipment = () => {
                       <td>{new Date(report.created_at).toLocaleDateString('th-TH')}</td>
                       <td>{report.defect_details}</td>
                       <td>
-                        {report.image_paths && report.image_paths.length > 0 ? (
-                          <img src={`http://localhost:3333/uploads/${report.image_paths[0]}`} alt="ตำหนิอุปกรณ์" className="defect-img" />
-                        ) : "ไม่มีภาพ"}
+                        {report.image_paths ? (
+                          (() => {
+                            try {
+                              // ตรวจสอบว่า image_paths เป็น string ที่มี JSON array หรือไม่
+                              const imageArray = Array.isArray(report.image_paths)
+                                ? report.image_paths // ถ้าเป็น array แล้ว ใช้ได้เลย
+                                : JSON.parse(report.image_paths); // ถ้าเป็น string ให้แปลงเป็น array
+
+                              const imagePath = imageArray.length > 0 ? imageArray[0] : null; // ดึงค่ารูปแรก
+
+                              return imagePath ? (
+                                <img
+                                  src={`http://localhost:3333/${imagePath}`}
+                                  alt="ตำหนิอุปกรณ์"
+                                  className="defect-img"
+                                />
+                              ) : (
+                                "ไม่มีภาพ"
+                              );
+                            } catch (error) {
+                              console.error("Error parsing image_paths:", error);
+                              return "เกิดข้อผิดพลาดในการโหลดภาพ";
+                            }
+                          })()
+                        ) : (
+                          "ไม่มีภาพ"
+                        )}
                       </td>
                       <td>
                         <button onClick={() => handleDeleteDefect(report.report_id)} className="delete-btn">ลบ</button>
@@ -398,7 +420,7 @@ const ShowEquipment = () => {
                 </tbody>
               </table>
             ) : (
-              <p>❌ ไม่มีข้อมูลตำหนิอุปกรณ์</p>
+              <p>ไม่มีข้อมูลตำหนิอุปกรณ์</p>
             )}
 
             <button onClick={() => setIsHistoryModalOpen(false)} className="close-btn">ปิด</button>
@@ -406,6 +428,8 @@ const ShowEquipment = () => {
         </div>
       )}
     </div>
+    
+  
   );
 };
 
