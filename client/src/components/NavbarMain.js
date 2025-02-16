@@ -230,6 +230,7 @@ const NavbarMain = ({ userData, onLogout }) => {
             <ul>
               {notifications.length > 0 ? (
                 notifications.map((notification, index) => {
+                  console.log(notification);
                   const isLatest = index === 0;  // เช็คว่าเป็นข้อมูลล่าสุด
                   return (
                     <li key={notification.borrow_id} className={isLatest ? 'new-notification' : ''}>
@@ -243,6 +244,7 @@ const NavbarMain = ({ userData, onLogout }) => {
                       <p>ชื่ออุปกรณ์: {notification.equipment_name}</p>
                       <p>รหัสอุปกรณ์: {notification.equipment_id}</p>
                       <p>อัพเดตเมื่อ: {new Date(notification.updated_at).toLocaleString('th-TH', { hour12: false })}</p>
+                      <p><strong>เหตุผล:</strong> {notification.reject_reason}</p>  {/* แสดงเหตุผลในการลบ */}
                       <button
                         className="delete-notification-button"
                         onClick={() => handleDeleteNotification(notification.borrow_id)}
@@ -250,7 +252,6 @@ const NavbarMain = ({ userData, onLogout }) => {
                         ลบ
                       </button>
                     </li>
-
                   );
                 })
               ) : (
